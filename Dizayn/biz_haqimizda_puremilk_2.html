@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Biz Haqimizda - PureMilk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#bcc8cf",
+                        "tertiary-container": "#2c383d",
+                        "on-tertiary-container": "#94a1a8",
+                        "on-secondary-container": "#636360",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed": "#d8e4eb",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#111d22",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc7f7",
+                        "primary-container": "#1a365d",
+                        "secondary-container": "#e1dfdc",
+                        "primary-fixed-dim": "#adc7f7",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#86a0cd",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474744",
+                        "tertiary": "#172328",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "outline": "#74777f",
+                        "secondary-fixed": "#e4e2de",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#3c494e",
+                        "on-surface-variant": "#43474e",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "surface-variant": "#e2e2e2",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#001b3c",
+                        "primary": "#002045",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#455f88",
+                        "surface-container-low": "#f3f3f4",
+                        "secondary": "#5e5e5c",
+                        "secondary-fixed-dim": "#c8c6c3",
+                        "surface-bright": "#f9f9f9",
+                        "surface-dim": "#dadada"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "gutter": "32px",
+                        "container-padding-mobile": "24px",
+                        "section-gap": "120px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "container-padding-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-white/70 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-white/20 shadow-sm shadow-[#1A365D]/5 transition-all duration-300">
+<div class="flex justify-between items-center h-20 px-container-padding-mobile md:px-container-padding-desktop max-w-full mx-auto">
+<a class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary tracking-tighter hover:opacity-80 transition-opacity" href="#">PureMilk</a>
+<nav class="hidden md:flex gap-gutter items-center">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Shop</a>
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Our Farms</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Sustainability</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Recipes</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Wholesale</a>
+</nav>
+<div class="flex items-center gap-stack-md">
+<button class="hidden md:flex font-label-md text-label-md text-primary hover:text-primary-container transition-colors">Sign In</button>
+<button class="font-label-md text-label-md text-primary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow pt-24 md:pt-32">
+<!-- Hero Section -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto mb-section-gap">
+<div class="text-center mb-stack-lg max-w-3xl mx-auto">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-primary mb-stack-md">Bizning Tariximiz</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Tabiatning eng sof in'omlarini sizning dasturxoningizga yetkazish yo'lidagi sayohatimiz.</p>
+</div>
+<div class="relative h-[614px] md:h-[716px] rounded-xl overflow-hidden shadow-sm shadow-[#1A365D]/5">
+<div class="bg-cover bg-center w-full h-full" data-alt="A sweeping, cinematic wide shot of an idyllic, lush green organic dairy farm at sunrise. The soft morning light casts long shadows across the pristine pastures where healthy cows graze. In the background, a modern, minimalist barn facility blends seamlessly with the natural landscape. The image uses a cool, fresh color palette with deep greens and bright whites, evoking a sense of purity and high-end organic farming." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBeKPlHa62CWvxzaUM2LMRZ0WAenmBcjsbsxl4kN7Py8gQa9Np1vsEIo3M9g2pdLTFc-TG-EtY5ACZP62GWCN1El0m7oLkl8Xu24QmFUDM-aPAhHWXCLUzWTZ9YX1syu3dPvT4G29i7otyFZpqe3fv6MZmRv5rVljAgAoyrN5IGZ_-I3TS1O99N2QcfEMh1ISb2nhS_Cdr0I-yBaI-L5JPVkVU1HYqxf1jOukV3z6Dl9hSpPfFeR8oB9gDqsfp3b84AutC6k0yE5oA')"></div>
+</div>
+</section>
+<!-- Timeline Section -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto mb-section-gap relative before:content-[''] before:absolute before:left-1/2 before:top-0 before:bottom-0 before:w-px before:bg-outline-variant before:-translate-x-1/2 hidden md:block">
+<h2 class="font-headline-md text-headline-md text-center text-primary mb-stack-lg bg-background relative z-10 w-max mx-auto px-4">Tarixiy Yo'l</h2>
+<div class="space-y-stack-lg">
+<!-- 1990 -->
+<div class="flex justify-between items-center w-full">
+<div class="w-[45%] text-right pr-gutter">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-stack-sm">1990</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Kichik oilaviy ferma sifatida asos solingan. Bizning asosiy maqsadimiz har doim tabiiylik va sifat bo'lgan.</p>
+</div>
+<div class="w-4 h-4 rounded-full bg-primary relative z-10 shadow-[0_0_0_4px_rgba(0,32,69,0.2)]"></div>
+<div class="w-[45%] pl-gutter">
+<div class="bg-cover bg-center w-full h-48 rounded-lg shadow-sm shadow-[#1A365D]/5" data-alt="A vintage-style but high-quality photograph of a small, rustic yet well-maintained wooden dairy farm building from the 1990s. The scene is bathed in warm, nostalgic sunlight, highlighting the simplicity and humble beginnings of the organic farm. The aesthetic remains clean and premium despite the historical context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuChLLVSOl1VEXzXKguXbxzT9rikUzsJcDuXi-T8EXWk4rGGPzZOYpKHHt_M15fZ6a3DrL2hkwLKeYhk-Th17AaerhLAqGfdhgi9B6vYk5zAe05U9cV2mZvHeXRTu2rKHnXEXFi1VCKcS8Lsn76E6flB1ucmvJ9ItAX5Iw4keXcXXTPf6XhnaHahz43gbOT8vgz2elcq-OmAXeBeOcjvTRqEQerVrT0LhMaig3dblW6YjZOxQNV2fmoPTi_YJf5hgeh7Di5snB-_K2w')"></div>
+</div>
+</div>
+<!-- 2005 -->
+<div class="flex justify-between items-center w-full flex-row-reverse">
+<div class="w-[45%] text-left pl-gutter">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-stack-sm">2005</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">To'liq organik sertifikatlash. Biz barcha jarayonlarni eng yuqori ekologik standartlarga moslashtirdik.</p>
+</div>
+<div class="w-4 h-4 rounded-full bg-primary relative z-10 shadow-[0_0_0_4px_rgba(0,32,69,0.2)]"></div>
+<div class="w-[45%] pr-gutter">
+<div class="bg-cover bg-center w-full h-48 rounded-lg shadow-sm shadow-[#1A365D]/5" data-alt="A close-up, high-end macro shot of fresh milk being poured into a pristine glass bottle. The background is slightly out of focus, showing a modern dairy processing facility. The lighting is crisp and cool, emphasizing the pure white color of the milk and the clean, hygienic environment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZDVH_I6AhRmPJSytqowalhzeV96YVG6qJUvjPiUAWYM_dJR-MHkq-Zweu1_cy4vBjjPVJvVgpB-6UawTHQIkDEXIFh5i1wYJRqA8-W_ZA86-mVzvE_W_Wg5MZ0l2UZb31wEjaReZ--ZU_k76zAmYOCFu77ZhYB0nYd8xuVtfaq0zvq0dH4kPFWqJnhZ1KhQ4uWx15rdU95t-T3TgXGwnuk9NeUCflqkCXYYI4bhWNZ9FUjeaWVv3Pie1IVCn6ssLCXPTzrHJvWkw')"></div>
+</div>
+</div>
+<!-- 2023 -->
+<div class="flex justify-between items-center w-full">
+<div class="w-[45%] text-right pr-gutter">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-stack-sm">Bugun</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Zamonaviy texnologiyalar va an'anaviy yondashuv uyg'unligi. Eng sof sut mahsulotlari yetkazib beruvchisi.</p>
+</div>
+<div class="w-4 h-4 rounded-full bg-primary relative z-10 shadow-[0_0_0_4px_rgba(0,32,69,0.2)]"></div>
+<div class="w-[45%] pl-gutter">
+<div class="bg-cover bg-center w-full h-48 rounded-lg shadow-sm shadow-[#1A365D]/5" data-alt="A modern, high-tech dairy farm facility featuring advanced robotic milking systems and clean, bright automated processes. The setting is impeccably clean, almost laboratory-like, with stainless steel equipment gleaming under bright white LED lights. The aesthetic is futuristic yet organic, representing the pinnacle of modern dairy production." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAzsySt5crOgAsedIzvyqNqgtzV2zGlle51IsKN92_zbxS4icyRrJfuHSkJC6DcrIv1G5dHoa0uJ_HIebO5we_91WMrZhMzR_XNAy5prjawtba21rK212Hui2-cgPl5vHe9OTb3WbAMEcLXO5zLgtdZxvl5i7AttMMB1xMgnp8T1VkTOd49TWIZMkG9b3O4ekKmYOf-3G4MNwuzFmatOxo9fXLe3rOax0CyYMHe3iOzlARRTO3D3VYt7CxIDo1T9Hs2jirXxRKfIVY')"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Team Section -->
+<section class="bg-surface-container-low py-section-gap mb-section-gap">
+<div class="px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto">
+<div class="text-center mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-md">Bizning Jamoamiz</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Sifat va sof tabiatga sadoqatli bo'lgan tajribali mutaxassislarimiz.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Team Member 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm shadow-[#1A365D]/5 border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform duration-300">
+<div class="w-32 h-32 mx-auto rounded-full overflow-hidden mb-stack-sm">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a confident middle-aged male head farmer, standing in a brightly lit, pristine barn. He is wearing a clean, modern agricultural uniform. The lighting is soft and natural, creating a warm, trustworthy appearance. The background is a soft blur of modern dairy equipment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBObbYtFyXV3_rBMHFipWEAodp-UyWoUR3d1XniddDCxsAqhYvYHHK_pWZuvTFa56iiJNUkIlHlPeF2GL-hpqADx4DJGn6SsL9y2i_UxoaFCzJh8kBzbgGyE28e2hDlyQUFAG-RAPoh2o0oaT3eOHcewkecSRwXBBnox3la3nwHwR38if4Pok4-pe90CQCmtVg81DKumIT2HUDzfh3ZJYk-0uTq_M_OJ27KQbLs135rf2QbcY0njfDckxwgaq98uJlcO5nu02YapRE"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Aziz Rahimov</h3>
+<p class="font-label-sm text-label-sm text-primary-container/80 uppercase tracking-widest mt-1 mb-stack-sm">Bosh Ferma Mudiri</p>
+</div>
+<!-- Team Member 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm shadow-[#1A365D]/5 border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform duration-300">
+<div class="w-32 h-32 mx-auto rounded-full overflow-hidden mb-stack-sm">
+<img class="w-full h-full object-cover" data-alt="A high-quality portrait of a female quality assurance scientist wearing a crisp white lab coat, standing in a state-of-the-art dairy laboratory. She holds a clipboard and smiles subtly. The environment is extremely clean, bright, and modern, illuminated by cool, clinical lighting that emphasizes hygiene and precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgMCngk3JX8AunM9ryli1LXjNebBAy8IJQz09TYb8XfwtKKe96t7hLdsbe75ZluQihq3BA4KkuitHHZQKQv_W5BZ3DoRsXp3y6PDTFhI2fkbcmAZxNWojLbCdj13_rr59fQYkytt60wJMXQoAkBhkKnZLYogG4FOFyq3fP75n741zZCKlXRbnz2lMH17P8GirUvqA_kW1qj_LvBe_yI6sqOPL1Wk-mq3VjetJVzM9-enJfXEev3Rg2w7jbPD_l3fRyrl1RoQlHG4Q"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Nigora Aliyeva</h3>
+<p class="font-label-sm text-label-sm text-primary-container/80 uppercase tracking-widest mt-1 mb-stack-sm">Sifat Nazorati Bo'yicha Mutaxassis</p>
+</div>
+<!-- Team Member 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-stack-md shadow-sm shadow-[#1A365D]/5 border border-outline-variant/30 text-center hover:-translate-y-1 transition-transform duration-300">
+<div class="w-32 h-32 mx-auto rounded-full overflow-hidden mb-stack-sm">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male agricultural expert in a modern, sustainable farming context. He is standing in a lush green pasture with a gentle breeze implied. He looks knowledgeable and approachable. The color palette is fresh, relying on vivid greens and bright whites to convey an organic luxury aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7GzMtQC7k8ADDmE9EV65smWarvZLryDT8Vo93R3CYUmSUuSomBJkCbZ_q1bF1Y_fbSz6YpHa_xkx8WwJHOx2zDcYXV1aTZDa7IMNL3mKYm5iXhfaRTh_bt2Rzxgd1eub0YesQWExduesXAZtfkHsYKogzZ1mfAye_V4iPXoEl4itbwxzalVKY_mVOM22vHSCovOQCpC2eLcooKwBFvlsev1hXZJxiE8gXOExSyIqmibw4cRpUuGStxhy9L6e3U1Mt7uD6ptiZCWY"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Rustam Qodirov</h3>
+<p class="font-label-sm text-label-sm text-primary-container/80 uppercase tracking-widest mt-1 mb-stack-sm">Barqarorlik Bo'yicha Direktor</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Quality Control Section -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto mb-section-gap">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter items-center">
+<div class="order-2 md:order-1 relative rounded-xl overflow-hidden aspect-video shadow-sm shadow-[#1A365D]/5 group cursor-pointer">
+<div class="bg-cover bg-center w-full h-full absolute inset-0 transition-transform duration-700 group-hover:scale-105" data-alt="A wide, high-resolution shot of a pristine, high-tech dairy laboratory. The room is immaculate, featuring stainless steel counters, advanced testing equipment, and glowing blue digital displays. The lighting is bright, cool, and highly professional, perfectly capturing the minimalist, glassmorphic aesthetic of modern food science." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCRmjQ1oE56EWx_o7sMc1m_RTKcKp1rrJQTdObDpCN6aDcjsdunr9Ptp4ZCIc1pqrNYl7EUGqszRzLG_-6FT71iUErrUohLTWqEvcgo4tLefYBcHw2Va8VuvTAqXJrBFZXI_D2ecLdMTwDeI6PHepGxG3mH2WxUcAiNYbAd_rqrW48vFw3vrQUCXFtfhvhS5dcuzyTpHJPufPMNdpMb_nJxVCOJ8vo47edhimIurnakzdBgFmChQ1CRuCj0OfB2BGdJIZeih1iRnK4')"></div>
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<div class="w-16 h-16 bg-white/80 rounded-full flex items-center justify-center backdrop-blur-md">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="play_arrow">play_arrow</span>
+</div>
+</div>
+</div>
+<div class="order-1 md:order-2">
+<h2 class="font-headline-md text-headline-md text-primary mb-stack-md">Sifat Nazorati</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-md">Bizning laboratoriyalarimiz eng yuqori standartlarga javob beradi. Har bir tomchi sut qat'iy nazoratdan o'tadi, shunda siz eng toza va xavfsiz mahsulotni olasiz.</p>
+<ul class="space-y-stack-sm">
+<li class="flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Kunning har soatida avtomatlashtirilgan monitoring.</span>
+</li>
+<li class="flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Faqat tabiiy, organik ozuqa bilan oziqlangan sigirlar suti.</span>
+</li>
+<li class="flex items-start gap-stack-sm">
+<span class="material-symbols-outlined text-primary-container" data-icon="check_circle">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Xalqaro oziq-ovqat xavfsizligi sertifikatlari.</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest w-full py-stack-lg border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<span class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary">PureMilk</span>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-wrap gap-stack-md justify-start md:justify-end items-center">
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">Shipping & Returns</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">FAQ</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">Contact Us</a>
+<a class="font-body-md text-body-md text-secondary hover:text-primary transition-colors hover:translate-x-1 duration-200 focus-within:ring-2 focus-within:ring-primary rounded" href="#">Store Locator</a>
+</div>
+<div class="col-span-1 md:col-span-4 mt-stack-md pt-stack-md border-t border-outline-variant/30">
+<p class="font-body-md text-body-md text-secondary text-center">© 2024 PureMilk Organic Dairy. Crafted for Purity.</p>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PureMilk - Bosh sahifa</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f3f0eb",
+                        "secondary": "#466554",
+                        "surface-variant": "#e5e2dd",
+                        "surface-tint": "#286b3e",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#c8ebd5",
+                        "surface-dim": "#dcdad5",
+                        "secondary-fixed": "#c8ebd5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#fffbff",
+                        "on-primary-fixed-variant": "#075228",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f6f3ee",
+                        "on-surface-variant": "#404940",
+                        "tertiary-fixed": "#ffdf9f",
+                        "surface-container-highest": "#e5e2dd",
+                        "outline-variant": "#c0c9be",
+                        "background": "#fcf9f4",
+                        "surface-container-high": "#ebe8e3",
+                        "tertiary-fixed-dim": "#eec058",
+                        "tertiary-container": "#946f05",
+                        "inverse-surface": "#31302d",
+                        "on-secondary-container": "#4c6b5a",
+                        "surface-container": "#f0ede9",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1c1c19",
+                        "secondary-fixed-dim": "#adceb9",
+                        "error-container": "#ffdad6",
+                        "surface": "#fcf9f4",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#408253",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5b4300",
+                        "on-surface": "#1c1c19",
+                        "on-primary-fixed": "#00210c",
+                        "on-secondary-fixed-variant": "#2f4d3d",
+                        "on-secondary-fixed": "#022113",
+                        "primary-fixed-dim": "#91d6a0",
+                        "primary": "#25683c",
+                        "inverse-primary": "#91d6a0",
+                        "on-error": "#ffffff",
+                        "tertiary": "#765700",
+                        "outline": "#707970",
+                        "surface-bright": "#fcf9f4",
+                        "primary-fixed": "#acf3ba",
+                        "on-primary-container": "#f6fff3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit-xs": "4px",
+                        "margin-mobile": "16px",
+                        "unit-md": "16px",
+                        "gutter": "24px",
+                        "unit-lg": "24px",
+                        "container-max": "1280px",
+                        "unit-2xl": "48px",
+                        "unit-xl": "32px",
+                        "unit-3xl": "64px",
+                        "unit-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["40px", { "lineHeight": "48px", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopNavBar -->
+<nav class="bg-secondary dark:bg-inverse-surface shadow-md docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-unit-3xl py-unit-md max-w-container-max mx-auto">
+<div class="text-headline-md font-headline-md font-bold text-on-primary dark:text-primary-fixed">
+                PureMilk
+            </div>
+<div class="hidden md:flex space-x-gutter">
+<a class="text-on-primary/80 dark:text-on-surface-variant hover:text-tertiary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Biz haqimizda</a>
+<a class="text-on-primary/80 dark:text-on-surface-variant hover:text-tertiary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Mahsulotlar</a>
+<a class="text-on-primary/80 dark:text-on-surface-variant hover:text-tertiary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Ishlab chiqarish</a>
+<a class="text-on-primary/80 dark:text-on-surface-variant hover:text-tertiary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Yangiliklar</a>
+<a class="text-on-primary/80 dark:text-on-surface-variant hover:text-tertiary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Aloqa</a>
+</div>
+<div class="flex items-center space-x-unit-md">
+<div class="text-on-primary font-body-sm text-body-sm hidden md:block">
+                    UZ | <span class="text-on-primary/70">RU</span> | <span class="text-on-primary/70">EN</span>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded font-bold hover:bg-surface-tint transition-colors">
+                    Buyurtma berish
+                </button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative w-full h-[819px] min-h-[600px] flex items-center">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center" data-alt="A sweeping, cinematic high-resolution photograph of a lush, vibrant green dairy farm at sunrise. Healthy cows graze peacefully on rolling hills. Golden morning light washes over the scene, casting long soft shadows. The mood is pure, serene, and organic, emphasizing agricultural heritage and premium quality. The palette features deep fresh greens, warm sunlit golds, and clear soft skies." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBzuxqL1guHr2DXIuMwWcDKI0lAPbLX5ilV6rkEy-MDhRgFVrDvzln-dUXG3aQ1Ozap7dq5WmuO_h3KwmFpP2zLM_iM9Hl2vPsmf_1Uh2qfTmJonmsqlddhxboVsE7GYEJbLeQ4Td9c75vMkxkZWVXIa5sfDtM8GxgZo0tFMBTUbuZpaeetx8Zjp_A791VI0nxSAw6RYUgizcj3B_WtWlstZkZr6bQKHjubYD5sG4xAPp6CahwcGPlA-D-blxOiHyIdhTavVIQ3l0E')"></div>
+<div class="absolute inset-0 bg-[#1C3A2B]/60"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-unit-3xl w-full text-on-primary">
+<div class="max-w-2xl reveal">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-unit-md text-shadow-sm text-on-primary">
+                        Tabiatdan dasturxoningizgacha
+                    </h1>
+<p class="font-body-lg text-body-lg mb-unit-xl text-on-primary/90 max-w-xl">
+                        O'zbekistonning eng yirik sut mahsulotlari ishlab chiqaruvchisi. Biz har kuni tabiatning eng sof in'omlarini uyingizga yetkazamiz.
+                    </p>
+<div class="flex flex-wrap gap-unit-md mb-unit-2xl">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-primary-container transition-colors hover:shadow-lg hover:shadow-on-background/10">
+                            Mahsulotlarni ko'rish
+                        </button>
+<button class="border border-on-primary text-on-primary px-8 py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-on-primary/10 transition-colors">
+                            Biz bilan bog'lanish
+                        </button>
+</div>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter pt-unit-lg border-t border-on-primary/20 reveal">
+<div>
+<div class="font-headline-lg text-headline-lg text-tertiary-fixed mb-unit-xs">20+ yil</div>
+<div class="font-body-sm text-body-sm text-on-primary/80">Tajriba</div>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-tertiary-fixed mb-unit-xs">50+</div>
+<div class="font-body-sm text-body-sm text-on-primary/80">Mahsulot turi</div>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-tertiary-fixed mb-unit-xs">500+</div>
+<div class="font-body-sm text-body-sm text-on-primary/80">Sherik do'konlar</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Categories Section -->
+<section class="py-unit-3xl max-w-container-max mx-auto px-margin-mobile md:px-unit-3xl overflow-hidden">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-unit-2xl text-center reveal">Mahsulot Toifalari</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Category Card -->
+<div class="bg-surface group cursor-pointer reveal rounded-lg overflow-hidden relative">
+<div class="h-64 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="A clean, minimalist high-end still life of fresh milk splashing into a clear glass, accompanied by a jug of premium milk. The setting is bright, pristine, and organic, with a soft cream-colored background and subtle daylight shadows. Minimalist and refined." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBqe-xzepUJKAWBZ-o-64jQqvuCRhzOcfvSP-eFFCY_OazWmFgmefqEQJ2liQYcVY0sZva0F1hwlptd7s4d7jysql2P5oeloaIpspAmGj1YCmAjvRoMq2UWNblugf3RiJKIpMu6ueLGtozEKz3CgzAGQsCWxYl037cN_OZpz08Lr2CwimZTR_N4KJ5dFP0bG9Hm7pC4qsP1bsQbJh6-_fgxr6nuLiy9v7-yIDCp28C62wrPpDRNEM5kFf7aq2mc5xZm3xmTEhybQpw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-unit-lg w-full">
+<h3 class="font-headline-md text-headline-md text-on-primary">Sut &amp; Ichimliklar</h3>
+</div>
+</div>
+<!-- Category Card -->
+<div class="bg-surface group cursor-pointer reveal rounded-lg overflow-hidden relative" style="transition-delay: 100ms;">
+<div class="h-64 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="A beautifully styled composition of rich, creamy yogurt and kefir in elegant ceramic bowls on a natural wooden board. Light and airy aesthetic, soft shadows, pure white canvas background, communicating premium fermented dairy products." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0RFj_2QxijqXqA5fpBYmAJmvztF2Xx5qc30ndcqeX7EOt_a1_FwaK4jYqr44lV8o7CWUOPnSGqRS577BkZEXgHqu0P-b7N2Isgq3E07GrX9iERHzT_AYPdKYo54uxnj0iB1F2fAcowSG-EubBT2aVJkPJUhjvPCgcSdzliYzTaPlAWVSrE9Y2zSu4obddG2V2MqUL86DPYOM079NHQClbgO4_xWzfRpdwM7IILXbivFORPZ62AzMTgWLM3xUKSvRv2FhUQhBjQV4')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-unit-lg w-full">
+<h3 class="font-headline-md text-headline-md text-on-primary">Fermentlangan</h3>
+</div>
+</div>
+<!-- Category Card -->
+<div class="bg-surface group cursor-pointer reveal rounded-lg overflow-hidden relative" style="transition-delay: 200ms;">
+<div class="h-64 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" data-alt="A gourmet selection of artisan cheeses on a slate board, paired with a sprig of fresh herbs and grapes. The lighting is dramatic yet soft, highlighting the texture and quality of the premium aged and fresh cheeses against a dark, elegant background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDDJ4nQ8Na6O3vqAw2UpQ2-rDS0dAeQzn38hYYcGl6XEX1lamEijVhZBrMnEW-xe8kFf-2c0npDYrNJb6gAElngAfewMhbiZ2cfN07-E6dIanikpG_cQUfdZP3m784Yn7tkRejn0D8fjrNK-UkNco7Llu3Qx6mnEP5hfug1Wo_Sij3nMAgc3YSQO9AnLIVyMunyNZmHoyZKTauUOzzVt09IRz3F7_fWa-ZFCRMIbMkduwiB0XNjvt5gvxVKCGq53kMv9q-8yyvj_FI')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-unit-lg w-full">
+<h3 class="font-headline-md text-headline-md text-on-primary">Pishloqlar</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Banner -->
+<section class="bg-inverse-surface py-unit-3xl my-unit-3xl w-full">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-unit-3xl flex flex-col md:flex-row items-center justify-between reveal">
+<div class="mb-unit-lg md:mb-0 max-w-xl">
+<h2 class="font-headline-lg text-headline-lg text-on-primary mb-unit-sm">Bizning jamoaga qo'shiling yoki hamkor bo'ling</h2>
+<p class="font-body-md text-body-md text-surface-variant">Sifatli va tabiiy mahsulotlarni tarqatishda biz bilan birga qadam tashlang.</p>
+</div>
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-8 py-3 rounded-lg font-label-md text-label-md font-bold hover:bg-tertiary-fixed-dim transition-colors whitespace-nowrap">
+                    Batafsil ma'lumot
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface dark:bg-surface-container-lowest full-width border-t border-outline-variant flat no shadows">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-mobile md:px-unit-3xl py-unit-3xl max-w-container-max mx-auto">
+<div>
+<div class="text-headline-lg font-headline-lg text-inverse-on-surface dark:text-primary mb-unit-lg">
+                    PureMilk
+                </div>
+<p class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant">
+                    Tabiatning eng sof in'omlari.
+                </p>
+</div>
+<div class="flex flex-col space-y-unit-sm">
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Mahsulotlar</a>
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Kompaniya</a>
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Mijozlarga</a>
+</div>
+<div class="flex flex-col space-y-unit-sm">
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Ijtimoiy tarmoqlar</a>
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Maxfiylik siyosati</a>
+<a class="font-label-md text-label-md text-surface-variant dark:text-on-surface-variant hover:text-tertiary transition-colors Focus: outline-none ring-2 ring-tertiary-container" href="#">Foydalanish shartlari</a>
+</div>
+<div class="flex items-end text-inverse-on-surface dark:text-on-surface font-body-sm text-body-sm">
+                © 2024 PureMilk. Barcha huquqlar himoyalangan.
+            </div>
+</div>
+</footer>
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const reveals = document.querySelectorAll(".reveal");
+            const revealOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+            
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("active");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(el => revealObserver.observe(el));
+        });
+    </script>
+</body></html>

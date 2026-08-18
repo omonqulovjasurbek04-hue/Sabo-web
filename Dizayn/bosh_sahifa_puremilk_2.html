@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="uz"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PureMilk - Tabiatning eng toza in'omi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#bcc8cf",
+                        "tertiary-container": "#2c383d",
+                        "on-tertiary-container": "#94a1a8",
+                        "on-secondary-container": "#636360",
+                        "outline-variant": "#c4c6cf",
+                        "surface-container": "#eeeeee",
+                        "tertiary-fixed": "#d8e4eb",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#111d22",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#adc7f7",
+                        "primary-container": "#1a365d",
+                        "secondary-container": "#e1dfdc",
+                        "primary-fixed-dim": "#adc7f7",
+                        "inverse-surface": "#2f3131",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#86a0cd",
+                        "on-secondary-fixed": "#1b1c1a",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474744",
+                        "tertiary": "#172328",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "outline": "#74777f",
+                        "secondary-fixed": "#e4e2de",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-tertiary-fixed-variant": "#3c494e",
+                        "on-surface-variant": "#43474e",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "surface-variant": "#e2e2e2",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#001b3c",
+                        "primary": "#002045",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#455f88",
+                        "surface-container-low": "#f3f3f4",
+                        "secondary": "#5e5e5c",
+                        "secondary-fixed-dim": "#c8c6c3",
+                        "surface-bright": "#f9f9f9",
+                        "surface-dim": "#dadada"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "gutter": "32px",
+                        "container-padding-mobile": "24px",
+                        "section-gap": "120px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "container-padding-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 30px rgba(26, 54, 93, 0.05);
+        }
+        
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slow-fade {
+            animation: slowFadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes slowFadeIn {
+            0% { opacity: 0; filter: blur(10px); }
+            100% { opacity: 1; filter: blur(0); }
+        }
+
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .nav-scrolled {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(26, 54, 93, 0.1);
+        }
+
+        .interactive-element {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .interactive-element:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(26, 54, 93, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-fixed selection:text-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 transition-all duration-300" id="main-nav">
+<div class="flex justify-between items-center h-20 px-container-padding-desktop max-w-full mx-auto md:px-container-padding-desktop px-container-padding-mobile">
+<!-- Brand -->
+<a class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary dark:text-primary-fixed tracking-tighter hover:opacity-80 transition-opacity" href="#">
+                PureMilk
+            </a>
+<!-- Desktop Nav Links -->
+<div class="hidden md:flex items-center gap-gutter">
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Shop</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary transition-colors font-label-md text-label-md" href="#">Our Farms</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary transition-colors font-label-md text-label-md" href="#">Sustainability</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary transition-colors font-label-md text-label-md" href="#">Recipes</a>
+<a class="text-on-surface-variant dark:text-on-tertiary-container hover:text-primary transition-colors font-label-md text-label-md" href="#">Wholesale</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-stack-md">
+<button class="hidden md:flex text-primary font-label-md text-label-md hover:text-primary/70 transition-colors">Sign In</button>
+<button class="flex items-center gap-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg interactive-element">
+<span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                    Cart
+                </button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden fade-up">
+<!-- Hero Image Background -->
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover object-center floating" data-alt="A pristine glass of organic milk resting on a clean, light wood table, bathed in soft, golden morning sunlight. The background features a subtle, out-of-focus bright farm landscape suggesting purity and freshness. The overall aesthetic is high-end, minimalist, and bright, with cool shadows and warm highlights, embodying a luxury organic dairy brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTwj1fTIZJNJVuQvrij_NNd5U3xx5nHqtX1HCy0HLgGhse7C8NZZk02-14cIr9563veUNz_Hpo4twCIrc6TLzx48RFexSTV1T1BSMm0N3qxz6rbrzmMs_Z2V-HTG61Ko8OjjT6sCHdfKI3jIfVKP6qgug-xVxhnyBaT0MKC4F4yapa6OlZlf-NUiTn--hsoS0rhCrROxbe_LT8uFQGlc1O5R0VCeGP8vSXPyyiOgu3Dw4YYSq6im9Z6Z-gCYhXSRUVp52u1rrasuQ"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest/80 to-transparent"></div>
+</div>
+<div class="relative z-10 w-full max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+<div class="max-w-2xl slow-fade">
+<div class="inline-block bg-primary-fixed text-primary px-4 py-2 rounded-full font-label-sm text-label-sm mb-stack-md">
+                        100% Organik &amp; Tabiiy
+                    </div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-stack-md">
+                        Tabiatning eng toza in'omi.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg max-w-lg">
+                        Har tong sofdil fermerlarimiz tomonidan yig'ilgan, tabiatning eng sof ta'mini his eting. Bizning sutimiz – sog'lom hayotingiz asosi.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-stack-md">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-lg font-label-md text-label-md interactive-element text-center">
+                            Xarid Qilish
+                        </button>
+<button class="glass-panel text-primary px-8 py-4 rounded-lg font-label-md text-label-md interactive-element text-center flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">play_circle</span>
+                            Bizning Fermalar
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Our Mission -->
+<section class="py-section-gap bg-surface-container-lowest fade-up">
+<div class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+<div class="grid md:grid-cols-2 gap-gutter items-center">
+<div class="fade-up order-2 md:order-1 relative rounded-2xl overflow-hidden aspect-square interactive-element">
+<img class="w-full h-full object-cover" data-alt="Close-up of a modern, clean dairy farm environment. Minimalist architectural lines, pristine white walls, and a subtle hint of green pasture in the background. The lighting is soft and airy, conveying a sense of transparency, high standards, and eco-friendly practices in premium organic dairy farming." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-q9ansfcEqesC7K-vO_Tchs00fRTkTcmbG8UOzpC9Hi6luOoP8FwsOz8TmGCFs9-uupvTgCc7zCbi0tQJJ4d9uPSS2_NdFFVsH6Pb95UKTubbc7c9-t2xvch-OyUjRB4zmTjwa_hp9MTtoXQ_iuHJEC9tXUv0yekOmZRVVTd9JE5XYSX7rGLUgKMKELZvpUudBK6WzxRLOuB3Ac7dUOCqElFJ21zNM8MjD91AMiovNT2syIJWm7FJ8CEa46om1sxecMEQ-5CJCN0"/>
+</div>
+<div class="fade-up order-1 md:order-2 pl-0 md:pl-gutter">
+<h2 class="font-headline-md text-headline-sm md:text-headline-md text-primary mb-stack-md">Bizning Missiyamiz</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg">
+                            Biz faqatgina sut sotmaymiz; biz tozalik, shaffoflik va tabiatga bo'lgan hurmatni ulashamiz. Har bir tomchi orqasida mas'uliyatli dehqonchilik va hayvonlar farovonligiga qaratilgan chuqur e'tibor yotadi.
+                        </p>
+<ul class="space-y-stack-sm mb-stack-lg">
+<li class="flex items-start gap-3 fade-up">
+<span class="material-symbols-outlined text-surface-tint">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Tabiiy ozuqa bilan oziqlangan sigirlar</span>
+</li>
+<li class="flex items-start gap-3 fade-up" style="transition-delay: 100ms;">
+<span class="material-symbols-outlined text-surface-tint">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Kimyoviy qo'shimchalarsiz</span>
+</li>
+<li class="flex items-start gap-3 fade-up" style="transition-delay: 200ms;">
+<span class="material-symbols-outlined text-surface-tint">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Qayta ishlanadigan qadoqlar</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="py-section-gap bg-background fade-up">
+<div class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+<div class="text-center mb-stack-lg fade-up">
+<h2 class="font-headline-md text-headline-sm md:text-headline-md text-primary mb-stack-sm">Asosiy Mahsulotlar</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Har kuni dasturxoningizni bezaydigan eng sara sut mahsulotlari.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-gutter">
+<!-- Product 1 -->
+<div class="glass-panel rounded-xl p-stack-md flex flex-col items-center group cursor-pointer interactive-element fade-up">
+<div class="w-full aspect-square rounded-lg overflow-hidden mb-stack-md relative bg-surface-container-highest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sleek, minimalist glass bottle of organic milk against a very soft, light-blue to white gradient background. The bottle has a subtle condensation effect, suggesting it is chilled and fresh. The aesthetic is clean, high-end product photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA84PCK9-AXyumQKSeMTMCo41nY0SSHJ0jMrbN59bUcHp35ULc3Z8pVvgNOHEwowA-DA6gM9JqWDkB87UTJVsIOjj9_5n0qoHI9qwRdzBLCEQaGzVdhXImPUiWDJU3VHpwBdaCt9kDMZYDsxmkPY60_Cx1Y5Gb7WFyJPVC20A9lRBPycpyxaHbphW1mwkQWEh3aoqoElvL9gOyKq-BRYdqsTh3i42yYEuRiTVtpZvZqF6jYFB6leKmEeaYyUd9kJXOl1VXl-YWeOsg"/>
+</div>
+<div class="text-center">
+<h3 class="font-label-md text-label-md text-primary mb-unit">Organik Sut (1L)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-sm">Sof va toza ta'm</p>
+<span class="font-label-md text-label-md text-primary">15,000 so'm</span>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="glass-panel rounded-xl p-stack-md flex flex-col items-center group cursor-pointer interactive-element fade-up" style="transition-delay: 100ms;">
+<div class="w-full aspect-square rounded-lg overflow-hidden mb-stack-md relative bg-surface-container-highest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A beautifully designed, minimalist carton of heavy cream resting beside a small ceramic bowl. Soft, diffused lighting highlights the creamy texture. The setting is clean, bright, and luxurious, emphasizing premium culinary quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFxvZ60WOR0pYi3BdnCcv6snNMu3Tpd6ee0rrbjnUS2AmbikZumjG4k_EnqmPdt8qLwEknPVXnVh3iEJG9_jfkW518Sio9RqnIa241lCfTz3fpkP7fEQaWZHQAxNd9FMKxy5MYpMWe4JXp_g_Ia6PbmOsWcVF0F7Dv6WyDJnQdpY6QGVCcixD82bNIWtJIA5kxogSMUehDgcNjZVoSqpTQOjiB7WSWfF_LO1wO7N2252itqnuOuxFv1_hEyuTs1RG3AcO6hhmZXPE"/>
+</div>
+<div class="text-center">
+<h3 class="font-label-md text-label-md text-primary mb-unit">Qaymoq (500g)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-sm">Haqiqiy uy qaymog'i</p>
+<span class="font-label-md text-label-md text-primary">25,000 so'm</span>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="glass-panel rounded-xl p-stack-md flex flex-col items-center group cursor-pointer interactive-element fade-up" style="transition-delay: 200ms;">
+<div class="w-full aspect-square rounded-lg overflow-hidden mb-stack-md relative bg-surface-container-highest">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A block of rich, yellow organic butter wrapped partially in premium parchment paper. Placed on a minimalist marble slab with soft, ambient light creating a high-end, appetizing visual of pure, farm-fresh butter." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuI_kYYt1t0ZpoDB5p1bMQaDqEP1OED7v3N9rLgYw3-2-M7iwphfHG8r-nodmjBoefvOSOE8RLBuCrpM4YLbT_cHvKJY5SHLiXjdIQLAR4MqJt5G_gY3UlHXxtQ3-UY9HdyJ0_EqswuIPERYWZJ5CUG-XCEP37MPj9nZbucDnaHWE6C8cMb6-N8A67AkHDueKowSv-V3--ItQSGmQCVTiS-MV7wtG4mVFyAfenL161rR8vWB8rERIOj78bNVzg0lOJN8tT3-5rIyw"/>
+</div>
+<div class="text-center">
+<h3 class="font-label-md text-label-md text-primary mb-unit">Sariyog' (250g)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-sm">Ertalabki nonushta uchun</p>
+<span class="font-label-md text-label-md text-primary">20,000 so'm</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-tertiary w-full py-stack-lg border-t border-outline-variant dark:border-tertiary-container mt-section-gap fade-up">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<a class="font-display-lg text-display-lg-mobile text-primary dark:text-primary-fixed tracking-tighter mb-stack-md block" href="#">
+                    PureMilk
+                </a>
+<p class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container mb-stack-sm">
+                    © 2024 PureMilk Organic Dairy. Crafted for Purity.
+                </p>
+</div>
+<div class="col-span-1 flex flex-col gap-unit">
+<h4 class="font-label-md text-label-md text-primary dark:text-tertiary-fixed mb-unit">Company</h4>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Our Story</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Farms</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Careers</a>
+</div>
+<div class="col-span-1 flex flex-col gap-unit">
+<h4 class="font-label-md text-label-md text-primary dark:text-tertiary-fixed mb-unit">Support</h4>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">FAQ</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Contact Us</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Store Locator</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Shipping &amp; Returns</a>
+</div>
+<div class="col-span-1 flex flex-col gap-unit">
+<h4 class="font-label-md text-label-md text-primary dark:text-tertiary-fixed mb-unit">Legal</h4>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-secondary dark:text-on-tertiary-container hover:text-primary hover:translate-x-1 transition-transform duration-200" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple scroll reveal
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach((el) => {
+                observer.observe(el);
+            });
+
+            // Navbar scroll effect
+            const nav = document.getElementById('main-nav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('nav-scrolled');
+                } else {
+                    nav.classList.remove('nav-scrolled');
+                }
+            });
+        });
+    </script>
+</body></html>
