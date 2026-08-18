@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Production &amp; Quality - PureMilk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#fcf9f4",
+                        "on-primary-fixed": "#022113",
+                        "surface-container-low": "#f6f3ee",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#00210c",
+                        "primary-fixed-dim": "#adceb9",
+                        "secondary-fixed": "#acf3ba",
+                        "inverse-surface": "#31302d",
+                        "tertiary-container": "#cba72f",
+                        "on-primary-container": "#83a490",
+                        "surface": "#fcf9f4",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#adceb9",
+                        "surface-container": "#f0ede9",
+                        "tertiary-fixed-dim": "#e9c349",
+                        "surface-container-high": "#ebe8e3",
+                        "primary-container": "#1c3a2b",
+                        "on-tertiary-container": "#4e3d00",
+                        "on-surface-variant": "#424844",
+                        "surface-variant": "#e5e2dd",
+                        "primary-fixed": "#c8ebd5",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#075228",
+                        "on-secondary-container": "#2f7144",
+                        "surface-container-highest": "#e5e2dd",
+                        "inverse-on-surface": "#f3f0eb",
+                        "outline": "#727973",
+                        "secondary-container": "#acf3ba",
+                        "primary": "#052417",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#241a00",
+                        "surface-dim": "#dcdad5",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c2c8c2",
+                        "tertiary-fixed": "#ffe088",
+                        "secondary": "#286b3e",
+                        "secondary-fixed-dim": "#91d6a0",
+                        "on-primary-fixed-variant": "#2f4d3d",
+                        "tertiary": "#735c00",
+                        "on-surface": "#1c1c19",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#574500",
+                        "background": "#fcf9f4",
+                        "surface-tint": "#466554",
+                        "on-background": "#1c1c19",
+                        "accent-green": "#4A8C5C"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "unit": "8px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter", "sans-serif"],
+                        "caption": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "display-lg-mobile": ["Playfair Display", "serif"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "display-lg": ["Playfair Display", "serif"],
+                        "headline-sm": ["Playfair Display", "serif"],
+                        "headline-md": ["Playfair Display", "serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(252, 249, 244, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 225, 218, 0.5);
+        }
+        
+        .soft-shadow {
+            box-shadow: 0 8px 32px rgba(5, 36, 23, 0.08);
+        }
+        
+        .smooth-transition {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #4A8C5C, transparent);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        @media (max-width: 768px) {
+            .timeline-line {
+                top: 0;
+                left: 50%;
+                width: 2px;
+                height: 100%;
+                background: linear-gradient(to bottom, #4A8C5C, transparent);
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col selection:bg-accent-green selection:text-white">
+<!-- TopNavBar -->
+<header class="bg-surface/60 backdrop-blur-md dark:bg-surface-container/60 docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto py-4">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+                PureMilk
+            </div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Products</a>
+<a class="text-primary dark:text-primary-fixed font-bold border-b-2 border-primary dark:border-primary-fixed pb-1 font-body-md text-body-md" href="#">Production</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">About Us</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Certificates</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Blog</a>
+<a class="text-on-surface-variant dark:text-outline-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 hidden md:block">
+<span class="material-symbols-outlined">language</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col">
+<!-- Hero Section -->
+<section class="relative w-full min-h-[716px] flex items-center justify-center px-margin-mobile md:px-margin-desktop py-24 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center opacity-80 mix-blend-multiply" data-alt="A pristine, highly modern dairy processing facility interior bathed in clean, bright natural light filtering through large glass windows. Polished stainless steel vats and precision piping reflect the high-key lighting. The minimalist premium aesthetic is emphasized by expansive white spaces and subtle, fresh green accents. The overall mood conveys absolute purity, scientific rigor, and advanced technology." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDEO4W1V7KXrGN9My9N4EFSAxQkrplFihQcQdeXHoR0NA4tvykjyV1PyS3PVhqF_5KBFSNo3giVvQj6JWeVWTw5KK-vQcgFFSJ19hC9_cbVjxJuWLR3Xcf5c2gkEMg4lNudqS4e8PPvAHu32U_lh294nd9h3XJ50gA5I5-uvm_tz6U5EdHLnzHe58CoFh8pHyKRGUBtp9rRfAmRC5s1LVNfetE_Jl5DDw70yARR-UbHN_JNWRJW9aDH')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-surface/90 via-surface/70 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto w-full flex flex-col md:w-2/3 lg:w-1/2 justify-start items-start text-left">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-accent-green/10 text-accent-green font-label-md text-label-md mb-6 tracking-widest uppercase">
+                    Our Commitment
+                </span>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-6 leading-tight">
+                    Sifat va Texnologiya
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-xl">
+                    Discover the uncompromising standards behind every drop. Our state-of-the-art facilities blend artisanal heritage with cutting-edge scientific precision to guarantee the purest milk.
+                </p>
+<button class="bg-primary hover:bg-[#073622] text-white font-label-md text-label-md px-8 py-4 rounded-lg smooth-transition flex items-center gap-2">
+                    Explore Our Process <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Process Timeline -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop bg-surface-bright">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Journey of Purity</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">A transparent view into our meticulous multi-stage quality control process, ensuring absolute safety from farm to table.</p>
+</div>
+<div class="relative mt-20">
+<!-- Line -->
+<div class="timeline-line hidden md:block"></div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 relative z-10">
+<!-- Step 1 -->
+<div class="flex flex-col items-center group relative pt-8 md:pt-0">
+<div class="md:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-green/20 -translate-x-1/2 -z-10"></div>
+<div class="w-16 h-16 rounded-full bg-white border-2 border-accent-green flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 smooth-transition z-10 relative">
+<span class="material-symbols-outlined text-accent-green text-3xl">cruelty_free</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2 text-center">Sog'lom sigirlar</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Ethically sourced from monitored, free-roaming herds fed on organic pastures.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center group relative pt-8 md:pt-0">
+<div class="md:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-green/20 -translate-x-1/2 -z-10"></div>
+<div class="w-16 h-16 rounded-full bg-white border-2 border-accent-green flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 smooth-transition z-10 relative">
+<span class="material-symbols-outlined text-accent-green text-3xl">science</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2 text-center">Laboratoriya</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Rigorous 5-point microbiological testing to ensure flawless safety parameters.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center group relative pt-8 md:pt-0">
+<div class="md:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-green/20 -translate-x-1/2 -z-10"></div>
+<div class="w-16 h-16 rounded-full bg-white border-2 border-accent-green flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 smooth-transition z-10 relative">
+<span class="material-symbols-outlined text-accent-green text-3xl">thermostat</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2 text-center">Pasteurizatsiya</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Gentle thermal processing preserving natural nutrients while eliminating pathogens.</p>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center group relative pt-8 md:pt-0">
+<div class="md:hidden absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-green/20 -translate-x-1/2 -z-10"></div>
+<div class="w-16 h-16 rounded-full bg-white border-2 border-accent-green flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 smooth-transition z-10 relative">
+<span class="material-symbols-outlined text-accent-green text-3xl">inventory_2</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2 text-center">Qadoqlash</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">Aseptic sealing in sustainable, eco-friendly materials to lock in freshness.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Capacity Section (Bento Grid Style) -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop bg-surface">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(250px,auto)]">
+<!-- Main Capacity Highlight -->
+<div class="md:col-span-2 md:row-span-2 rounded-3xl overflow-hidden relative group">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A wide angle view of an ultra-modern dairy logistics center. Towering, gleaming silver silos stand against a crisp blue sky, viewed from a low angle. Bright, natural daylight creates a high-contrast, premium architectural aesthetic. The scene implies massive scale, efficiency, and pristine cleanliness, incorporating subtle green architectural lighting accents." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDWekjURKV38C6hiDhpi665BsswE5gKEXyBppISHd4xgc0REySuU5mceg6e8vvdutbzpoOs5dqc7752fumyEySZUJzVGkRY6spvRVykcf24Wtdh9DSbz9UW8JqE-e0PqUA5pr4vjUygECjN9v2onfthE-eFZuDF5tEubA1uRNH0vJJa5prMr7-3o6hFfr8wGzGO18BiB_2CywPpSheBmDxs1wF4wh6XLPXByWIdLAKUaYQ1zG59dRnW')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/40 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-8 md:p-12 w-full">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-secondary-fixed text-4xl" style="font-variation-settings: 'FILL' 1;">factory</span>
+<h3 class="font-headline-sm text-headline-sm text-white">Scale &amp; Efficiency</h3>
+</div>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-2">500 tonna kunlik quvvat</h2>
+<p class="font-body-lg text-body-lg text-surface-container-low max-w-lg">Meeting immense demand without sacrificing a single metric of quality. Our facility operates continuously to deliver freshness globally.</p>
+</div>
+</div>
+<!-- Tech Highlight 1 -->
+<div class="bg-white rounded-3xl p-8 border border-surface-variant soft-shadow flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-2">ISO 22000 Certified</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Internationally recognized food safety management systems integrated into every step.</p>
+</div>
+</div>
+<!-- Tech Highlight 2 -->
+<div class="bg-primary rounded-3xl p-8 flex flex-col justify-between text-white relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">water_drop</span>
+</div>
+<div class="relative z-10">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center mb-6 text-secondary-fixed">
+<span class="material-symbols-outlined text-[24px]">eco</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm mb-2">Zero Waste Target</h4>
+<p class="font-body-md text-body-md text-primary-fixed-dim">Advanced filtration allows us to recycle 80% of our water usage back into cleaning processes.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Gallery Section -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop bg-surface-bright">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+<div class="max-w-xl">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Inside the Facility</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">A curated look at where tradition meets tomorrow's technology.</p>
+</div>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1 hover:text-accent-green transition-colors">
+                        View Full Gallery <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="group overflow-hidden rounded-2xl relative h-[400px]">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A macro, editorial-style photograph of a scientist in a sterile, pristine white laboratory setting, carefully examining a glass beaker filled with pure white milk. The lighting is soft and diffused, highlighting the clean environment and the high-tech analytical instruments in the blurred background. The mood is highly professional, trustworthy, and precise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzpH23sAuC8kfqGkL0qNoojCbSEwRDaGtoRlp_x2sHRKjFA9Nd0KIE6reLp_nxhXIJRZIyTFL56TYE6bgmnc3WEjX47O9fF3wJVWZETw2Ox79Rdh8dJ7CM4SRqDWQciMxBnFbZ-JokCN_IrLWuquZXR69pv8SlJxpsE9glroCHbcUaDi0I7lUt0IFFOAX96m2hOR6XiU0aNA5UCJJPYSu7AW2VjsySB_GzqwyOngMQjWPmkGUumwK5"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+<div class="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-lg">
+<span class="font-label-md text-label-md text-primary">Advanced Analytics Lab</span>
+</div>
+</div>
+<div class="group overflow-hidden rounded-2xl relative h-[400px]">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A stunning, symmetrical architectural shot down the central corridor of a modern dairy production line. Rows of flawless, polished stainless steel machinery gleam under bright, cool-toned industrial lighting. The floors are impeccably clean. The minimalist premium aesthetic dominates, conveying high capacity, extreme hygiene, and automated perfection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4U8Y8sm2RMZa9g-pXQ95psDX83V8_oHn_4ffhqwJSGnJGS9Timtz4Ok699yKaqeQdxfZ7QPr9PV5mXwd_Hh9De7C6nvag185oIlMPhtf4iyVpc6DfiUju08ZOSneJGwv4KhoRU7HfSHGPXyi9tWOwawy6pXUJx5yMYuZtf6ogSM5Z-oqvO8NU-UeUjXUsk8dKCBsEk7Q8ATT_wGueCdho47dRgXeb0etvIpJEoi7F25tVnXtYjJXt"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
+<div class="absolute bottom-6 left-6 glass-panel px-4 py-2 rounded-lg">
+<span class="font-label-md text-label-md text-primary">Main Processing Floor</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-high w-full mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-20 max-w-container-max mx-auto">
+<div class="flex flex-col gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">PureMilk</span>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant">© 2024 PureMilk. Purity in every drop.</p>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Products</a>
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed font-semibold" href="#">Production</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">About Us</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Certificates</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Blog</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Contact</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:underline transition-all hover:text-primary dark:hover:text-primary-fixed" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe md:hidden bg-surface/80 backdrop-blur-xl dark:bg-surface-container-highest/80 shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors rounded-2xl" href="#">
+<span class="material-symbols-outlined mb-1">storefront</span>
+<span class="font-label-md text-label-md">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors rounded-2xl" href="#">
+<span class="material-symbols-outlined mb-1">shopping_basket</span>
+<span class="font-label-md text-label-md">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors rounded-2xl" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label-md text-label-md">Account</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-2xl px-4 py-1 scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1">menu</span>
+<span class="font-label-md text-label-md">Menu</span>
+</a>
+</nav>
+</body></html>
