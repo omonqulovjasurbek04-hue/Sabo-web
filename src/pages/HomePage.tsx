@@ -171,7 +171,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onSelectProduct 
                             : 'text-[#17202A] dark:text-[#AEB7C0] hover:text-[#C71925]'
                         }`}
                       >
-                        ✨ 3D Model
+                        ✨ 3D model
                       </button>
                       <button
                         onClick={() => setHeroViewMode('photo')}
@@ -181,7 +181,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onSelectProduct 
                             : 'text-[#17202A] dark:text-[#AEB7C0] hover:text-[#C71925]'
                         }`}
                       >
-                        📷 Foto
+                        📷 Surat
                       </button>
                     </div>
 

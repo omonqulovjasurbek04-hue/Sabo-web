@@ -140,24 +140,24 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <div className="space-y-4">
               <img
                 src="https://images.unsplash.com/photo-1527153857715-3908f2ae5e81?auto=format&fit=crop&w=600&q=80"
-                alt="Farm cow"
+                alt="Ferma sigiri"
                 className="w-full h-48 sm:h-64 object-cover rounded-3xl shadow-md border border-[#DCE3E8] dark:border-white/10"
               />
               <img
                 src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80"
-                alt="Green pasture"
+                alt="Yashil yaylov"
                 className="w-full h-40 sm:h-52 object-cover rounded-3xl shadow-md border border-[#DCE3E8] dark:border-white/10"
               />
             </div>
             <div className="space-y-4 pt-8">
               <img
                 src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80"
-                alt="Clean dairy factory"
+                alt="Toza sut zavodi"
                 className="w-full h-40 sm:h-52 object-cover rounded-3xl shadow-md border border-[#DCE3E8] dark:border-white/10"
               />
               <img
                 src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80"
-                alt="Fresh milk bottles"
+                alt="Yangi sut butilkalari"
                 className="w-full h-48 sm:h-64 object-cover rounded-3xl shadow-md border border-[#DCE3E8] dark:border-white/10"
               />
             </div>

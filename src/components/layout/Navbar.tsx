@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   SABO
                 </span>
                 <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#1684C4] dark:text-[#2498D1] mt-0.5">
-                  Natural Dairy
+                  Tabiiy sut mahsulotlari
                 </span>
               </div>
             </button>
@@ -133,8 +133,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={toggleTheme}
               className="p-2.5 text-[#17202A] dark:text-gray-200 hover:text-[#C71925] dark:hover:text-[#2498D1] hover:bg-[#EFF7FB] dark:hover:bg-white/10 rounded-full transition-all flex items-center justify-center cursor-pointer"
-              title={theme === 'dark' ? "Kunduzgi rejim (Light Mode)" : "Tungi rejim (Dark Mode)"}
-              aria-label="Toggle theme"
+              title={theme === 'dark' ? 'Kunduzgi rejim' : 'Tungi rejim'}
+              aria-label="Rejimni almashtirish"
             >
               {theme === 'dark' ? (
                 <Sun className="w-5 h-5 text-[#82C744] transition-transform rotate-0 hover:rotate-45" />
@@ -148,7 +148,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onOpenSearch}
               className="p-2.5 sm:px-4 sm:py-2 text-[#17202A] dark:text-gray-200 hover:text-[#C71925] dark:hover:text-[#2498D1] hover:bg-[#EFF7FB] dark:hover:bg-white/10 rounded-full transition-all flex items-center gap-2 text-xs font-semibold"
               title="Qidiruv"
-              aria-label="Search"
+              aria-label="Qidirish"
             >
               <Search className="w-4 h-4 text-[#1684C4] dark:text-[#2498D1]" />
               <span className="hidden xl:inline text-gray-500 dark:text-gray-400">{t.common.search}...</span>
@@ -159,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                 className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-[#17202A] dark:text-gray-200 hover:bg-[#EFF7FB] dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer"
-                aria-label="Language selector"
+                aria-label="Til tanlagichi"
               >
                 <Globe className="w-3.5 h-3.5 text-[#1684C4] dark:text-[#2498D1]" />
                 <span>{languageLabels[language].flag}</span>
@@ -202,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onNavigate('favorites')}
               className="relative p-2.5 text-[#17202A] dark:text-gray-200 hover:text-[#C71925] dark:hover:text-[#E32935] hover:bg-[#EFF7FB] dark:hover:bg-white/10 rounded-full transition-all hidden sm:flex items-center justify-center cursor-pointer"
               title="Sevimlilar"
-              aria-label="Favorites"
+              aria-label="Sevimlilar"
             >
               <Heart className="w-5 h-5" />
               {favoritesCount > 0 && (
@@ -217,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onNavigate('account')}
               className="p-2.5 text-[#17202A] dark:text-gray-200 hover:text-[#C71925] dark:hover:text-[#2498D1] hover:bg-[#EFF7FB] dark:hover:bg-white/10 rounded-full transition-all hidden md:flex items-center justify-center cursor-pointer"
               title="Shaxsiy kabinet"
-              aria-label="Account"
+              aria-label="Shaxsiy kabinet"
             >
               <User className="w-5 h-5" />
             </button>
@@ -226,7 +226,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => setIsCartOpen(true)}
               className="flex items-center gap-2.5 bg-[#C71925] hover:bg-[#A80F19] dark:bg-[#E32935] dark:hover:bg-[#FF4652] active:scale-95 text-white pl-3.5 pr-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all cursor-pointer"
-              aria-label="Shopping cart"
+              aria-label="Savat"
             >
               <div className="relative">
                 <ShoppingBag className="w-4 h-4" />
@@ -243,7 +243,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onOpenMobileMenu}
               className="p-2 text-gray-700 dark:text-gray-200 hover:text-black dark:hover:text-white rounded-xl hover:bg-gray-200/60 dark:hover:bg-white/10 lg:hidden"
-              aria-label="Open mobile menu"
+              aria-label="Mobil menyuni ochish"
             >
               <Menu className="w-6 h-6" />
             </button>
