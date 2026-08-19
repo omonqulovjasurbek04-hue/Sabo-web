@@ -14,10 +14,6 @@ const STORAGE_KEY = 'sabo_language';
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('puremilk_language');
-    if (saved === 'uz' || saved === 'ru' || saved === 'en') {
-      return saved;
-    }
     return 'uz';
   });
 
