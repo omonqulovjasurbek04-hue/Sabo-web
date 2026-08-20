@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title">
+  <title id="title">SABO product placeholder</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDF6E3"/>
+      <stop offset="100%" stop-color="#F5E3B8"/>
+    </linearGradient>
+    <linearGradient id="milk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E9F2F8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="24" fill="url(#bg)"/>
+  <g transform="translate(200 196)">
+    <path d="M-78 -70 L-52 -52 L-38 34 a38 38 0 0 0 76 0 L-18 -52 L6 -70 Z" fill="url(#milk)" stroke="#C9DCE9" stroke-width="3"/>
+    <path d="M-38 -34 a32 32 0 0 0 64 0" fill="none" stroke="#CFE2EF" stroke-width="4"/>
+    <ellipse cx="0" cy="-70" rx="46" ry="12" fill="#CFE2EF"/>
+    <path d="M-58 -86 l26 10 M-30 -88 l26 10 M2 -86 l26 10" stroke="#9FC6DE" stroke-width="5" stroke-linecap="round"/>
+    <path d="M0 8 a16 16 0 0 0 16-16c0-5-2.3-9-5.8-12.5C7.8-22 6-26 6-30c-1.2 6-4.6 11-9.2 14.5C-6.4-12-8-9-8-8a8 8 0 0 0 8 16z" fill="#1684C4"/>
+  </g>
+  <g transform="translate(200 342)">
+    <rect x="-44" y="-18" width="88" height="36" rx="18" fill="#C71925"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="#FFFFFF">SABO</text>
+  </g>
+</svg>

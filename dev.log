@@ -1,0 +1,335 @@
+
+> sabo-app@0.1.0 dev
+> next dev --turbopack -p 3000
+
+   ▲ Next.js 15.5.23 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.19:3000
+
+ ✓ Starting...
+ ✓ Compiled middleware in 429ms
+ ✓ Ready in 2.5s
+ ○ Compiling /[locale] ...
+ ✓ Compiled /[locale] in 5.6s
+ GET /uz 200 in 6873ms
+ ✓ Compiled in 136ms
+ ✓ Compiled in 969ms
+ ✓ Compiled /[locale] in 161ms
+ ⨯ ./src/app/[locale]/not-found.tsx:1:1
+Export LinkButton doesn't exist in target module
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { getDictionary } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { isLocale } [36mfrom[39m [32m"@/lib/i18n/locales"[39m[33m;[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+
+./src/components/sections/cta.tsx:3:1
+Export LinkButton doesn't exist in target module
+[0m [90m 1 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mReveal[39m } [36mfrom[39m [32m"@/components/ui/reveal"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m type { [33mDictionary[39m } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m type { [33mLocale[39m } [36mfrom[39m [32m"@/lib/i18n/locales"[39m[33m;[39m
+ [90m 6 |[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/sections/cta.tsx
+    ./src/app/[locale]/page.tsx
+
+
+
+./src/components/sections/hero.tsx:3:1
+Export LinkButton doesn't exist in target module
+[0m [90m 1 |[39m [36mimport[39m [33mImage[39m [36mfrom[39m [32m"next/image"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mReveal[39m } [36mfrom[39m [32m"@/components/ui/reveal"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m type { [33mDictionary[39m } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/sections/hero.tsx
+    ./src/app/[locale]/page.tsx
+
+
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1449ms
+ GET /uz 500 in 1864ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 685ms
+ GET /favicon.ico 500 in 846ms
+ ⨯ ./src/app/[locale]/not-found.tsx:1:1
+Export LinkButton doesn't exist in target module
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m { getDictionary } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m { isLocale } [36mfrom[39m [32m"@/lib/i18n/locales"[39m[33m;[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+
+./src/components/sections/cta.tsx:3:1
+Export LinkButton doesn't exist in target module
+[0m [90m 1 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { [33mReveal[39m } [36mfrom[39m [32m"@/components/ui/reveal"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m type { [33mDictionary[39m } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m type { [33mLocale[39m } [36mfrom[39m [32m"@/lib/i18n/locales"[39m[33m;[39m
+ [90m 6 |[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/sections/cta.tsx
+    ./src/app/[locale]/page.tsx
+
+
+
+./src/components/sections/hero.tsx:3:1
+Export LinkButton doesn't exist in target module
+[0m [90m 1 |[39m [36mimport[39m [33mImage[39m [36mfrom[39m [32m"next/image"[39m[33m;[39m
+ [90m 2 |[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { [33mLinkButton[39m } [36mfrom[39m [32m"@/components/ui/button"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m { [33mContainer[39m } [36mfrom[39m [32m"@/components/ui/container"[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mReveal[39m } [36mfrom[39m [32m"@/components/ui/reveal"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m type { [33mDictionary[39m } [36mfrom[39m [32m"@/lib/i18n/dictionary"[39m[33m;[39m[0m
+
+The export LinkButton was not found in module [project]/src/components/ui/button.tsx [app-rsc] (ecmascript).
+Did you mean to import Button?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/sections/hero.tsx
+    ./src/app/[locale]/page.tsx
+
+
+ GET /uz 500 in 252ms
+ GET /favicon.ico 500 in 307ms
+ ✓ Compiled in 113ms
+ ✓ Compiled /[locale] in 101ms
+ GET /uz 200 in 964ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 379ms
+ ✓ Compiled in 148ms
+ ✓ Compiled /[locale] in 86ms
+ ✓ Compiled in 82ms
+ ✓ Compiled in 105ms
+ GET /uz 200 in 511ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 334ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 372ms
+ ✓ Compiled in 81ms
+ ✓ Compiled /[locale] in 89ms
+ ✓ Compiled in 108ms
+ GET /uz 200 in 431ms
+ ✓ Compiled in 103ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 362ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 360ms
+ ✓ Compiled in 67ms
+ ✓ Compiled in 87ms
+ ✓ Compiled /[locale] in 65ms
+ GET /uz 200 in 369ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 338ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 326ms
+ ✓ Compiled in 86ms
+ ✓ Compiled in 75ms
+ ✓ Compiled in 125ms
+ ✓ Compiled /[locale] in 182ms
+ GET /uz 200 in 461ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 345ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 332ms
+ ✓ Compiled in 110ms
+ ✓ Compiled /[locale] in 77ms
+ GET /uz 200 in 328ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 316ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 311ms
+ ✓ Compiled in 145ms
+ GET /uz 200 in 866ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 322ms
+ ✓ Compiled in 106ms
+ ✓ Compiled in 89ms
+ ✓ Compiled in 96ms
+ ✓ Compiled /[locale] in 73ms
+ GET /uz 200 in 339ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 352ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 310ms
+ ✓ Compiled in 99ms
+ ✓ Compiled /[locale] in 70ms
+ GET /uz 200 in 326ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 323ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 305ms
+ ✓ Compiled in 81ms
+ ✓ Compiled /[locale] in 72ms
+ GET /uz 200 in 311ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 323ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 318ms
+ ✓ Compiled in 208ms
+ ✓ Compiled /[locale] in 103ms
+ GET /uz 200 in 387ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 365ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 341ms
+ ✓ Compiled in 84ms
+ ✓ Compiled /[locale] in 64ms
+ GET /uz 200 in 337ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 331ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 315ms
+ ✓ Compiled in 152ms
+ ✓ Compiled /[locale] in 67ms
+ GET /uz 200 in 282ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 342ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 316ms
+ ✓ Compiled in 86ms
+ ✓ Compiled /[locale] in 64ms
+ GET /uz 200 in 288ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 313ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 363ms
+ ✓ Compiled in 148ms
+ ✓ Compiled /[locale] in 82ms
+ GET /uz 200 in 355ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 323ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 347ms
+ ✓ Compiled in 96ms
+ ✓ Compiled /[locale] in 140ms
+ GET /uz 200 in 363ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 339ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 330ms
+ GET /uz 200 in 1010ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 399ms
+ ✓ Compiled in 117ms
+ ⚠ Fast Refresh had to perform a full reload when ./src/components/cart/cart-provider.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 111ms
+ GET /uz 200 in 1228ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 432ms
+ ✓ Compiled in 99ms
+ ✓ Compiled in 109ms
+ ✓ Compiled in 181ms
+ ✓ Compiled in 112ms
+ ✓ Compiled /[locale] in 92ms
+ GET /uz 200 in 348ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 344ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 345ms
+ ✓ Compiled in 108ms
+ ✓ Compiled /[locale] in 69ms
+ GET /uz 200 in 424ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 349ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 345ms
+ ✓ Compiled in 103ms
+ ✓ Compiled in 110ms
+ ✓ Compiled in 91ms
+ ✓ Compiled in 101ms
+ ✓ Compiled in 105ms
+ ✓ Compiled in 131ms
+ ✓ Compiled in 99ms
+ ✓ Compiled /[locale] in 178ms
+ GET /uz 200 in 405ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 336ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 342ms
+ ✓ Compiled in 86ms
+ ✓ Compiled in 74ms
+ ✓ Compiled /[locale] in 70ms
+ GET /uz 200 in 335ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 316ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 334ms
+ ✓ Compiled in 114ms
+ ✓ Compiled in 164ms
+ ○ Compiling /[locale] ...
+ ✓ Compiled /[locale] in 661ms
+ GET /uz 200 in 722ms
+ GET /uz 404 in 950ms
+ ✓ Compiled /icon.png in 354ms
+ GET /icon.png?icon.c7d7c745.png 200 in 709ms
+ GET /favicon.ico?favicon.06e52542.ico 200 in 399ms
+ ✓ Compiled in 98ms
+ ✓ Compiled /[locale] in 66ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.bbzkr84ps0n'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.bbzkr84ps0n'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.wk0trd0xqk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.wk0trd0xqk'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.bbzkr84ps0n'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.bbzkr84ps0n'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.xmx9ggo69lk'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.xmx9ggo69lk'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.c6n2usyvwd'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.c6n2usyvwd'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.sisuyzk6kl'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.sisuyzk6kl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.lndvivuumm'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.lndvivuumm'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.sisuyzk6kl'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.sisuyzk6kl'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.n9vcmgdzha'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.n9vcmgdzha'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.zqwigwgibsp'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.zqwigwgibsp'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Admin\Desktop\Sabo\sabo-app\.next\static\development\_buildManifest.js.tmp.n6iigj88stb'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Admin\\Desktop\\Sabo\\sabo-app\\.next\\static\\development\\_buildManifest.js.tmp.n6iigj88stb'
+}
