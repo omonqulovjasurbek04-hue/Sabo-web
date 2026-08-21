@@ -1,0 +1,45 @@
+name: SABO Backend CI
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'sabo-backend/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'sabo-backend/**'
+
+jobs:
+  test_and_build:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./sabo-backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: sabo-backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit Tests
+        run: npm run test -- --passWithNoTests
+
+      - name: Production Build
+        run: npm run build
