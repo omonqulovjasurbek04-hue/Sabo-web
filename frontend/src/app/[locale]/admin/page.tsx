@@ -189,32 +189,9 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden">
-        {/* Top Navbar */}
-        <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/images/logo.png"
-              alt="SABO"
-              width={1230}
-              height={678}
-              className="h-8 w-auto object-contain"
-            />
-          </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggle dict={dict} />
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-surface text-xs font-bold text-muted hover:text-foreground transition-colors"
-            >
-              <span>Veb-saytga qaytish</span>
-              <ExternalLink className="size-3.5" />
-            </Link>
-          </div>
-        </div>
-
+      <div className="min-h-screen bg-background text-foreground flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden">
         {/* Login Card */}
-        <div className="max-w-md w-full mx-auto my-auto py-10">
+        <div className="max-w-md w-full my-auto py-10">
           <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-border shadow-xl backdrop-blur-md relative">
             <div className="text-center mb-8">
               <div className="size-16 rounded-2xl bg-secondary-soft text-secondary flex items-center justify-center mx-auto mb-4 shadow-xs">
