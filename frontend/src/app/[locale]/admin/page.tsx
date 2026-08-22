@@ -245,7 +245,7 @@ export default function AdminPage() {
                   <input
                     type="text"
                     required
-                    placeholder="Bekzodbek"
+                    placeholder="Foydalanuvchi nomi"
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
