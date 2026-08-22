@@ -12,11 +12,6 @@ const nextConfig: NextConfig = {
     },
     optimizePackageImports: [
       "lucide-react",
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "clsx",
-      "tailwind-merge",
     ],
   },
   images: {
