@@ -1,32 +1,37 @@
-# React + TypeScript + Vite
+# SABO Dairy — Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+SABO tabiiy sut mahsulotlari boshqaruv paneli (Vite + React + TypeScript + Tailwind CSS + Recharts).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🔑 Kirish ma'lumotlari
 
-## React Compiler
+| Maydon | Qiymat |
+|---|---|
+| **URL** | `http://localhost:5173` |
+| **Login** | `Bekzodbek` |
+| **Parol** | `Admin0525` |
+| **Rol** | `SUPER_ADMIN` |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🚀 Ishga tushirish
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+```bash
+# O'rnatish
+npm install
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Ishga tushirish
+npm run dev
+
+# Production build
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 📊 Imkoniyatlar:
+- **Dashboard & Recharts**: Savdo dinamikasi va toifalar ulushi doiraviy grafigi
+- **Mahsulotlar**: Qidiruv, filtr va yangi mahsulot qo'shish
+- **Buyurtmalar**: Buyurtmalar holati, mijoz ma'lumotlari va Click/Payme to'lovlari
+- **Mijozlar, Ishlab chiqarish, Sertifikatlar, Blog, Xabarlar, Media, Tarjimalar, SEO, Sozlamalar**
