@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-milk: #FDFBF7;
+    --color-cream: #F5EFEB;
+    --color-beige: #EBE3DA;
+    --color-dark-green: #0E3B2E;
+    --color-dark-green-hover: #08281F;
+    --color-muted-green: #2D6A4F;
+    --color-muted-green-light: #D8F3DC;
+    --color-accent-amber: #D97706;
+    --color-accent-red: #E63946;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #F8F6F0;
+  color: #1A2E26;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Glassmorphism Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(45, 106, 79, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 106, 79, 0.4);
+}
