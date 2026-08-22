@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { CartProvider } from "@/components/cart/cart-provider";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
 import { generatePageMetadata } from "@/lib/seo";
@@ -32,6 +34,9 @@ export default async function LocaleLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200">
       <CartProvider>
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <Navbar dict={dict} locale={locale} />
         <main id="main-content" className="flex-1">
           {children}

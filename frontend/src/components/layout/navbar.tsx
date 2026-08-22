@@ -30,11 +30,6 @@ export function Navbar({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
-
-  // Hide website navbar when on admin dashboard
-  if (pathname?.includes("/admin")) {
-    return null;
-  }
   const searchRef = useRef<HTMLInputElement>(null);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const drawerPanelRef = useRef<HTMLDivElement>(null);
@@ -131,6 +126,11 @@ export function Navbar({
     }
     setSearchOpen(false);
   };
+
+  // Hide website navbar when on admin dashboard
+  if (pathname?.includes("/admin")) {
+    return null;
+  }
 
   return (
     <header

@@ -11,9 +11,16 @@ interface LocalizedLinkProps
 export function LocalizedLink({
   href,
   locale,
+  prefetch = true,
   ...props
 }: LocalizedLinkProps) {
-  return <Link href={getLocalizedPath(locale, href)} {...props} />;
+  return (
+    <Link
+      href={getLocalizedPath(locale, href)}
+      prefetch={prefetch}
+      {...props}
+    />
+  );
 }
 
 export function localizedHref(locale: Locale, href: string): string {
