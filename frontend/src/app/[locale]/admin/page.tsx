@@ -22,6 +22,11 @@ import {
   LogOut,
   ShieldCheck,
   AlertCircle,
+  Sparkles,
+  ArrowRight,
+  Clock,
+  Sliders,
+  Server,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -58,7 +63,6 @@ export default function AdminPage() {
     setLoginError("");
 
     setTimeout(() => {
-      // Validate credentials: Bekzodbek / Admin0525
       if (usernameInput === "Bekzodbek" && passwordInput === "Admin0525") {
         if (typeof window !== "undefined") {
           window.localStorage.setItem("sabo_admin_auth", "true");
@@ -67,10 +71,10 @@ export default function AdminPage() {
         setIsAuthenticated(true);
         setLoginError("");
       } else {
-        setLoginError("Login yoki parol noto'g'ri! Iltimos, qaytadan tekshirib kiring.");
+        setLoginError("Login yoki parol noto'g'ri! Iltimos, ma'lumotlarni qayta tekshiring.");
       }
       setIsSubmitting(false);
-    }, 400);
+    }, 350);
   };
 
   const handleLogout = () => {
@@ -91,59 +95,61 @@ export default function AdminPage() {
   // Mock Orders state
   const [orders, setOrders] = useState([
     {
-      id: "ord_1787384016258",
+      id: "ORD-2026-8941",
       customerName: "Jasurbek Omonqulov",
       customerPhone: "+998 90 123 45 67",
-      address: "Toshkent sh., Yunusobod tumani, 12-mavze",
-      items: "SABO Sut 3.2% (2 dona), SABO Kefir (1 dona)",
+      address: "Toshkent sh., Yunusobod tumani, 12-mavze, 45-uy",
+      items: "SABO Sut 3.2% (2 dona), SABO Kefir 1L (1 dona)",
       totalAmount: 36000,
-      paymentMethod: "click",
+      paymentMethod: "Click",
       paymentStatus: "paid",
       orderStatus: "confirmed",
-      date: "2026-08-22 10:24",
+      date: "Bugun, 10:24",
     },
     {
-      id: "ord_1787383921004",
+      id: "ORD-2026-8940",
       customerName: "Dilshod Rahimov",
       customerPhone: "+998 93 987 65 43",
-      address: "Toshkent sh., Chilonzor tumani, 9-mavze",
-      items: "SABO Qaymoq (3 dona)",
+      address: "Toshkent sh., Chilonzor tumani, 9-mavze, 18-uy",
+      items: "SABO Qaymoq 200g (3 dona)",
       totalAmount: 45000,
-      paymentMethod: "payme",
+      paymentMethod: "Payme",
       paymentStatus: "pending",
       orderStatus: "new",
-      date: "2026-08-22 09:45",
+      date: "Bugun, 09:45",
     },
     {
-      id: "ord_1787381205912",
+      id: "ORD-2026-8939",
       customerName: "Madina Alimova",
       customerPhone: "+998 97 555 11 22",
-      address: "Toshkent sh., Mirzo Ulug'bek tumani",
-      items: "SABO Yogurt 2.5% (4 dona), SABO Sutim (2 dona)",
+      address: "Toshkent sh., Mirzo Ulug'bek tumani, 4-tor ko'cha",
+      items: "SABO Yogurt 2.5% (4 dona), SABO Sutim 1L (2 dona)",
       totalAmount: 52000,
-      paymentMethod: "cash",
+      paymentMethod: "Naqd",
       paymentStatus: "paid",
       orderStatus: "completed",
-      date: "2026-08-21 16:30",
+      date: "Kecha, 16:30",
     },
   ]);
 
   // Mock Contact Messages
   const [messages, setMessages] = useState([
     {
-      id: "msg_001",
+      id: "MSG-001",
       name: "Akmal Karimov",
       phone: "+998 91 234 56 78",
-      message: "Do'konlar tarmog'imizga SABO sut va qatiq mahsulotlarini ulgurji yetkazib berish bo'yicha shartnoma qilmoqchimiz.",
-      date: "2026-08-22 08:15",
+      subject: "Ulgurji hamkorlik",
+      message: "Do'konlar tarmog'imizga SABO tabiiy sut va qatiq mahsulotlarini ulgurji yetkazib berish bo'yicha shartnoma qilmoqchimiz.",
+      date: "Bugun, 08:15",
       status: "new",
     },
     {
-      id: "msg_002",
+      id: "MSG-002",
       name: "Sardor Yusupov",
       phone: "+998 94 321 00 11",
-      message: "SABO Yogurt mahsulotlarining sertifikatlari bilan qanday tanishsa bo'ladi?",
-      date: "2026-08-21 14:20",
+      subject: "Mahsulot sertifikatlari",
+      message: "SABO Yogurt va Sariyog' mahsulotlarining ISO hamda Halol sifat sertifikatlari nusxasini taqdim eta olasizmi?",
+      date: "Kecha, 14:20",
       status: "read",
     },
   ]);
@@ -175,79 +181,96 @@ export default function AdminPage() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
 
-  // Loading state while checking localStorage
+  // Loading state
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+        <div className="size-10 rounded-full border-3 border-primary/20 border-t-primary animate-spin" />
       </div>
     );
   }
 
   // -------------------------------------------------------------
-  // LOGIN SCREEN (If not authenticated)
+  // LOGIN SCREEN (ELEGANT TYPOGRAPHY & DESIGN)
   // -------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden">
+      <div className="min-h-screen bg-background text-foreground flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden selection:bg-primary selection:text-white">
+        {/* Subtle Ambient Glow Effects */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
+
         {/* Login Card */}
-        <div className="max-w-md w-full my-auto py-10">
-          <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-border shadow-xl backdrop-blur-md relative">
+        <div className="max-w-md w-full my-auto relative z-10">
+          <div className="p-8 sm:p-10 rounded-3xl bg-surface/90 backdrop-blur-xl border border-border/80 shadow-2xl shadow-black/5 dark:shadow-black/40">
+            {/* Brand Logo & Lock Icon */}
             <div className="text-center mb-8">
-              <div className="size-16 rounded-2xl bg-secondary-soft text-secondary flex items-center justify-center mx-auto mb-4 shadow-xs">
-                <Lock className="size-8" />
+              <div className="flex justify-center mb-4">
+                <Image
+                  src="/images/logo.png"
+                  alt="SABO"
+                  width={1230}
+                  height={678}
+                  className="h-10 w-auto object-contain drop-shadow-xs"
+                />
               </div>
-              <h1 className="font-display font-bold text-2xl sm:text-3xl text-foreground">
+
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-soft text-secondary text-xs font-bold uppercase tracking-widest mb-3">
+                <ShieldCheck className="size-3.5" />
+                <span>Boshqaruv Tizimi</span>
+              </div>
+
+              <h1 className="font-display font-black text-2xl sm:text-3xl text-foreground tracking-tight">
                 Administrator Kirish
               </h1>
-              <p className="text-muted text-xs sm:text-sm mt-1">
-                SABO boshqaruv tizimiga kirish uchun login va parolingizni kiriting.
+              <p className="text-muted text-xs sm:text-sm mt-1.5 font-medium leading-relaxed">
+                Tizimga xavfsiz kirish uchun hisob ma&apos;lumotlaringizni kiriting.
               </p>
             </div>
 
             {loginError && (
-              <div className="mb-6 p-4 rounded-2xl bg-action-red/10 border border-action-red/20 text-action-red text-xs font-semibold flex items-start gap-2.5">
+              <div className="mb-6 p-4 rounded-2xl bg-action-red/10 border border-action-red/20 text-action-red text-xs font-bold flex items-start gap-3 animate-shake">
                 <AlertCircle className="size-4 shrink-0 mt-0.5" />
-                <span>{loginError}</span>
+                <span className="leading-snug">{loginError}</span>
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <form onSubmit={handleLogin} className="flex flex-col gap-4.5">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
+                <label className="block text-[11px] font-extrabold uppercase tracking-wider text-muted mb-2">
                   Login (Foydalanuvchi nomi)
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted/80" />
                   <input
                     type="text"
                     required
                     placeholder="Foydalanuvchi nomi"
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background/70 text-sm font-semibold text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
-                  Parol
+                <label className="block text-[11px] font-extrabold uppercase tracking-wider text-muted mb-2">
+                  Maxfiy parol
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted/80" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
                     value={passwordInput}
                     onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full pl-10 pr-11 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-10 pr-11 py-3 rounded-xl border border-border bg-background/70 text-sm font-semibold text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                   </button>
@@ -257,30 +280,30 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-2 w-full py-3.5 px-6 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-hover transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                className="mt-2 w-full py-3.5 px-6 rounded-xl bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-hover active:scale-[0.99] transition-all cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
-                  <div className="size-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                  <div className="size-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
                 ) : (
                   <>
-                    <ShieldCheck className="size-4" />
                     <span>Tizimga kirish</span>
+                    <ArrowRight className="size-4" />
                   </>
                 )}
               </button>
             </form>
 
-            <div className="mt-6 pt-6 border-t border-border text-center">
-              <div className="inline-flex items-center gap-1.5 text-xs text-muted">
-                <span className="size-2 rounded-full bg-emerald-500" />
-                <span>Xavfsiz 256-bit shifrlangan ma&apos;lumotlar tizimi</span>
+            <div className="mt-8 pt-6 border-t border-border/80 text-center">
+              <div className="inline-flex items-center gap-2 text-xs font-semibold text-muted">
+                <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>256-bit xavfsiz shifrlangan boshqaruv tizimi</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer info */}
-        <div className="max-w-md w-full mx-auto text-center text-xs text-muted pb-4">
+        <div className="max-w-md w-full mx-auto text-center text-xs font-semibold text-muted/70 pb-4 relative z-10">
           &copy; 2026 SABO Dairy. Barcha huquqlar himoyalangan.
         </div>
       </div>
@@ -288,157 +311,166 @@ export default function AdminPage() {
   }
 
   // -------------------------------------------------------------
-  // AUTHENTICATED DASHBOARD VIEW
+  // AUTHENTICATED DASHBOARD (PREMIUM TYPOGRAPHY & SLEEK UI)
   // -------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row selection:bg-primary selection:text-white">
       {/* Sidebar Navigation */}
-      <aside className="w-full lg:w-72 bg-surface border-b lg:border-b-0 lg:border-r border-border shrink-0 flex flex-col justify-between p-6">
+      <aside className="w-full lg:w-80 bg-surface/95 backdrop-blur-md border-b lg:border-b-0 lg:border-r border-border shrink-0 flex flex-col justify-between p-6">
         <div>
           {/* Admin Header / Brand */}
           <div className="flex items-center justify-between pb-6 mb-6 border-b border-border">
-            <Link href="/" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 group">
               <Image
                 src="/images/logo.png"
                 alt="SABO"
                 width={1230}
                 height={678}
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain transition-transform group-hover:scale-105"
               />
-              <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-secondary-soft text-secondary uppercase tracking-wider">
+              <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-secondary-soft text-secondary uppercase tracking-widest">
                 Admin
               </span>
             </Link>
             <ThemeToggle dict={dict} />
           </div>
 
-          {/* Logged in User info */}
-          <div className="mb-6 p-3.5 rounded-2xl bg-background border border-border flex items-center justify-between">
+          {/* Logged in Administrator Profile Badge */}
+          <div className="mb-6 p-4 rounded-2xl bg-background/80 border border-border flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-3">
-              <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold font-display text-sm">
+              <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center font-black font-display text-sm shadow-xs">
                 B
               </div>
               <div>
-                <div className="text-xs font-bold text-foreground">Bekzodbek</div>
-                <div className="text-[11px] text-muted">Bosh Administrator</div>
+                <div className="text-xs font-extrabold text-foreground tracking-tight">Bekzodbek</div>
+                <div className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 mt-0.5">
+                  <span className="size-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  Bosh Administrator
+                </div>
               </div>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              title="Chiqish"
-              className="p-1.5 rounded-lg text-muted hover:text-action-red hover:bg-action-red/10 transition-colors cursor-pointer"
+              title="Tizimdan chiqish"
+              className="p-2 rounded-xl text-muted hover:text-action-red hover:bg-action-red/10 transition-colors cursor-pointer"
             >
               <LogOut className="size-4" />
             </button>
           </div>
 
-          {/* Nav items */}
+          {/* Navigation Items */}
           <nav className="flex flex-col gap-1.5">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "dashboard"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <LayoutDashboard className="size-5" />
+              <LayoutDashboard className="size-4.5" />
               <span>Boshqaruv paneli</span>
             </button>
 
             <button
               onClick={() => setActiveTab("products")}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center justify-between px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "products"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <Package className="size-5" />
+              <div className="flex items-center gap-3.5">
+                <Package className="size-4.5" />
                 <span>Mahsulotlar</span>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-elevated text-foreground font-bold">
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                  activeTab === "products"
+                    ? "bg-white/20 text-white"
+                    : "bg-surface-elevated text-foreground"
+                }`}
+              >
                 {productList.length}
               </span>
             </button>
 
             <button
               onClick={() => setActiveTab("orders")}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center justify-between px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "orders"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <ShoppingCart className="size-5" />
+              <div className="flex items-center gap-3.5">
+                <ShoppingCart className="size-4.5" />
                 <span>Buyurtmalar</span>
               </div>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-action-red text-white font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-action-red text-white font-bold shadow-xs">
                 {orders.length}
               </span>
             </button>
 
             <button
               onClick={() => setActiveTab("messages")}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center justify-between px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "messages"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <MessageSquare className="size-5" />
+              <div className="flex items-center gap-3.5">
+                <MessageSquare className="size-4.5" />
                 <span>Xabarlar</span>
               </div>
               {messages.filter((m) => m.status === "new").length > 0 && (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-action-red text-white font-bold animate-pulse">
-                  {messages.filter((m) => m.status === "new").length}
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-action-red text-white font-bold animate-pulse shadow-xs">
+                  {messages.filter((m) => m.status === "new").length} ta yangi
                 </span>
               )}
             </button>
 
             <button
               onClick={() => setActiveTab("categories")}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "categories"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <FolderTree className="size-5" />
+              <FolderTree className="size-4.5" />
               <span>Kategoriyalar</span>
             </button>
 
             <button
               onClick={() => setActiveTab("settings")}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-colors text-left cursor-pointer ${
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "settings"
-                  ? "bg-primary text-white"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
-              <Settings className="size-5" />
+              <Settings className="size-4.5" />
               <span>Sozlamalar &amp; API</span>
             </button>
           </nav>
         </div>
 
-        {/* Footer / Store Link */}
+        {/* Sidebar Footer */}
         <div className="pt-6 mt-6 border-t border-border flex flex-col gap-3">
           <Link
             href="/"
-            className="flex items-center justify-between px-4 py-3 rounded-xl border border-border bg-background/50 hover:bg-background text-sm font-semibold text-foreground transition-colors"
+            className="flex items-center justify-between px-4 py-3 rounded-xl border border-border bg-background/50 hover:bg-background text-xs font-bold text-foreground transition-all hover:shadow-2xs"
           >
             <span>Veb-saytga o&apos;tish</span>
-            <ExternalLink className="size-4 text-muted" />
+            <ExternalLink className="size-3.5 text-muted" />
           </Link>
           <button
             type="button"
             onClick={handleLogout}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-action-red/30 text-action-red hover:bg-action-red/10 text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-action-red/30 text-action-red hover:bg-action-red/10 text-xs font-extrabold transition-colors cursor-pointer"
           >
             <LogOut className="size-3.5" />
             <span>Tizimdan chiqish</span>
@@ -446,114 +478,127 @@ export default function AdminPage() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-6 lg:p-10 overflow-y-auto max-w-7xl">
+      {/* Main Workspace Area */}
+      <main className="flex-1 p-6 sm:p-8 lg:p-10 overflow-y-auto max-w-7xl">
         {/* 1. DASHBOARD TAB */}
         {activeTab === "dashboard" && (
           <div className="flex flex-col gap-8">
-            <div>
-              <h1 className="font-display font-bold text-3xl sm:text-4xl text-foreground">
-                Boshqaruv paneli
-              </h1>
-              <p className="text-muted text-sm sm:text-base mt-1">
-                SABO sut mahsulotlari platformasining real vaqtdagi ko&apos;rsatkichlari.
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-soft text-secondary text-xs font-extrabold uppercase tracking-wider mb-2">
+                  <Sparkles className="size-3.5" />
+                  <span>SABO Analytics</span>
+                </div>
+                <h1 className="font-display font-black text-3xl sm:text-4xl text-foreground tracking-tight">
+                  Boshqaruv paneli
+                </h1>
+                <p className="text-muted text-sm sm:text-base mt-1 font-medium">
+                  SABO sut mahsulotlari platformasining real vaqtdagi ko&apos;rsatkichlari.
+                </p>
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface border border-border text-xs font-bold text-muted self-start sm:self-auto">
+                <Clock className="size-4 text-primary" />
+                <span>Jonli sinxronizatsiya faol</span>
+              </div>
             </div>
 
-            {/* KPI Cards */}
+            {/* KPI Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs flex flex-col justify-between">
+              <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-muted">Jami tushum</span>
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-muted">Jami tushum</span>
                   <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-600">
                     <TrendingUp className="size-5" />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <span className="text-2xl sm:text-3xl font-bold font-display text-foreground">
-                    {totalRevenue.toLocaleString()} <span className="text-sm font-normal text-muted">UZS</span>
+                <div className="mt-5">
+                  <span className="text-2xl sm:text-3xl font-black font-display text-foreground tracking-tight">
+                    {totalRevenue.toLocaleString()} <span className="text-xs font-bold text-muted uppercase">UZS</span>
                   </span>
-                  <span className="text-xs text-emerald-600 font-semibold block mt-1">
-                    +18% oxirgi haftada
+                  <span className="text-xs text-emerald-600 font-bold block mt-1.5 flex items-center gap-1">
+                    <span>+18.4%</span>
+                    <span className="text-muted font-medium">oxirgi 7 kunda</span>
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs flex flex-col justify-between">
+              <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-muted">Buyurtmalar</span>
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-muted">Buyurtmalar</span>
                   <div className="p-2.5 rounded-2xl bg-blue-500/10 text-blue-600">
                     <ShoppingCart className="size-5" />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <span className="text-2xl sm:text-3xl font-bold font-display text-foreground">
-                    {orders.length} ta
+                <div className="mt-5">
+                  <span className="text-2xl sm:text-3xl font-black font-display text-foreground tracking-tight">
+                    {orders.length} <span className="text-sm font-bold text-muted">ta</span>
                   </span>
-                  <span className="text-xs text-blue-600 font-semibold block mt-1">
-                    {orders.filter((o) => o.orderStatus === "new").length} ta yangi
+                  <span className="text-xs text-blue-600 font-bold block mt-1.5">
+                    {orders.filter((o) => o.orderStatus === "new").length} ta yangi buyurtma
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs flex flex-col justify-between">
+              <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-muted">Mahsulotlar</span>
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-muted">Mahsulotlar</span>
                   <div className="p-2.5 rounded-2xl bg-primary/10 text-primary">
                     <Package className="size-5" />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <span className="text-2xl sm:text-3xl font-bold font-display text-foreground">
-                    {productList.length} xil
+                <div className="mt-5">
+                  <span className="text-2xl sm:text-3xl font-black font-display text-foreground tracking-tight">
+                    {productList.length} <span className="text-sm font-bold text-muted">xil</span>
                   </span>
-                  <span className="text-xs text-primary font-semibold block mt-1">
-                    7 ta toifada
+                  <span className="text-xs text-primary font-bold block mt-1.5">
+                    7 ta asosiy toifada
                   </span>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs flex flex-col justify-between">
+              <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold text-muted">Xabarlar</span>
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-muted">Xabarlar</span>
                   <div className="p-2.5 rounded-2xl bg-action-red/10 text-action-red">
                     <MessageSquare className="size-5" />
                   </div>
                 </div>
-                <div className="mt-4">
-                  <span className="text-2xl sm:text-3xl font-bold font-display text-foreground">
-                    {messages.length} ta
+                <div className="mt-5">
+                  <span className="text-2xl sm:text-3xl font-black font-display text-foreground tracking-tight">
+                    {messages.length} <span className="text-sm font-bold text-muted">ta</span>
                   </span>
-                  <span className="text-xs text-action-red font-semibold block mt-1">
-                    {messages.filter((m) => m.status === "new").length} ta yangi xabar
+                  <span className="text-xs text-action-red font-bold block mt-1.5">
+                    {messages.filter((m) => m.status === "new").length} ta o&apos;qilmagan murojaat
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Recent Orders Overview */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border shadow-xs">
-              <div className="flex items-center justify-between mb-6">
+            {/* Recent Orders Overview Table */}
+            <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border shadow-sm">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/70">
                 <div>
-                  <h3 className="font-display font-bold text-xl text-foreground">
+                  <h3 className="font-display font-black text-xl text-foreground tracking-tight">
                     So&apos;nggi buyurtmalar
                   </h3>
-                  <p className="text-xs text-muted mt-0.5">
-                    Real vaqtda qabul qilingan onlayn buyurtmalar
+                  <p className="text-xs text-muted font-medium mt-0.5">
+                    Real vaqtda qabul qilingan onlayn buyurtmalar va to&apos;lov holatlari
                   </p>
                 </div>
                 <button
                   onClick={() => setActiveTab("orders")}
-                  className="text-xs sm:text-sm font-bold text-primary hover:underline cursor-pointer"
+                  className="text-xs sm:text-sm font-bold text-primary hover:underline cursor-pointer flex items-center gap-1"
                 >
-                  Barchasini ko&apos;rish &rarr;
+                  <span>Barchasi</span>
+                  <ArrowRight className="size-4" />
                 </button>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
                   <thead>
-                    <tr className="border-b border-border text-muted text-xs uppercase font-bold">
+                    <tr className="border-b border-border text-muted text-[11px] uppercase font-extrabold tracking-wider">
                       <th className="py-3 px-4">Buyurtma ID</th>
                       <th className="py-3 px-4">Mijoz</th>
                       <th className="py-3 px-4">Mahsulotlar</th>
@@ -564,34 +609,34 @@ export default function AdminPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {orders.map((order) => (
-                      <tr key={order.id} className="hover:bg-surface-elevated/50 transition-colors">
-                        <td className="py-3.5 px-4 font-mono font-bold text-xs text-foreground">
+                      <tr key={order.id} className="hover:bg-surface-elevated/60 transition-colors">
+                        <td className="py-4 px-4 font-mono font-bold text-xs text-foreground">
                           {order.id}
                         </td>
-                        <td className="py-3.5 px-4">
-                          <div className="font-semibold text-foreground">{order.customerName}</div>
-                          <div className="text-xs text-muted">{order.customerPhone}</div>
+                        <td className="py-4 px-4">
+                          <div className="font-bold text-foreground text-sm">{order.customerName}</div>
+                          <div className="text-xs text-muted font-medium">{order.customerPhone}</div>
                         </td>
-                        <td className="py-3.5 px-4 text-xs text-muted max-w-xs truncate">
+                        <td className="py-4 px-4 text-xs font-semibold text-muted max-w-xs truncate">
                           {order.items}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-foreground">
+                        <td className="py-4 px-4 font-black font-display text-foreground text-sm">
                           {order.totalAmount.toLocaleString()} UZS
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-4 px-4">
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${
                               order.paymentStatus === "paid"
                                 ? "bg-emerald-500/10 text-emerald-600"
                                 : "bg-amber-500/10 text-amber-600"
                             }`}
                           >
-                            {order.paymentMethod} ({order.paymentStatus})
+                            {order.paymentMethod} • {order.paymentStatus}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-4 px-4">
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                               order.orderStatus === "confirmed"
                                 ? "bg-blue-500/10 text-blue-600"
                                 : order.orderStatus === "completed"
@@ -616,16 +661,16 @@ export default function AdminPage() {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h1 className="font-display font-bold text-3xl text-foreground">
-                  Mahsulotlar boshqaruvi
+                <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
+                  Mahsulotlar katalogi
                 </h1>
-                <p className="text-muted text-sm mt-1">
-                  SABO mahsulotlari katalogi, narxlar va qadoqlash parametrlari.
+                <p className="text-muted text-sm mt-1 font-medium">
+                  SABO tabiiy sut mahsulotlari, narxlari va parametrlari.
                 </p>
               </div>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-xs hover:bg-primary-hover transition-colors cursor-pointer shrink-0"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:bg-primary-hover transition-all cursor-pointer shrink-0"
               >
                 <Plus className="size-4" />
                 <span>Yangi mahsulot qo&apos;shish</span>
@@ -635,20 +680,20 @@ export default function AdminPage() {
             {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted/70" />
                 <input
                   type="text"
-                  placeholder="Mahsulot nomi yoki slug bo'yicha qidirish..."
+                  placeholder="Mahsulot nomi yoki toifasi bo'yicha qidirish..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface text-sm text-foreground focus:outline-none focus:border-primary"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface text-sm font-semibold text-foreground focus:outline-none focus:border-primary"
                 />
               </div>
 
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2.5 rounded-xl border border-border bg-surface text-sm text-foreground focus:outline-none focus:border-primary"
+                className="px-4 py-2.5 rounded-xl border border-border bg-surface text-sm font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer"
               >
                 <option value="all">Barcha toifalar</option>
                 {categories.map((c) => (
@@ -660,12 +705,12 @@ export default function AdminPage() {
             </div>
 
             {/* Products Table */}
-            <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs overflow-x-auto">
+            <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-border text-muted text-xs uppercase font-bold">
+                  <tr className="border-b border-border text-muted text-[11px] uppercase font-extrabold tracking-wider">
                     <th className="py-3 px-4">Rasm</th>
-                    <th className="py-3 px-4">Nomi (UZ)</th>
+                    <th className="py-3 px-4">Mahsulot nomi</th>
                     <th className="py-3 px-4">Kategoriya</th>
                     <th className="py-3 px-4">Yog&apos;lilik</th>
                     <th className="py-3 px-4">Hajmlar</th>
@@ -675,9 +720,9 @@ export default function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {filteredProducts.map((p) => (
-                    <tr key={p.id} className="hover:bg-surface-elevated/50 transition-colors">
+                    <tr key={p.id} className="hover:bg-surface-elevated/60 transition-colors">
                       <td className="py-3 px-4">
-                        <div className="size-12 rounded-xl bg-background border border-border overflow-hidden relative flex items-center justify-center">
+                        <div className="size-12 rounded-2xl bg-background border border-border overflow-hidden relative flex items-center justify-center shadow-2xs">
                           {p.image ? (
                             <Image
                               src={p.image}
@@ -691,22 +736,22 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-bold text-foreground">{p.name.uz}</div>
+                        <div className="font-bold text-foreground text-sm">{p.name.uz}</div>
                         <div className="text-xs text-muted font-mono">{p.slug}</div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-secondary-soft text-secondary uppercase">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-secondary-soft text-secondary uppercase tracking-wider">
                           {p.category}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-semibold text-foreground">
+                      <td className="py-3 px-4 font-bold text-foreground">
                         {p.fat || "—"}
                       </td>
-                      <td className="py-3 px-4 text-muted text-xs">
+                      <td className="py-3 px-4 text-muted font-medium text-xs">
                         {p.volumes?.join(", ") || "—"}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-600">
                           <Check className="size-3" />
                           Mavjud
                         </span>
@@ -714,10 +759,10 @@ export default function AdminPage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           href={`/products/${p.slug}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-bold text-foreground hover:border-primary hover:text-primary transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-border bg-background text-xs font-extrabold text-foreground hover:border-primary hover:text-primary transition-all shadow-2xs"
                         >
                           <Eye className="size-3.5" />
-                          Ko&apos;rish
+                          <span>Ko&apos;rish</span>
                         </Link>
                       </td>
                     </tr>
@@ -732,45 +777,45 @@ export default function AdminPage() {
         {activeTab === "orders" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h1 className="font-display font-bold text-3xl text-foreground">
+              <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
                 Buyurtmalar boshqaruvi
               </h1>
-              <p className="text-muted text-sm mt-1">
-                Sayt orqali tushgan barcha buyurtmalar va to&apos;lov holatlari.
+              <p className="text-muted text-sm mt-1 font-medium">
+                Mijozlar buyurtmalari, manzillar va yetkazib berish jarayoni.
               </p>
             </div>
 
-            <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs overflow-x-auto">
+            <div className="p-6 rounded-3xl bg-surface border border-border shadow-sm overflow-x-auto">
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-border text-muted text-xs uppercase font-bold">
+                  <tr className="border-b border-border text-muted text-[11px] uppercase font-extrabold tracking-wider">
                     <th className="py-3 px-4">Buyurtma</th>
-                    <th className="py-3 px-4">Mijoz ma&apos;lumotlari</th>
-                    <th className="py-3 px-4">Yetkazish manzili</th>
+                    <th className="py-3 px-4">Mijoz</th>
+                    <th className="py-3 px-4">Manzil</th>
                     <th className="py-3 px-4">Tarkibi</th>
-                    <th className="py-3 px-4">Jami summa</th>
+                    <th className="py-3 px-4">Summa</th>
                     <th className="py-3 px-4">To&apos;lov</th>
-                    <th className="py-3 px-4">Holatni o&apos;zgartirish</th>
+                    <th className="py-3 px-4">Holatni yangilash</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {orders.map((o) => (
-                    <tr key={o.id} className="hover:bg-surface-elevated/50 transition-colors">
+                    <tr key={o.id} className="hover:bg-surface-elevated/60 transition-colors">
                       <td className="py-4 px-4 font-mono font-bold text-xs text-foreground">
                         <div>{o.id}</div>
                         <div className="text-[11px] text-muted font-normal mt-0.5">{o.date}</div>
                       </td>
                       <td className="py-4 px-4">
-                        <div className="font-bold text-foreground">{o.customerName}</div>
-                        <div className="text-xs text-muted font-mono">{o.customerPhone}</div>
+                        <div className="font-bold text-foreground text-sm">{o.customerName}</div>
+                        <div className="text-xs text-muted font-mono font-medium">{o.customerPhone}</div>
                       </td>
-                      <td className="py-4 px-4 text-xs text-muted max-w-xs leading-relaxed">
+                      <td className="py-4 px-4 text-xs text-muted font-medium max-w-xs leading-relaxed">
                         {o.address}
                       </td>
                       <td className="py-4 px-4 text-xs font-semibold text-foreground max-w-xs">
                         {o.items}
                       </td>
-                      <td className="py-4 px-4 font-bold text-foreground text-sm">
+                      <td className="py-4 px-4 font-black font-display text-foreground text-sm">
                         {o.totalAmount.toLocaleString()} UZS
                       </td>
                       <td className="py-4 px-4">
@@ -779,7 +824,7 @@ export default function AdminPage() {
                             {o.paymentMethod}
                           </span>
                           <span
-                            className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
+                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                               o.paymentStatus === "paid"
                                 ? "bg-emerald-500/10 text-emerald-600"
                                 : "bg-amber-500/10 text-amber-600"
@@ -793,7 +838,7 @@ export default function AdminPage() {
                         <select
                           value={o.orderStatus}
                           onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value)}
-                          className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-bold text-foreground focus:outline-none focus:border-primary"
+                          className="px-3 py-1.5 rounded-xl border border-border bg-background text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer shadow-2xs"
                         >
                           <option value="new">Yangi (New)</option>
                           <option value="confirmed">Tasdiqlangan</option>
@@ -815,11 +860,11 @@ export default function AdminPage() {
         {activeTab === "messages" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h1 className="font-display font-bold text-3xl text-foreground">
-                Qayta aloqa xabarlari
+              <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
+                Murojaatlar qutisi
               </h1>
-              <p className="text-muted text-sm mt-1">
-                Sayt aloqa formasidan yuborilgan murojaatlar va takliflar.
+              <p className="text-muted text-sm mt-1 font-medium">
+                Veb-sayt aloqa formasidan yuborilgan takliflar va xabarlar.
               </p>
             </div>
 
@@ -836,17 +881,17 @@ export default function AdminPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <div className="flex items-center gap-3">
                       <span className="font-bold text-base text-foreground">{m.name}</span>
-                      <span className="text-xs font-mono px-2.5 py-0.5 rounded-full bg-secondary-soft text-secondary font-semibold">
+                      <span className="text-xs font-mono px-3 py-1 rounded-full bg-secondary-soft text-secondary font-bold">
                         {m.phone}
                       </span>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-muted">
+                    <div className="flex items-center gap-3 text-xs text-muted font-medium">
                       <span>{m.date}</span>
                       <button
                         onClick={() => handleToggleMessageStatus(m.id)}
-                        className={`px-3 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                        className={`px-3.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer ${
                           m.status === "new"
-                            ? "bg-action-red text-white hover:bg-action-red-dark"
+                            ? "bg-action-red text-white hover:bg-action-red-dark shadow-xs"
                             : "bg-surface-elevated text-muted hover:text-foreground"
                         }`}
                       >
@@ -854,7 +899,8 @@ export default function AdminPage() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm text-muted leading-relaxed">{m.message}</p>
+                  <div className="font-bold text-sm text-foreground mb-1">{m.subject}</div>
+                  <p className="text-sm text-muted font-medium leading-relaxed">{m.message}</p>
                 </div>
               ))}
             </div>
@@ -865,11 +911,11 @@ export default function AdminPage() {
         {activeTab === "categories" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h1 className="font-display font-bold text-3xl text-foreground">
+              <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
                 Mahsulot toifalari
               </h1>
-              <p className="text-muted text-sm mt-1">
-                SABO sut mahsulotlarining barcha faol toifalari va ro&apos;yxatlari.
+              <p className="text-muted text-sm mt-1 font-medium">
+                SABO sut mahsulotlarining barcha toifalari va ulardagi mahsulotlar soni.
               </p>
             </div>
 
@@ -879,26 +925,26 @@ export default function AdminPage() {
                 return (
                   <div
                     key={c.slug}
-                    className="p-6 rounded-3xl bg-surface border border-border shadow-xs flex flex-col justify-between"
+                    className="p-6 rounded-3xl bg-surface border border-border shadow-sm flex flex-col justify-between hover:border-primary/40 transition-all"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <span className="size-12 rounded-2xl bg-secondary-soft text-secondary flex items-center justify-center font-bold font-display text-lg">
+                        <span className="size-12 rounded-2xl bg-secondary-soft text-secondary flex items-center justify-center font-black font-display text-lg shadow-2xs">
                           {c.name.uz.charAt(0)}
                         </span>
-                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
-                          Faol
+                        <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                          Faol toifa
                         </span>
                       </div>
-                      <h3 className="font-display font-bold text-xl text-foreground">
+                      <h3 className="font-display font-black text-xl text-foreground tracking-tight">
                         {c.name.uz}
                       </h3>
-                      <p className="text-xs text-muted font-mono mt-0.5">slug: {c.slug}</p>
+                      <p className="text-xs text-muted font-mono mt-1">slug: {c.slug}</p>
                     </div>
 
                     <div className="pt-6 mt-6 border-t border-border flex items-center justify-between text-sm">
-                      <span className="text-muted">Mahsulotlar soni:</span>
-                      <span className="font-bold text-foreground">{count} ta</span>
+                      <span className="text-muted font-medium">Mahsulotlar soni:</span>
+                      <span className="font-black text-foreground font-display">{count} ta</span>
                     </div>
                   </div>
                 );
@@ -911,79 +957,81 @@ export default function AdminPage() {
         {activeTab === "settings" && (
           <div className="flex flex-col gap-6">
             <div>
-              <h1 className="font-display font-bold text-3xl text-foreground">
+              <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
                 Tizim sozlamalari va API Holati
               </h1>
-              <p className="text-muted text-sm mt-1">
-                Backend, API v1, To&apos;lovlar va xavfsizlik parametrlari.
+              <p className="text-muted text-sm mt-1 font-medium">
+                Backend infratuzilmasi, API v1 va xavfsizlik parametrlari.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs">
-                <h3 className="font-display font-bold text-lg text-foreground mb-4">
-                  Feature Flags (Imkoniyatlar)
+              <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border shadow-sm">
+                <h3 className="font-display font-black text-lg text-foreground mb-4 tracking-tight flex items-center gap-2">
+                  <Sliders className="size-5 text-primary" />
+                  <span>Feature Flags (Imkoniyatlar)</span>
                 </h3>
                 <div className="flex flex-col gap-3 text-sm">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
-                    <span className="font-semibold text-foreground">E-Commerce Savat &amp; Checkout</span>
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">
-                      Yoqilgan (ON)
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
+                    <span className="font-bold text-foreground">E-Commerce Savat &amp; Checkout</span>
+                    <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                      ON
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
-                    <span className="font-semibold text-foreground">Click &amp; Payme To&apos;lov shlyuzlari</span>
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">
-                      Yoqilgan (ON)
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
+                    <span className="font-bold text-foreground">Click &amp; Payme To&apos;lov shlyuzlari</span>
+                    <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                      ON
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
-                    <span className="font-semibold text-foreground">Three.js 3D &amp; Animatsiyalar</span>
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">
-                      Yoqilgan (ON)
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
+                    <span className="font-bold text-foreground">Three.js 3D &amp; Animatsiyalar</span>
+                    <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                      ON
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
-                    <span className="font-semibold text-foreground">Ko&apos;p tillilik (UZ, RU, EN)</span>
-                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600">
-                      Yoqilgan (ON)
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
+                    <span className="font-bold text-foreground">Ko&apos;p tillilik (UZ, RU, EN)</span>
+                    <span className="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600">
+                      ON
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-surface border border-border shadow-xs">
-                <h3 className="font-display font-bold text-lg text-foreground mb-4">
-                  API &amp; Infratuzilma Holati
+              <div className="p-6 sm:p-8 rounded-3xl bg-surface border border-border shadow-sm">
+                <h3 className="font-display font-black text-lg text-foreground mb-4 tracking-tight flex items-center gap-2">
+                  <Server className="size-5 text-primary" />
+                  <span>API &amp; Infratuzilma Holati</span>
                 </h3>
                 <div className="flex flex-col gap-3 text-sm">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
                     <div>
-                      <div className="font-semibold text-foreground">Frontend Dev / Prod</div>
-                      <div className="text-xs text-muted font-mono">http://localhost:3000</div>
+                      <div className="font-bold text-foreground">Next.js Frontend &amp; API Server</div>
+                      <div className="text-xs text-muted font-mono font-medium">http://localhost:3000</div>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">200 OK</span>
+                    <span className="text-xs font-extrabold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full">200 OK</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
                     <div>
-                      <div className="font-semibold text-foreground">API v1 Marshrutlari</div>
-                      <div className="text-xs text-muted font-mono">/api/v1/*</div>
+                      <div className="font-bold text-foreground">API v1 Marshrutlari</div>
+                      <div className="text-xs text-muted font-mono font-medium">/api/v1/*</div>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">200 OK</span>
+                    <span className="text-xs font-extrabold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full">200 OK</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
                     <div>
-                      <div className="font-semibold text-foreground">NestJS Standalone API</div>
-                      <div className="text-xs text-muted font-mono">http://localhost:4000/api/v1</div>
+                      <div className="font-bold text-foreground">NestJS Standalone API</div>
+                      <div className="text-xs text-muted font-mono font-medium">http://localhost:4000/api/v1</div>
                     </div>
-                    <span className="text-xs font-bold text-blue-600">Tayyor</span>
+                    <span className="text-xs font-extrabold text-blue-600 bg-blue-500/10 px-2.5 py-1 rounded-full">Tayyor</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border">
+                  <div className="flex items-center justify-between p-3.5 rounded-2xl bg-background/60 border border-border">
                     <div>
-                      <div className="font-semibold text-foreground">Prisma PostgreSQL Sxemasi</div>
-                      <div className="text-xs text-muted font-mono">schema.prisma</div>
+                      <div className="font-bold text-foreground">Prisma PostgreSQL Sxemasi</div>
+                      <div className="text-xs text-muted font-mono font-medium">schema.prisma</div>
                     </div>
-                    <span className="text-xs font-bold text-emerald-600">Sinxron</span>
+                    <span className="text-xs font-extrabold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full">Sinxron</span>
                   </div>
                 </div>
               </div>
