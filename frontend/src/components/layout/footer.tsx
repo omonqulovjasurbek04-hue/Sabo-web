@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import { LocalizedLink } from "@/components/layout/localized-link";
 import { Container } from "@/components/ui/container";
@@ -15,6 +18,13 @@ import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const pathname = usePathname();
+
+  // Do not render website footer on admin dashboard
+  if (pathname?.includes("/admin")) {
+    return null;
+  }
+
   const links: Array<{ href: string; label: string }> = [
     { href: "/products", label: dict.nav.products },
     { href: "/production", label: dict.nav.production },

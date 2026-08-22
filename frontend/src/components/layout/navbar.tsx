@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
@@ -25,10 +25,16 @@ export function Navbar({
   dict: Dictionary;
   locale: Locale;
 }) {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const router = useRouter();
+
+  // Hide website navbar when on admin dashboard
+  if (pathname?.includes("/admin")) {
+    return null;
+  }
   const searchRef = useRef<HTMLInputElement>(null);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const drawerPanelRef = useRef<HTMLDivElement>(null);
