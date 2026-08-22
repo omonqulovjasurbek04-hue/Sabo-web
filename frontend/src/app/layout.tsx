@@ -35,26 +35,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<Record<string, string>>;
 }>) {
-  const { locale = "uz" } = await params;
-
   return (
     <html
-      lang={locale}
-      data-theme="light"
+      lang="uz"
       suppressHydrationWarning
       className={cn(playfair.variable, inter.variable, "font-sans")}
     >
       <head>
         <ThemeInit />
       </head>
-      <body className="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-white">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-white"
+      >
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

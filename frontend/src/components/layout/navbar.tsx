@@ -34,8 +34,13 @@ export function Navbar({
   const menuToggleRef = useRef<HTMLButtonElement>(null);
   const drawerPanelRef = useRef<HTMLDivElement>(null);
   const { totalQuantity } = useCart();
+  const [mounted, setMounted] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const links: Array<{ href: string; label: string }> = [
     { href: "/products", label: dict.nav.products },
@@ -223,7 +228,7 @@ export function Navbar({
             title={dict.nav.cart}
           >
             <CartIcon width={20} height={20} />
-            {totalQuantity > 0 ? (
+            {mounted && totalQuantity > 0 ? (
               <span
                 className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-action-red text-white text-[11px] font-bold inline-flex items-center justify-center shadow-xs"
                 aria-hidden="true"
