@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,9 +13,15 @@ import {
   Plus,
   Search,
   Eye,
+  EyeOff,
   ExternalLink,
   Check,
   TrendingUp,
+  Lock,
+  User,
+  LogOut,
+  ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -25,11 +31,57 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [usernameInput, setUsernameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "products" | "orders" | "messages" | "categories" | "settings"
   >("dashboard");
   const [locale] = useState<Locale>("uz");
   const dict = getDictionary(locale);
+
+  // Check auth from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const auth = window.localStorage.getItem("sabo_admin_auth");
+      setIsAuthenticated(auth === "true");
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setLoginError("");
+
+    setTimeout(() => {
+      // Validate credentials: Bekzodbek / Admin0525
+      if (usernameInput === "Bekzodbek" && passwordInput === "Admin0525") {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("sabo_admin_auth", "true");
+          window.localStorage.setItem("sabo_admin_user", "Bekzodbek");
+        }
+        setIsAuthenticated(true);
+        setLoginError("");
+      } else {
+        setLoginError("Login yoki parol noto'g'ri! Iltimos, qaytadan tekshirib kiring.");
+      }
+      setIsSubmitting(false);
+    }, 400);
+  };
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("sabo_admin_auth");
+      window.localStorage.removeItem("sabo_admin_user");
+    }
+    setIsAuthenticated(false);
+    setUsernameInput("");
+    setPasswordInput("");
+  };
 
   // Products state
   const [productList] = useState(initialProducts);
@@ -123,6 +175,144 @@ export default function AdminPage() {
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
 
+  // Loading state while checking localStorage
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="size-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // LOGIN SCREEN (If not authenticated)
+  // -------------------------------------------------------------
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden">
+        {/* Top Navbar */}
+        <div className="max-w-6xl w-full mx-auto flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/images/logo.png"
+              alt="SABO"
+              width={1230}
+              height={678}
+              className="h-8 w-auto object-contain"
+            />
+          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle dict={dict} />
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-border bg-surface text-xs font-bold text-muted hover:text-foreground transition-colors"
+            >
+              <span>Veb-saytga qaytish</span>
+              <ExternalLink className="size-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <div className="max-w-md w-full mx-auto my-auto py-10">
+          <div className="p-8 sm:p-10 rounded-3xl bg-surface border border-border shadow-xl backdrop-blur-md relative">
+            <div className="text-center mb-8">
+              <div className="size-16 rounded-2xl bg-secondary-soft text-secondary flex items-center justify-center mx-auto mb-4 shadow-xs">
+                <Lock className="size-8" />
+              </div>
+              <h1 className="font-display font-bold text-2xl sm:text-3xl text-foreground">
+                Administrator Kirish
+              </h1>
+              <p className="text-muted text-xs sm:text-sm mt-1">
+                SABO boshqaruv tizimiga kirish uchun login va parolingizni kiriting.
+              </p>
+            </div>
+
+            {loginError && (
+              <div className="mb-6 p-4 rounded-2xl bg-action-red/10 border border-action-red/20 text-action-red text-xs font-semibold flex items-start gap-2.5">
+                <AlertCircle className="size-4 shrink-0 mt-0.5" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
+                  Login (Foydalanuvchi nomi)
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Bekzodbek"
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-2">
+                  Parol
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    placeholder="••••••••"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    className="w-full pl-10 pr-11 py-3 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-primary transition-colors"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-foreground cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-2 w-full py-3.5 px-6 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-hover transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <div className="size-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                ) : (
+                  <>
+                    <ShieldCheck className="size-4" />
+                    <span>Tizimga kirish</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-border text-center">
+              <div className="inline-flex items-center gap-1.5 text-xs text-muted">
+                <span className="size-2 rounded-full bg-emerald-500" />
+                <span>Xavfsiz 256-bit shifrlangan ma&apos;lumotlar tizimi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer info */}
+        <div className="max-w-md w-full mx-auto text-center text-xs text-muted pb-4">
+          &copy; 2026 SABO Dairy. Barcha huquqlar himoyalangan.
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // AUTHENTICATED DASHBOARD VIEW
+  // -------------------------------------------------------------
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col lg:flex-row">
       {/* Sidebar Navigation */}
@@ -143,6 +333,27 @@ export default function AdminPage() {
               </span>
             </Link>
             <ThemeToggle dict={dict} />
+          </div>
+
+          {/* Logged in User info */}
+          <div className="mb-6 p-3.5 rounded-2xl bg-background border border-border flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold font-display text-sm">
+                B
+              </div>
+              <div>
+                <div className="text-xs font-bold text-foreground">Bekzodbek</div>
+                <div className="text-[11px] text-muted">Bosh Administrator</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Chiqish"
+              className="p-1.5 rounded-lg text-muted hover:text-action-red hover:bg-action-red/10 transition-colors cursor-pointer"
+            >
+              <LogOut className="size-4" />
+            </button>
           </div>
 
           {/* Nav items */}
@@ -247,13 +458,14 @@ export default function AdminPage() {
             <span>Veb-saytga o&apos;tish</span>
             <ExternalLink className="size-4 text-muted" />
           </Link>
-          <div className="text-xs text-muted px-2 flex items-center justify-between">
-            <span>SABO Admin v1.0</span>
-            <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
-              <span className="size-1.5 rounded-full bg-emerald-600 animate-pulse" />
-              Faol
-            </span>
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-action-red/30 text-action-red hover:bg-action-red/10 text-xs font-bold transition-colors cursor-pointer"
+          >
+            <LogOut className="size-3.5" />
+            <span>Tizimdan chiqish</span>
+          </button>
         </div>
       </aside>
 
