@@ -18,7 +18,7 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           className="absolute inset-0 size-full object-cover opacity-85 dark:opacity-75 transition-opacity duration-700"
         >
           <source
-            src="/video/Milk_pouring_into_glass_202608200354.mp4"
+            src="/video/sabo-milk-pour.mp4"
             type="video/mp4"
           />
         </video>
