@@ -1,12 +1,7 @@
-import { redirect } from "next/navigation";
-import { isLocale } from "@/lib/i18n/locales";
+"use client";
 
-interface LoginPageProps {
-  params: Promise<{ locale: string }>;
-}
+import AdminPage from "../admin/page";
 
-export default async function LoginPage({ params }: LoginPageProps) {
-  const { locale = "uz" } = await params;
-  const validLocale = isLocale(locale) ? locale : "uz";
-  redirect(`/${validLocale}/admin`);
+export default function LoginPage() {
+  return <AdminPage />;
 }

@@ -20,8 +20,8 @@ import type { Locale } from "@/lib/i18n/locales";
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const pathname = usePathname();
 
-  // Do not render website footer on admin dashboard
-  if (pathname?.includes("/admin")) {
+  // Do not render website footer on admin dashboard or login page
+  if (pathname?.includes("/admin") || pathname?.includes("/login")) {
     return null;
   }
 
