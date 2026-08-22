@@ -5,15 +5,6 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, "../"),
   compress: true,
   reactStrictMode: true,
-  experimental: {
-    staleTimes: {
-      dynamic: 60,
-      static: 300,
-    },
-    optimizePackageImports: [
-      "lucide-react",
-    ],
-  },
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",

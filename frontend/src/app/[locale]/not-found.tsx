@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Home, Package } from "lucide-react";
 
 import { LocalizedLink } from "@/components/layout/localized-link";
@@ -16,22 +15,18 @@ export default async function NotFound({
   const dict = getDictionary(locale);
 
   return (
-    <section className="relative flex-1 flex items-center justify-center py-24 lg:py-32 min-h-[75vh] overflow-hidden">
-      {/* Blurred Atmospheric Background Image */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <Image
-          src="/images/image-060.jpg"
-          alt="SABO Fresh Milk Background"
-          fill
-          priority
-          className="object-cover object-center scale-105 filter blur-xs opacity-40 dark:opacity-30 transition-all duration-700"
-        />
-        <div className="absolute inset-0 bg-background/80 dark:bg-black/80 backdrop-blur-xs" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60" />
-      </div>
+    <section
+      className="relative flex-1 flex items-center justify-center py-20 sm:py-28 lg:py-36 min-h-[75vh] overflow-hidden bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/images/image-060.jpg')",
+      }}
+    >
+      {/* Blurred Atmospheric Background Overlay */}
+      <div className="absolute inset-0 bg-background/85 dark:bg-black/85 backdrop-blur-md pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/60 pointer-events-none" />
 
       <Container className="relative z-10">
-        <div className="max-w-2xl mx-auto text-center flex flex-col items-center p-8 sm:p-12 rounded-3xl bg-surface/75 dark:bg-black/50 backdrop-blur-xl border border-border/80 shadow-2xl">
+        <div className="max-w-2xl mx-auto text-center flex flex-col items-center p-8 sm:p-12 rounded-3xl bg-surface/85 dark:bg-black/60 backdrop-blur-xl border border-border/80 shadow-2xl">
           {/* 404 Number */}
           <div className="mb-3">
             <div className="text-8xl sm:text-9xl lg:text-[10rem] font-black tracking-tight text-primary font-display leading-none drop-shadow-sm select-none">
@@ -53,7 +48,7 @@ export default async function NotFound({
             <LocalizedLink
               href="/"
               locale={locale}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-dark transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary-dark transition-all cursor-pointer"
             >
               <Home className="size-4" />
               <span>{dict.common.goHome || "Bosh sahifaga qaytish"}</span>
@@ -62,7 +57,7 @@ export default async function NotFound({
             <LocalizedLink
               href="/products"
               locale={locale}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-surface/90 border border-border text-foreground font-bold text-sm shadow-xs hover:border-primary hover:text-primary transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-surface/90 border border-border text-foreground font-bold text-sm shadow-xs hover:border-primary hover:text-primary transition-all cursor-pointer"
             >
               <Package className="size-4" />
               <span>{dict.nav.products || "Mahsulotlar katalogi"}</span>
