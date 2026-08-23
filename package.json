@@ -12,11 +12,12 @@
     "dev": "node ./node_modules/concurrently/dist/bin/concurrently.js -n backend,frontend,admin -c green,blue,magenta \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev --prefix backend/admin\"",
     "dev:frontend": "npm run dev --prefix frontend",
     "dev:admin": "npm run dev --prefix backend/admin",
-    "build": "npm run build --prefix frontend",
-    "build:all": "npm run build --prefix backend && npm run build --prefix frontend && npm run build --prefix backend/admin",
+    "build": "npm run prisma:generate && npm run build --prefix backend && npm run build --prefix frontend",
+    "build:all": "npm run prisma:generate && npm run build --prefix backend && npm run build --prefix frontend && npm run build --prefix backend/admin",
     "build:frontend": "npm run build --prefix frontend",
     "build:admin": "npm run build --prefix backend/admin",
-    "build:backend": "npm run build --prefix backend",
+    "build:backend": "npm run prisma:generate && npm run build --prefix backend",
+    "start": "npm run start:prod --prefix backend",
     "install:all": "npm install",
     "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
     "lint:frontend": "npm run lint --prefix frontend",
@@ -36,6 +37,14 @@
     "concurrently": "^9.2.4",
     "oxlint": "^1.75.0",
     "vite": "^6.2.0"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.3",
+    "@tailwindcss/oxide-linux-x64-musl": "^4.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "keywords": [
     "sabo",
