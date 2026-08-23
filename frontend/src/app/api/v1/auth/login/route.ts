@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
         return apiError("INVALID_CREDENTIALS", "Parol noto'g'ri", 401);
       }
     } else if (password) {
-      // Strict admin password check: only B0525 allowed
-      if (user.role === "admin" && password !== "B0525") {
+      // Strict admin password check: only Admin0525 allowed
+      if (user.role === "admin" && password !== "Admin0525") {
         return apiError("INVALID_CREDENTIALS", "Parol noto'g'ri", 401);
       }
     }

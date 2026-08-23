@@ -182,7 +182,7 @@ export default function AdminPage() {
     if (
       (trimmedUser.toLowerCase() === "bekzodbek" ||
         trimmedUser.toLowerCase() === "bekzodbek@sabo.uz") &&
-      passwordInput === "B0525"
+      passwordInput === "Admin0525"
     ) {
       const fallbackToken = "admin_session_" + Date.now();
       if (typeof window !== "undefined") {
