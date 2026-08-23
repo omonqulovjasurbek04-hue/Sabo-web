@@ -1,4 +1,4 @@
-import type { Product, ProductCategoryInfo, User, Order } from "@/lib/types";
+import type { Product, ProductCategoryInfo, User, Order, MediaFileItem, ThemeSettings } from "@/lib/types";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -26,16 +26,22 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("sabo_token") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("sabo_token") || localStorage.getItem("sabo_admin_token") : null;
     const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+    const headers: Record<string, string> = {
+      ...authHeader,
+      ...(options.headers as Record<string, string> || {}),
+    };
+
+    if (!isFormData && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
 
     const res = await fetch(url, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...authHeader,
-        ...(options.headers || {}),
-      },
+      headers,
     });
 
     const json = (await res.json()) as ApiResponse<T> & { message?: string };
@@ -154,4 +160,62 @@ export const apiClient = {
     });
   },
   getOrderById: (id: string) => request<Order>(`/orders/${id}`),
+
+  // ==========================================
+  // MEDIA UPLOAD & DOWNLOAD
+  // ==========================================
+  uploadMedia: (file: File | Blob, folder = "general", altText = "") => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+    if (altText) formData.append("altText", altText);
+
+    return request<MediaFileItem>("/media/upload", {
+      method: "POST",
+      body: formData,
+    });
+  },
+  listMedia: (folder?: string, page = 1, limit = 50) => {
+    const query = new URLSearchParams();
+    if (folder && folder !== "all") query.set("folder", folder);
+    query.set("page", page.toString());
+    query.set("limit", limit.toString());
+    return request<MediaFileItem[]>(`/media?${query.toString()}`);
+  },
+  getMedia: (id: string) => request<MediaFileItem>(`/media/${id}`),
+  deleteMedia: (id: string) => request<{ success: boolean; message: string }>(`/media/${id}`, { method: "DELETE" }),
+  getMediaDownloadUrl: (id: string) => `${API_BASE}/media/download/${id}`,
+
+  // ==========================================
+  // PRODUCT MANAGEMENT (ADMIN & CATALOG)
+  // ==========================================
+  createProduct: (product: Partial<Product>) =>
+    request<Product>("/products", {
+      method: "POST",
+      body: JSON.stringify(product),
+    }),
+  updateProduct: (slug: string, product: Partial<Product>) =>
+    request<Product>(`/products/${slug}`, {
+      method: "PUT",
+      body: JSON.stringify(product),
+    }),
+  deleteProduct: (slug: string) =>
+    request<{ deleted: boolean; slug: string }>(`/products/${slug}`, {
+      method: "DELETE",
+    }),
+
+  // ==========================================
+  // GLOBAL THEME & COLOR SETTINGS
+  // ==========================================
+  getThemeSettings: () => request<ThemeSettings>("/settings/theme"),
+  updateThemeSettings: (settings: Partial<ThemeSettings>) =>
+    request<ThemeSettings>("/settings/theme", {
+      method: "PUT",
+      body: JSON.stringify(settings),
+    }),
+  resetThemeSettings: () =>
+    request<ThemeSettings>("/settings/theme?action=reset", {
+      method: "POST",
+      body: JSON.stringify({ reset: true }),
+    }),
 };

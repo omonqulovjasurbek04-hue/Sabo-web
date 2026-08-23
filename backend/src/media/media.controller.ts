@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -21,6 +22,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { RoleType } from "@prisma/client";
+import { Response } from "express";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
@@ -67,21 +69,62 @@ export class MediaController {
     return this.mediaService.uploadFile(file, dto, userId);
   }
 
+  @Public()
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(RoleType.SUPER_ADMIN, RoleType.ADMIN, RoleType.EDITOR)
-  @ApiBearerAuth()
   @ApiOperation({ summary: "List media library files" })
   async listMedia(
     @Query("folder") folder?: string,
     @Query("page") page = "1",
-    @Query("limit") limit = "20",
+    @Query("limit") limit = "50",
   ) {
     return this.mediaService.listMedia(
       folder,
       parseInt(page, 10),
       parseInt(limit, 10),
     );
+  }
+
+  @Public()
+  @Get("download/:id")
+  @ApiOperation({ summary: "Download media file attachment by ID" })
+  async downloadMedia(
+    @Param("id") id: string,
+    @Res() res: Response,
+  ) {
+    const { stream, mimeType, fileName, size } =
+      await this.mediaService.getMediaStream(id);
+
+    res.setHeader("Content-Type", mimeType);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${encodeURIComponent(fileName)}"`,
+    );
+    if (size) {
+      res.setHeader("Content-Length", size.toString());
+    }
+
+    stream.pipe(res);
+  }
+
+  @Public()
+  @Get("file/:folder/:fileName")
+  @ApiOperation({ summary: "View or stream media file by storage key" })
+  async viewFile(
+    @Param("folder") folder: string,
+    @Param("fileName") fileName: string,
+    @Res() res: Response,
+  ) {
+    const storageKey = `${folder}/${fileName}`;
+    const { stream, mimeType, size } =
+      await this.mediaService.getMediaStream(storageKey);
+
+    res.setHeader("Content-Type", mimeType);
+    res.setHeader("Cache-Control", "public, max-age=86400, immutable");
+    if (size) {
+      res.setHeader("Content-Length", size.toString());
+    }
+
+    stream.pipe(res);
   }
 
   @Public()

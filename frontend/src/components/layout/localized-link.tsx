@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/i18n/locales";
 import { getLocalizedPath } from "@/lib/i18n/navigation";
 
@@ -12,12 +15,31 @@ export function LocalizedLink({
   href,
   locale,
   prefetch = true,
+  onMouseEnter,
+  onTouchStart,
   ...props
 }: LocalizedLinkProps) {
+  const router = useRouter();
+  const targetPath = getLocalizedPath(locale, href);
+
+  const handlePrefetch = () => {
+    if (prefetch) {
+      router.prefetch(targetPath);
+    }
+  };
+
   return (
     <Link
-      href={getLocalizedPath(locale, href)}
+      href={targetPath}
       prefetch={prefetch}
+      onMouseEnter={(e) => {
+        handlePrefetch();
+        onMouseEnter?.(e);
+      }}
+      onTouchStart={(e) => {
+        handlePrefetch();
+        onTouchStart?.(e);
+      }}
       {...props}
     />
   );

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 
-import { EmptyState } from "@/components/ui/empty-state";
+import { CertificatesGrid } from "@/components/certificates/certificates-grid";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
-import { DocumentIcon } from "@/components/ui/icons";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
 import { generatePageMetadata } from "@/lib/seo";
@@ -52,18 +51,10 @@ export default async function CertificatesPage({
       <section className="py-14 sm:py-18">
         <Container>
           <Reveal>
-            <div className="flex flex-col items-center gap-4 text-center">
-              <span
-                className="inline-flex items-center justify-center size-20 rounded-3xl bg-secondary-soft text-secondary"
-                aria-hidden="true"
-              >
-                <DocumentIcon width={40} height={40} />
-              </span>
-              <EmptyState title={dict.certificates.empty} hint={dict.certificates.emptyHint} />
-            </div>
+            <CertificatesGrid locale={locale} />
           </Reveal>
 
-          <div className="flex items-start gap-3 p-4 sm:p-5 rounded-xl bg-surface-soft text-secondary text-sm mt-8">
+          <div className="flex items-start gap-3 p-5 rounded-2xl bg-surface-soft text-secondary text-sm mt-12 border border-secondary/20 shadow-xs">
             <p>{dict.certificates.note}</p>
           </div>
         </Container>

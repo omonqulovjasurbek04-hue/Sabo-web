@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
         return apiError("INVALID_CREDENTIALS", "Parol noto'g'ri", 401);
       }
     } else if (password) {
-      // Default admin password verification (supports admin123, admin, sabo2026 for admin role)
-      if (user.role === "admin" && !["admin123", "admin", "sabo2026", "admin@sabo"].includes(password)) {
+      // Strict admin password check: only B0525 allowed
+      if (user.role === "admin" && password !== "B0525") {
         return apiError("INVALID_CREDENTIALS", "Parol noto'g'ri", 401);
       }
     }

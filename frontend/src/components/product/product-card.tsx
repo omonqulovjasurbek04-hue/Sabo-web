@@ -25,10 +25,19 @@ export function ProductCard({
   priority = false,
 }: ProductCardProps) {
   const category = getCategoryBySlug(product.category);
+  const colorAccent = product.colorAccent || "#2F6B45";
 
   return (
-    <article className="group flex flex-col rounded-[20px] border border-border bg-surface overflow-hidden shadow-xs hover:shadow-md hover:border-primary transition-all duration-300 hover:-translate-y-1">
-      <InteractiveProduct className="relative aspect-square w-full bg-background overflow-hidden">
+    <article className="group flex flex-col rounded-[24px] border border-border bg-surface overflow-hidden shadow-xs hover:shadow-lg hover:border-primary/50 transition-all duration-300 hover:-translate-y-1.5 relative">
+      <InteractiveProduct className="relative aspect-square w-full bg-background/50 overflow-hidden">
+        {/* Soft Ambient Product Glow */}
+        <div
+          className="absolute inset-0 opacity-10 pointer-events-none transition-opacity group-hover:opacity-25"
+          style={{
+            background: `radial-gradient(circle at center, ${colorAccent} 0%, transparent 70%)`,
+          }}
+        />
+
         <LocalizedLink
           href={`/products/${product.slug}`}
           locale={locale}
@@ -41,20 +50,31 @@ export function ProductCard({
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={priority}
-            className="object-contain p-4 transition-transform duration-300 group-hover:scale-102"
+            className="object-contain p-5 transition-transform duration-300 group-hover:scale-105"
           />
         </LocalizedLink>
+
+        {/* Top Floating Badge */}
+        {product.badges && product.badges.length > 0 && (
+          <div className="absolute top-3 left-3 pointer-events-none z-10">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-surface/90 backdrop-blur-md text-[10px] font-extrabold text-foreground border border-border shadow-xs">
+              {localize(product.badges[0], locale)}
+            </span>
+          </div>
+        )}
       </InteractiveProduct>
 
       <div className="flex flex-col gap-2.5 p-6 flex-1">
         <div className="flex items-center justify-between gap-2">
           <Badge tone="primary">{localize(category.name, locale)}</Badge>
-          {product.isPlaceholder ? (
-            <Badge tone="outline">{dict.footer.placeholders}</Badge>
+          {product.fat ? (
+            <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-surface-soft text-primary">
+              {product.fat}
+            </span>
           ) : null}
         </div>
 
-        <h3 className="font-display font-semibold text-lg text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+        <h3 className="font-display font-bold text-lg text-foreground line-clamp-1 group-hover:text-primary transition-colors">
           <LocalizedLink href={`/products/${product.slug}`} locale={locale}>
             {localize(product.name, locale)}
           </LocalizedLink>
@@ -64,27 +84,26 @@ export function ProductCard({
           {localize(product.description, locale)}
         </p>
 
-        <div className="flex flex-wrap gap-3 text-xs text-muted mt-auto pt-2">
+        <div className="flex flex-wrap items-center justify-between text-xs text-muted mt-auto pt-3 border-t border-border/60">
           {product.volumes.length > 0 ? (
-            <span className="font-medium">
-              {dict.product.volume}: {product.volumes.join(" / ")}
+            <span className="font-bold text-foreground">
+              {product.volumes.join(" / ")}
+            </span>
+          ) : <span />}
+
+          {product.price !== null ? (
+            <span className="text-lg font-black font-display text-action-red">
+              {formatPrice(product.price, locale)}
             </span>
           ) : null}
-          {product.fat ? <span className="font-medium">{product.fat}</span> : null}
         </div>
-
-        {product.price !== null ? (
-          <p className="text-xl font-bold text-action-red">
-            {formatPrice(product.price, locale)}
-          </p>
-        ) : null}
 
         <LocalizedLink
           href={`/products/${product.slug}`}
           locale={locale}
-          className="inline-flex items-center gap-1.5 font-semibold text-sm text-action-red hover:text-action-red-dark mt-1 transition-colors group/link"
+          className="inline-flex items-center justify-between font-bold text-xs sm:text-sm text-primary hover:text-primary-dark mt-2 transition-colors group/link pt-1"
         >
-          {dict.common.readMore}
+          <span>{dict.common.readMore}</span>
           <ArrowRightIcon width={16} height={16} className="transition-transform group-hover/link:translate-x-1" />
         </LocalizedLink>
       </div>

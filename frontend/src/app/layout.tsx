@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Plus_Jakarta_Sans, Outfit } from "next/font/google";
 
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { ThemeInit } from "@/components/layout/theme-init";
@@ -19,6 +19,20 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-jakarta",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -51,7 +65,7 @@ export default function RootLayout({
     <html
       lang="uz"
       suppressHydrationWarning
-      className={cn(playfair.variable, inter.variable, "font-sans")}
+      className={cn(playfair.variable, inter.variable, jakarta.variable, outfit.variable, "font-sans")}
     >
       <head>
         <ThemeInit />
@@ -60,7 +74,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-screen bg-background text-foreground antialiased selection:bg-primary selection:text-white"
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

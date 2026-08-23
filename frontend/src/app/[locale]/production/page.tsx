@@ -145,6 +145,35 @@ export default async function ProductionPage({ params }: ProductionPageProps) {
         </Container>
       </section>
 
+      {/* Production Video Showcase */}
+      <section className="py-14 bg-surface border-y border-border">
+        <Container>
+          <div className="max-w-4xl mx-auto text-center mb-8">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+              📹 Jonli Jarayon
+            </span>
+            <h2 className="font-display font-black text-2xl sm:text-3xl text-foreground mt-1">
+              SABO Sutini Quyish va Qadoqlash Jarayoni
+            </h2>
+            <p className="text-sm text-muted mt-2">
+              Zamonaviy Yevropa uskunalari va avtomatlashtirilgan toza liniyada tabiiy sutni tayyorlash.
+            </p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto aspect-video rounded-3xl overflow-hidden border border-border shadow-xl bg-black">
+            <video
+              src="/video/sabo-milk-pour.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </Container>
+      </section>
+
       <section className="pb-16 bg-background">
         <Container>
           <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary to-primary-dark p-8 sm:p-12 text-center text-white shadow-md">

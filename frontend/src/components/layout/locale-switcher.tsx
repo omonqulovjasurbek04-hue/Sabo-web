@@ -61,21 +61,21 @@ export function LocaleSwitcher({
 
   if (variant === "mobile") {
     return (
-      <div className="flex flex-col gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted text-center">
           {dict.nav.language}
         </span>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-1 bg-surface border border-border p-1 rounded-xl shadow-2xs">
           {locales.map((item) => (
             <button
               key={item}
               type="button"
               onClick={() => handleSelectLocale(item)}
               className={cn(
-                "inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors border cursor-pointer",
+                "px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-center",
                 item === locale
-                  ? "bg-primary text-white border-primary"
-                  : "bg-surface border-border-strong text-foreground hover:border-secondary hover:text-secondary"
+                  ? "bg-primary text-white shadow-xs"
+                  : "text-muted hover:text-foreground hover:bg-surface-elevated"
               )}
               aria-current={item === locale ? "true" : undefined}
             >

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+import { useTheme } from "@/components/layout/theme-provider";
 import { LocalizedLink } from "@/components/layout/localized-link";
 import { Container } from "@/components/ui/container";
 import {
@@ -19,11 +20,14 @@ import type { Locale } from "@/lib/i18n/locales";
 
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const pathname = usePathname();
+  const { themeSettings } = useTheme();
 
   // Do not render website footer on admin dashboard
   if (pathname?.includes("/admin")) {
     return null;
   }
+
+  const brandLogo = themeSettings?.brand?.logoUrl || "/images/logo.png";
 
   const links: Array<{ href: string; label: string }> = [
     { href: "/products", label: dict.nav.products },
@@ -49,7 +53,7 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           <div className="flex flex-col">
             <span className="inline-flex items-center">
               <Image
-                src="/images/logo.png"
+                src={brandLogo}
                 alt="SABO"
                 width={1230}
                 height={678}

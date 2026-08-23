@@ -27,14 +27,26 @@ import {
   Clock,
   Sliders,
   Server,
+  UploadCloud,
+  Download,
+  Copy,
+  FileText,
+  Image as ImageIcon,
+  Palette,
+  CheckCircle2,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { ProductEditModal } from "@/components/admin/product-edit-modal";
+import { ThemeDesignPanel } from "@/components/admin/theme-design-panel";
 import { products as initialProducts } from "@/data/products";
 import { categories } from "@/data/categories";
 import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
+import type { MediaFileItem, Product } from "@/lib/types";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -45,10 +57,67 @@ export default function AdminPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "products" | "orders" | "messages" | "categories" | "settings"
+    "dashboard" | "products" | "orders" | "messages" | "categories" | "media" | "design" | "settings"
   >("dashboard");
   const [locale] = useState<Locale>("uz");
   const dict = getDictionary(locale);
+
+  // Media Library state
+  const [mediaList, setMediaList] = useState<MediaFileItem[]>([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [mediaFolder, setMediaFolder] = useState<string>("all");
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
+  const fetchMedia = async (folder = "all") => {
+    setMediaLoading(true);
+    try {
+      const res = await apiClient.listMedia(folder, 1, 50);
+      if (res.success && res.data) {
+        setMediaList(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to load media:", err);
+    } finally {
+      setMediaLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchMedia(mediaFolder);
+    }
+  }, [isAuthenticated, mediaFolder]);
+
+  const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    setUploadMessage("");
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        await apiClient.uploadMedia(file, mediaFolder === "all" ? "general" : mediaFolder, file.name);
+      }
+      setUploadMessage(`${files.length} ta fayl muvaffaqiyatli yuklandi!`);
+      await fetchMedia(mediaFolder);
+    } catch {
+      setUploadMessage("Fayl yuklashda xatolik yuz berdi");
+    } finally {
+      setIsUploading(false);
+      setTimeout(() => setUploadMessage(""), 4000);
+      e.target.value = "";
+    }
+  };
+
+  const handleCopyUrl = (url: string) => {
+    const fullUrl = url.startsWith("http") ? url : `${window.location.origin}${url}`;
+    navigator.clipboard.writeText(fullUrl);
+    setCopiedUrl(url);
+    setTimeout(() => setCopiedUrl(null), 2500);
+  };
 
   // Check auth from localStorage on mount
   useEffect(() => {
@@ -111,22 +180,21 @@ export default function AdminPage() {
 
     // Fallback for admin credentials
     if (
-      (trimmedUser.toLowerCase() === "admin" ||
-        trimmedUser.toLowerCase() === "sabo_admin" ||
-        trimmedUser.toLowerCase() === "admin@sabo.uz") &&
-      ["admin", "admin123", "sabo2026", "admin@sabo"].includes(passwordInput)
+      (trimmedUser.toLowerCase() === "bekzodbek" ||
+        trimmedUser.toLowerCase() === "bekzodbek@sabo.uz") &&
+      passwordInput === "B0525"
     ) {
       const fallbackToken = "admin_session_" + Date.now();
       if (typeof window !== "undefined") {
         window.localStorage.setItem("sabo_token", fallbackToken);
         window.localStorage.setItem("sabo_admin_token", fallbackToken);
         window.localStorage.setItem("sabo_admin_auth", "true");
-        window.localStorage.setItem("sabo_admin_user", "Administrator");
+        window.localStorage.setItem("sabo_admin_user", "Bekzodbek");
       }
       setIsAuthenticated(true);
       setLoginError("");
     } else {
-      setLoginError("Login yoki parol noto'g'ri! Iltimos, ma'lumotlarni qayta tekshiring.");
+      setLoginError("Login yoki parol noto'g'ri! Faqat ruxsat etilgan ma'lumotlar bilan kiring.");
     }
 
     setIsSubmitting(false);
@@ -145,10 +213,68 @@ export default function AdminPage() {
     apiClient.logout().catch(() => {});
   };
 
-  // Products state
-  const [productList] = useState(initialProducts);
+  // Products state & CRUD
+  const [productList, setProductList] = useState<Product[]>(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [productActionMsg, setProductActionMsg] = useState("");
+
+  const loadProducts = async () => {
+    try {
+      const res = await apiClient.getProducts();
+      if (res.success && res.data) {
+        setProductList(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to load products from API:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadProducts();
+    }
+  }, [isAuthenticated]);
+
+  const handleCreateProduct = () => {
+    setEditingProduct(null);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditProduct = (p: Product) => {
+    setEditingProduct(p);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteProduct = async (slug: string, name: string) => {
+    if (!confirm(`"${name}" mahsulotini rostdan ham o'chirmoqchimisiz?`)) return;
+    try {
+      const res = await apiClient.deleteProduct(slug);
+      if (res.success) {
+        setProductList((prev) => prev.filter((p) => p.slug !== slug));
+        setProductActionMsg(`"${name}" muvaffaqiyatli o'chirildi!`);
+        setTimeout(() => setProductActionMsg(""), 4000);
+      }
+    } catch {
+      setProductActionMsg("Mahsulotni o'chirishda xatolik yuz berdi");
+    }
+  };
+
+  const handleProductSaved = (saved: Product) => {
+    setProductList((prev) => {
+      const idx = prev.findIndex((p) => p.slug === saved.slug || p.id === saved.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = saved;
+        return copy;
+      }
+      return [saved, ...prev];
+    });
+    setProductActionMsg(`"${saved.name.uz}" muvaffaqiyatli saqlandi!`);
+    setTimeout(() => setProductActionMsg(""), 4000);
+  };
 
   // Mock Orders state
   const [orders, setOrders] = useState([
@@ -503,6 +629,41 @@ export default function AdminPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab("media")}
+              className={`flex items-center justify-between px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
+                activeTab === "media"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                  : "text-muted hover:bg-surface-elevated hover:text-foreground"
+              }`}
+            >
+              <div className="flex items-center gap-3.5">
+                <ImageIcon className="size-4.5" />
+                <span>Media Kutubxonasi</span>
+              </div>
+              <span
+                className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                  activeTab === "media"
+                    ? "bg-white/20 text-white"
+                    : "bg-surface-elevated text-foreground"
+                }`}
+              >
+                {mediaList.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("design")}
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
+                activeTab === "design"
+                  ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                  : "text-muted hover:bg-surface-elevated hover:text-foreground"
+              }`}
+            >
+              <Palette className="size-4.5" />
+              <span>Dizayn &amp; Ranglar</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab("settings")}
               className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm transition-all text-left cursor-pointer ${
                 activeTab === "settings"
@@ -728,12 +889,21 @@ export default function AdminPage() {
               </div>
               <button
                 type="button"
+                onClick={handleCreateProduct}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:bg-primary-hover transition-all cursor-pointer shrink-0"
               >
                 <Plus className="size-4" />
                 <span>Yangi mahsulot qo&apos;shish</span>
               </button>
             </div>
+
+            {/* Notification message */}
+            {productActionMsg && (
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="size-4 shrink-0" />
+                <span>{productActionMsg}</span>
+              </div>
+            )}
 
             {/* Filter Bar */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -770,6 +940,7 @@ export default function AdminPage() {
                     <th className="py-3 px-4">Rasm</th>
                     <th className="py-3 px-4">Mahsulot nomi</th>
                     <th className="py-3 px-4">Kategoriya</th>
+                    <th className="py-3 px-4">Narxi</th>
                     <th className="py-3 px-4">Yog&apos;lilik</th>
                     <th className="py-3 px-4">Hajmlar</th>
                     <th className="py-3 px-4">Holat</th>
@@ -802,6 +973,9 @@ export default function AdminPage() {
                           {p.category}
                         </span>
                       </td>
+                      <td className="py-3 px-4 font-black font-display text-action-red">
+                        {p.price ? `${p.price.toLocaleString()} UZS` : "—"}
+                      </td>
                       <td className="py-3 px-4 font-bold text-foreground">
                         {p.fat || "—"}
                       </td>
@@ -809,19 +983,46 @@ export default function AdminPage() {
                         {p.volumes?.join(", ") || "—"}
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-500/10 text-emerald-600">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${
+                            p.availability === "in-stock"
+                              ? "bg-emerald-500/10 text-emerald-600"
+                              : "bg-amber-500/10 text-amber-600"
+                          }`}
+                        >
                           <Check className="size-3" />
-                          Mavjud
+                          {p.availability === "in-stock" ? "Mavjud" : "Tugagan"}
                         </span>
                       </td>
                       <td className="py-3 px-4 text-right">
-                        <Link
-                          href={`/products/${p.slug}`}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-border bg-background text-xs font-extrabold text-foreground hover:border-primary hover:text-primary transition-all shadow-2xs"
-                        >
-                          <Eye className="size-3.5" />
-                          <span>Ko&apos;rish</span>
-                        </Link>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleEditProduct(p)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border bg-background text-xs font-bold text-foreground hover:border-primary hover:text-primary transition-all shadow-2xs cursor-pointer"
+                            title="Tahrirlash"
+                          >
+                            <Pencil className="size-3.5" />
+                            <span>Tahrirlash</span>
+                          </button>
+
+                          <Link
+                            href={`/products/${p.slug}`}
+                            className="p-1.5 rounded-xl border border-border bg-background text-muted hover:text-primary hover:border-primary transition-all shadow-2xs"
+                            title="Saytda ko'rish"
+                          >
+                            <Eye className="size-3.5" />
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProduct(p.slug, p.name.uz)}
+                            className="p-1.5 rounded-xl border border-action-red/30 bg-action-red/10 text-action-red hover:bg-action-red hover:text-white transition-all shadow-2xs cursor-pointer"
+                            title="O'chirish"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1011,7 +1212,173 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* 6. SETTINGS & API HEALTH TAB */}
+        {/* 6. MEDIA & ASSET LIBRARY TAB */}
+        {activeTab === "media" && (
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="font-display font-black text-3xl text-foreground tracking-tight">
+                  Media va Fayllar Kutubxonasi
+                </h1>
+                <p className="text-muted text-sm mt-1 font-medium">
+                  Mahsulot rasmlari, sertifikatlar, bannerlar va 3D modellarni boshqarish.
+                </p>
+              </div>
+
+              {/* Upload Action */}
+              <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-md shadow-primary/20 hover:bg-primary-hover transition-all cursor-pointer shrink-0">
+                <UploadCloud className="size-4" />
+                <span>{isUploading ? "Yuklanmoqda..." : "Fayl yuklash"}</span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,.pdf,.glb,.gltf"
+                  onChange={handleUploadFiles}
+                  disabled={isUploading}
+                  className="hidden"
+                />
+              </label>
+            </div>
+
+            {/* Upload Notification Message */}
+            {uploadMessage && (
+              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-bold flex items-center gap-2">
+                <CheckCircle2 className="size-4 shrink-0" />
+                <span>{uploadMessage}</span>
+              </div>
+            )}
+
+            {/* Drag & Drop Upload Zone */}
+            <div className="p-8 rounded-3xl bg-surface border-2 border-dashed border-border hover:border-primary/50 text-center flex flex-col items-center justify-center gap-3 transition-colors relative group">
+              <input
+                type="file"
+                multiple
+                accept="image/*,.pdf,.glb,.gltf"
+                onChange={handleUploadFiles}
+                disabled={isUploading}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+              />
+              <div className="size-14 rounded-2xl bg-primary-soft text-primary flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                <UploadCloud className="size-7" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm sm:text-base text-foreground">
+                  Fayllarni bu yerga sudrab tashlang yoki tanlang
+                </h3>
+                <p className="text-xs text-muted mt-1">
+                  Formatlar: JPG, PNG, WEBP, SVG, PDF, GLB 3D (Maksimal hajm: 25 MB)
+                </p>
+              </div>
+            </div>
+
+            {/* Folder Filter Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              {[
+                { id: "all", label: "Barcha fayllar" },
+                { id: "products", label: "Mahsulotlar" },
+                { id: "nature", label: "Zavod va Tabiat" },
+                { id: "gallery", label: "Galereya" },
+                { id: "general", label: "Yuklanganlar" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setMediaFolder(tab.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                    mediaFolder === tab.id
+                      ? "bg-primary text-white shadow-xs"
+                      : "bg-surface border border-border text-muted hover:text-foreground"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Media Grid */}
+            {mediaLoading ? (
+              <div className="py-16 text-center text-muted text-sm font-medium">
+                Media kutubxonasi yuklanmoqda...
+              </div>
+            ) : mediaList.length === 0 ? (
+              <div className="p-12 text-center rounded-3xl bg-surface border border-border text-muted">
+                Ushbu toifada hozircha fayllar mavjud emas.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {mediaList.map((item) => {
+                  const isImage = item.mimeType.startsWith("image/");
+                  return (
+                    <div
+                      key={item.id}
+                      className="p-3 rounded-2xl bg-surface border border-border hover:border-primary/40 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between group"
+                    >
+                      <div>
+                        {/* Thumbnail View */}
+                        <div className="relative aspect-square rounded-xl overflow-hidden bg-background border border-border mb-2.5 flex items-center justify-center">
+                          {isImage ? (
+                            <Image
+                              src={item.url}
+                              alt={item.fileName}
+                              fill
+                              className="object-contain p-2 transition-transform duration-200 group-hover:scale-105"
+                            />
+                          ) : (
+                            <FileText className="size-10 text-muted" />
+                          )}
+                        </div>
+
+                        <div className="text-xs font-bold text-foreground truncate" title={item.fileName}>
+                          {item.fileName}
+                        </div>
+                        <div className="text-[10px] text-muted font-mono mt-0.5 flex items-center justify-between">
+                          <span>{Math.round(item.size / 1024)} KB</span>
+                          <span className="uppercase">{item.folder}</span>
+                        </div>
+                      </div>
+
+                      {/* Quick Actions */}
+                      <div className="pt-3 mt-3 border-t border-border flex items-center justify-between gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyUrl(item.url)}
+                          className="flex-1 py-1.5 px-2 rounded-lg bg-background border border-border hover:border-primary text-[11px] font-bold text-foreground transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                          title="URL manzilidan nusxa olish"
+                        >
+                          {copiedUrl === item.url ? (
+                            <>
+                              <Check className="size-3 text-emerald-600" />
+                              <span className="text-emerald-600">Nusxalandi</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="size-3 text-muted" />
+                              <span>Havola</span>
+                            </>
+                          )}
+                        </button>
+
+                        <a
+                          href={`/api/v1/media/download/${item.id}?file=${encodeURIComponent(item.url.replace(/^\//, ""))}`}
+                          download
+                          className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                          title="Kompyuterga yuklab olish"
+                        >
+                          <Download className="size-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 7. DESIGN, COLORS & TYPOGRAPHY TAB */}
+        {activeTab === "design" && <ThemeDesignPanel />}
+
+        {/* 8. SETTINGS & API HEALTH TAB */}
         {activeTab === "settings" && (
           <div className="flex flex-col gap-6">
             <div>
@@ -1097,6 +1464,14 @@ export default function AdminPage() {
           </div>
         )}
       </main>
+
+      {/* Product Edit / Create Modal */}
+      <ProductEditModal
+        product={editingProduct}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSaved={handleProductSaved}
+      />
     </div>
   );
 }

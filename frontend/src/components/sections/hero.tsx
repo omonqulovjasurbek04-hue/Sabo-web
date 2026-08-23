@@ -1,15 +1,22 @@
+"use client";
+
 import { LinkButton } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
+import { useTheme } from "@/components/layout/theme-provider";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 
 export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const { themeSettings } = useTheme();
+  const videoSrc = themeSettings?.brand?.heroVideoUrl || "/video/sabo-milk-pour.mp4";
+
   return (
     <section className="relative min-h-[85vh] lg:min-h-[92vh] flex items-center py-20 md:py-28 lg:py-36 bg-background overflow-hidden">
       {/* High-Clarity Continuous Looping Milk Video Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <video
+          key={videoSrc}
           autoPlay
           loop
           muted
@@ -18,7 +25,7 @@ export function Hero({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           className="absolute inset-0 size-full object-cover opacity-85 dark:opacity-75 transition-opacity duration-700"
         >
           <source
-            src="/video/sabo-milk-pour.mp4"
+            src={videoSrc}
             type="video/mp4"
           />
         </video>

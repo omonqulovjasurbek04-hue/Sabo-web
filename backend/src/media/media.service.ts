@@ -8,10 +8,13 @@ import {
 import { ConfigService } from "@nestjs/config";
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import * as fs from "fs";
 import * as path from "path";
+import { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 import { APP_CONSTANTS } from "../config/constants";
 import { ErrorCode } from "../common/enums/error-code.enum";
@@ -23,6 +26,7 @@ export class MediaService {
   private readonly s3Client: S3Client;
   private readonly bucket: string;
   private readonly publicUrl: string;
+  private readonly localStorageDir: string;
   private readonly logger = new Logger(MediaService.name);
 
   constructor(
@@ -34,6 +38,15 @@ export class MediaService {
       "s3.publicUrl",
       "http://localhost:9000/sabo-media",
     );
+    this.localStorageDir = path.resolve(process.cwd(), "uploads");
+
+    if (!fs.existsSync(this.localStorageDir)) {
+      try {
+        fs.mkdirSync(this.localStorageDir, { recursive: true });
+      } catch (err: any) {
+        this.logger.error(`Failed to create local upload directory: ${err.message}`);
+      }
+    }
 
     this.s3Client = new S3Client({
       endpoint: this.configService.get<string>("s3.endpoint"),
@@ -109,6 +122,7 @@ export class MediaService {
     const folder = (dto.folder || "general").replace(/[^a-zA-Z0-9_-]/g, "");
     const storageKey = `${folder}/${uuidv4()}-${sanitizedBase}${ext}`;
 
+    let uploadedToS3 = false;
     try {
       await this.s3Client.send(
         new PutObjectCommand({
@@ -118,13 +132,27 @@ export class MediaService {
           ContentType: file.mimetype,
         }),
       );
+      uploadedToS3 = true;
     } catch (err: any) {
-      this.logger.error(`Failed to upload to S3: ${err.message}`, err.stack);
-      // If S3 is not available in local test mode, we still create media metadata
-      this.logger.warn("Continuing with metadata creation...");
+      this.logger.warn(`S3 upload skipped/failed (${err.message}). Saving to local disk.`);
     }
 
-    const url = `${this.publicUrl}/${storageKey}`;
+    // Always keep a local copy for immediate local dev serving
+    try {
+      const targetFolder = path.join(this.localStorageDir, folder);
+      if (!fs.existsSync(targetFolder)) {
+        fs.mkdirSync(targetFolder, { recursive: true });
+      }
+      const localFilePath = path.join(this.localStorageDir, storageKey);
+      fs.writeFileSync(localFilePath, file.buffer);
+    } catch (localErr: any) {
+      this.logger.error(`Failed to save local file copy: ${localErr.message}`);
+    }
+
+    // If S3 is active, use publicUrl, otherwise use local media endpoint
+    const url = uploadedToS3
+      ? `${this.publicUrl}/${storageKey}`
+      : `/api/v1/media/file/${storageKey}`;
 
     const media = await this.prisma.media.create({
       data: {
@@ -156,6 +184,55 @@ export class MediaService {
     return media;
   }
 
+  async getMediaStream(idOrKey: string): Promise<{ stream: Readable; mimeType: string; fileName: string; size?: number }> {
+    let media = await this.prisma.media.findFirst({
+      where: {
+        OR: [{ id: idOrKey }, { storageKey: idOrKey }],
+      },
+    });
+
+    const storageKey = media ? media.storageKey : idOrKey;
+    const fileName = media ? media.originalName : path.basename(storageKey);
+    const mimeType = media ? media.mimeType : "application/octet-stream";
+
+    // 1. Try local file system
+    const localPath = path.join(this.localStorageDir, storageKey);
+    if (fs.existsSync(localPath)) {
+      const stats = fs.statSync(localPath);
+      return {
+        stream: fs.createReadStream(localPath),
+        mimeType,
+        fileName,
+        size: stats.size,
+      };
+    }
+
+    // 2. Try S3
+    try {
+      const s3Res = await this.s3Client.send(
+        new GetObjectCommand({
+          Bucket: this.bucket,
+          Key: storageKey,
+        }),
+      );
+      if (s3Res.Body) {
+        return {
+          stream: s3Res.Body as Readable,
+          mimeType: s3Res.ContentType || mimeType,
+          fileName,
+          size: s3Res.ContentLength,
+        };
+      }
+    } catch (s3Err: any) {
+      this.logger.error(`Failed to fetch from S3: ${s3Err.message}`);
+    }
+
+    throw new NotFoundException({
+      code: ErrorCode.MEDIA_NOT_FOUND,
+      message: "Media file content not found",
+    });
+  }
+
   async deleteMedia(id: string) {
     const media = await this.getMedia(id);
 
@@ -176,6 +253,16 @@ export class MediaService {
       });
     }
 
+    // Remove from local disk
+    const localPath = path.join(this.localStorageDir, media.storageKey);
+    if (fs.existsSync(localPath)) {
+      try {
+        fs.unlinkSync(localPath);
+      } catch (err: any) {
+        this.logger.warn(`Could not delete local file: ${err.message}`);
+      }
+    }
+
     try {
       await this.s3Client.send(
         new DeleteObjectCommand({
@@ -192,7 +279,7 @@ export class MediaService {
   }
 
   async listMedia(folder?: string, page = 1, limit = 20) {
-    const where = folder ? { folder } : {};
+    const where = folder && folder !== "all" ? { folder } : {};
     const [data, total] = await Promise.all([
       this.prisma.media.findMany({
         where,

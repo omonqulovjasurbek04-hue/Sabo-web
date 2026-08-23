@@ -3,8 +3,10 @@
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { useCart } from "@/components/cart/cart-provider";
+import { useTheme } from "@/components/layout/theme-provider";
 import { LocalizedLink } from "@/components/layout/localized-link";
 import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -26,6 +28,7 @@ export function Navbar({
   locale: Locale;
 }) {
   const pathname = usePathname();
+  const { themeSettings } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -137,38 +140,43 @@ export function Navbar({
     return null;
   }
 
+  const brandLogo = themeSettings?.brand?.logoUrl || "/images/logo.png";
+
   return (
-    <header
-      className={`sticky top-0 z-50 bg-surface/85 backdrop-blur-[12px] border-b transition-all duration-300 ${
+    <>
+      <header
+        className={`sticky top-0 transition-all duration-300 ${
+          menuOpen ? "z-[9999]" : "z-50"
+        } bg-surface/85 backdrop-blur-[12px] border-b ${
         isScrolled
           ? "border-border shadow-md dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
           : "border-border/40 shadow-none"
       }`}
     >
-      {/* Scroll indicator - appears when scrolled down */}
-      <div
-        className={`absolute top-0 left-0 h-[2.5px] bg-action-red transition-all duration-150 pointer-events-none z-50 ${
-          isScrolled ? "opacity-100 shadow-[0_2px_12px_rgba(199,25,37,0.6)]" : "opacity-0"
-        }`}
-        style={{ width: `${scrollProgress}%` }}
-        aria-hidden="true"
-      />
-      <Container className="flex items-center justify-between gap-6 h-[var(--header-height)]">
-        <LocalizedLink
-          href="/"
-          locale={locale}
-          className="inline-flex items-center shrink-0"
-          aria-label="SABO"
-        >
-          <Image
-            src="/images/logo.png"
-            alt="SABO"
-            width={1230}
-            height={678}
-            className="w-auto h-10 lg:h-11 object-contain"
-            priority
-          />
-        </LocalizedLink>
+        {/* Scroll indicator - appears when scrolled down */}
+        <div
+          className={`absolute top-0 left-0 h-[2.5px] bg-action-red transition-all duration-150 pointer-events-none z-50 ${
+            isScrolled ? "opacity-100 shadow-[0_2px_12px_rgba(199,25,37,0.6)]" : "opacity-0"
+          }`}
+          style={{ width: `${scrollProgress}%` }}
+          aria-hidden="true"
+        />
+        <Container className="flex items-center justify-between gap-6 h-[var(--header-height)]">
+          <LocalizedLink
+            href="/"
+            locale={locale}
+            className="inline-flex items-center shrink-0"
+            aria-label="SABO"
+          >
+            <Image
+              src={brandLogo}
+              alt="SABO"
+              width={1230}
+              height={678}
+              className="w-auto h-10 lg:h-11 object-contain"
+              priority
+            />
+          </LocalizedLink>
 
         <nav className="hidden lg:flex items-center gap-1" aria-label={dict.nav.menu}>
           {links.map((link) => (
@@ -201,7 +209,7 @@ export function Navbar({
                 onClick={() => setSearchOpen(false)}
                 aria-label={dict.nav.close}
               >
-                <CloseIcon width={20} height={20} />
+                <CloseIcon width={18} height={18} />
               </button>
             </form>
           ) : (
@@ -210,29 +218,25 @@ export function Navbar({
               className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
               onClick={() => setSearchOpen(true)}
               aria-label={dict.nav.search}
-              title={dict.nav.search}
             >
-              <SearchIcon width={20} height={20} />
+              <SearchIcon width={18} height={18} />
             </button>
           )}
 
-          <LocaleSwitcher locale={locale} dict={dict} />
-
-          <ThemeToggle dict={dict} />
+          <div className="hidden lg:flex items-center gap-2">
+            <LocaleSwitcher locale={locale} dict={dict} />
+            <ThemeToggle dict={dict} />
+          </div>
 
           <LocalizedLink
             href="/cart"
             locale={locale}
             className="relative inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
-            aria-label={dict.nav.cart}
-            title={dict.nav.cart}
+            aria-label={dict.cart.title}
           >
             <CartIcon width={20} height={20} />
             {mounted && totalQuantity > 0 ? (
-              <span
-                className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-action-red text-white text-[11px] font-bold inline-flex items-center justify-center shadow-xs"
-                aria-hidden="true"
-              >
+              <span className="absolute -top-1 -right-1 flex items-center justify-center size-5 text-xs font-bold text-white bg-action-red rounded-full">
                 {totalQuantity}
               </span>
             ) : null}
@@ -240,73 +244,93 @@ export function Navbar({
 
           <button
             type="button"
-            className="inline-flex lg:hidden items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-secondary hover:bg-secondary-soft hover:border-secondary transition-colors"
-            onClick={() => setMenuOpen(true)}
-            aria-label={dict.nav.menu}
+            className="lg:hidden inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-all cursor-pointer"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-label={menuOpen ? dict.nav.close : dict.nav.menu}
             aria-expanded={menuOpen}
             ref={menuToggleRef}
           >
-            <MenuIcon width={24} height={24} />
+            {menuOpen ? (
+              <CloseIcon width={22} height={22} className="text-action-red" />
+            ) : (
+              <MenuIcon width={24} height={24} />
+            )}
           </button>
         </div>
       </Container>
+    </header>
 
-      {menuOpen ? (
-        <div className="fixed inset-0 z-100" role="dialog" aria-modal="true" aria-label={dict.nav.menu}>
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/50 backdrop-blur-xs cursor-pointer w-full h-full border-none"
-            onClick={() => setMenuOpen(false)}
-            aria-label={dict.nav.close}
-          />
+    {/* Mobile Navigation Drawer rendered via React Portal directly into document.body */}
+    {mounted && menuOpen && typeof document !== "undefined"
+      ? createPortal(
           <div
-            className="absolute top-0 right-0 h-full w-[min(360px,85vw)] bg-surface shadow-2xl flex flex-col overflow-y-auto border-l border-border transition-transform"
-            ref={drawerPanelRef}
+            className="fixed inset-0 z-[999999]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={dict.nav.menu}
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-              <Image
-                src="/images/logo.png"
-                alt="SABO"
-                width={1230}
-                height={678}
-                className="w-auto h-9 object-contain"
-              />
-              <button
-                type="button"
-                className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-secondary hover:bg-secondary-soft hover:border-secondary transition-colors"
-                onClick={() => setMenuOpen(false)}
-                aria-label={dict.nav.close}
-              >
-                <CloseIcon width={24} height={24} />
-              </button>
-            </div>
+            {/* Backdrop overlay */}
+            <button
+              type="button"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm cursor-pointer w-full h-full border-none z-[999999]"
+              onClick={() => setMenuOpen(false)}
+              aria-label={dict.nav.close}
+            />
 
-            <nav className="flex flex-col p-3 flex-1" aria-label={dict.nav.menu}>
-              {[{ href: "/", label: dict.nav.home }, ...links].map((link) => (
-                <LocalizedLink
-                  key={link.href}
-                  href={link.href}
-                  locale={locale}
-                  className="px-4 py-3.5 rounded-lg text-base font-medium text-foreground hover:bg-secondary-soft hover:text-secondary transition-colors"
+            {/* Slide-out Drawer Panel */}
+            <div
+              className="fixed top-0 right-0 h-full w-[min(360px,85vw)] bg-surface shadow-2xl flex flex-col overflow-y-auto border-l border-border transition-transform z-[1000000]"
+              ref={drawerPanelRef}
+            >
+              <div className="flex items-center justify-between h-[var(--header-height)] px-6 max-sm:px-4 border-b border-border shrink-0 bg-surface">
+                <Image
+                  src={brandLogo}
+                  alt="SABO"
+                  width={1230}
+                  height={678}
+                  className="w-auto h-10 lg:h-11 object-contain"
+                />
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:bg-action-red/10 hover:border-action-red transition-colors cursor-pointer"
                   onClick={() => setMenuOpen(false)}
+                  aria-label={dict.nav.close}
                 >
-                  {link.label}
-                </LocalizedLink>
-              ))}
-            </nav>
+                  <CloseIcon width={22} height={22} />
+                </button>
+              </div>
 
-            <div className="flex flex-col gap-5 p-6 border-t border-border bg-surface-soft/40">
-              <LocaleSwitcher locale={locale} dict={dict} variant="mobile" />
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted">
-                  {dict.nav.theme}
-                </span>
-                <ThemeToggle dict={dict} />
+              <nav className="flex flex-col p-3 flex-1 bg-surface" aria-label={dict.nav.menu}>
+                {[{ href: "/", label: dict.nav.home }, ...links].map((link) => (
+                  <LocalizedLink
+                    key={link.href}
+                    href={link.href}
+                    locale={locale}
+                    className="px-4 py-3.5 rounded-lg text-base font-bold text-foreground hover:bg-primary-soft hover:text-primary transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </LocalizedLink>
+                ))}
+              </nav>
+
+              <div className="flex items-center justify-between gap-4 p-5 sm:p-6 border-t border-border bg-surface-soft/40">
+                {/* Left: Language Selection */}
+                <LocaleSwitcher locale={locale} dict={dict} variant="mobile" />
+
+                {/* Right: Theme Toggle */}
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted text-center">
+                    {dict.nav.theme}
+                  </span>
+                  <ThemeToggle dict={dict} />
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      ) : null}
-    </header>
+          </div>,
+          document.body
+        )
+      : null}
+    </>
   );
 }

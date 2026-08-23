@@ -113,6 +113,82 @@
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
+/* ============ Dynamic Color Palettes ============ */
+[data-palette="emerald"] {
+  --color-primary: #15803d;
+  --color-primary-dark: #166534;
+  --color-primary-soft: #DCFCE7;
+  --color-accent: #047857;
+  --color-accent-soft: #D1FAE5;
+}
+
+[data-palette="sky"] {
+  --color-primary: #0284C7;
+  --color-primary-dark: #0369A1;
+  --color-primary-soft: #E0F2FE;
+  --color-accent: #0EA5E9;
+  --color-accent-soft: #BAE6FD;
+}
+
+[data-palette="berry"] {
+  --color-primary: #BE123C;
+  --color-primary-dark: #9F1239;
+  --color-primary-soft: #FFE4E6;
+  --color-accent: #E11D48;
+  --color-accent-soft: #FECDD3;
+}
+
+[data-palette="amber"] {
+  --color-primary: #B45309;
+  --color-primary-dark: #92400E;
+  --color-primary-soft: #FEF3C7;
+  --color-accent: #D97706;
+  --color-accent-soft: #FDE68A;
+}
+
+/* Dark mode palettes */
+[data-theme="dark"][data-palette="emerald"] {
+  --color-primary: #4ADE80;
+  --color-primary-dark: #22C55E;
+  --color-primary-soft: #052E16;
+}
+
+[data-theme="dark"][data-palette="sky"] {
+  --color-primary: #38BDF8;
+  --color-primary-dark: #0EA5E9;
+  --color-primary-soft: #082F49;
+}
+
+[data-theme="dark"][data-palette="berry"] {
+  --color-primary: #FB7185;
+  --color-primary-dark: #F43F5E;
+  --color-primary-soft: #4C0519;
+}
+
+[data-theme="dark"][data-palette="amber"] {
+  --color-primary: #FBBF24;
+  --color-primary-dark: #F59E0B;
+  --color-primary-soft: #451A03;
+}
+
+/* ============ Dynamic Fonts ============ */
+[data-font="jakarta"] {
+  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-font="outfit"] {
+  --font-sans: var(--font-outfit), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-outfit), Georgia, serif;
+}
+
+[data-font="inter"] {
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+[data-font="playfair"] {
+  --font-display: var(--font-playfair), Georgia, serif;
+}
+
 /* ============ Base Layer ============ */
 @layer base {
   * {

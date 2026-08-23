@@ -21,9 +21,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     );
     try {
       this.client = new Redis(redisUrl, {
-        maxRetriesPerRequest: 3,
-        enableReadyCheck: true,
+        maxRetriesPerRequest: 1,
+        enableReadyCheck: false,
         lazyConnect: true,
+        retryStrategy: () => null, // Do not spam reconnect if redis is offline
+      });
+
+      this.client.on("error", () => {
+        // Silently handle error event to prevent Unhandled error event crash
       });
 
       this.client
@@ -31,9 +36,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         .then(() => {
           this.logger.log("✅ Redis connected successfully");
         })
-        .catch((err) => {
+        .catch(() => {
           this.logger.warn(
-            `⚠️ Redis connection failed: ${err.message}. Running in fallback mode.`,
+            `⚠️ Redis not available at ${redisUrl}. Running in in-memory fallback mode.`,
           );
         });
     } catch (e: any) {
