@@ -5,12 +5,13 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package manifests
+# Copy package manifests (including root package-lock.json for workspace)
 COPY package*.json ./
+COPY ../package-lock.json ./
 COPY prisma ./prisma/
 
-# Install all dependencies (including dev)
-RUN npm ci
+# Install all dependencies (including dev) for backend workspace
+RUN npm ci --workspace=backend --include-workspace-root
 
 # Copy source code
 COPY tsconfig*.json nest-cli.json ./
@@ -35,6 +36,7 @@ RUN apk add --no-cache openssl curl
 
 # Copy production artifacts
 COPY package*.json ./
+COPY ../package-lock.json ./
 COPY prisma ./prisma/
 COPY docker-entrypoint.sh ./
 COPY --from=builder /app/node_modules ./node_modules
