@@ -1,12 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
   "cleanUrls": true,
-  "functions": {
-    "src/app/api/**/*": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/video/(.*)",

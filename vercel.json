@@ -1,15 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "npm run build:frontend",
-  "installCommand": "npm install",
-  "outputDirectory": "frontend/.next",
   "cleanUrls": true,
-  "functions": {
-    "frontend/src/app/api/**/*": {
-      "maxDuration": 30
-    }
-  },
   "headers": [
     {
       "source": "/video/(.*)",
