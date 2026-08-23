@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+cd /app
+
 echo "🚀 Starting SABO Backend API..."
 
 # Synchronize Database Schema if DATABASE_URL is configured
