@@ -99,6 +99,8 @@ npm run dev:backend
 9. **Tarjimalar (UZ, RU, EN) & SEO** — Ko'p tillilik va qidiruv tizimlari sozlamalari
 10. **To'lovlar, Foydalanuvchilar & Audit Logs** — Xavfsizlik va tranzaksiyalar monitoringi
 
+
+
 ---
 
 ## 🌐 Serverga yuklash (Vercel & Production)
