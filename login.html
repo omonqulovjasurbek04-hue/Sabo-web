@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <!-- 
+      File: login.html
+      Description: SABO Tizimga kirish (Login) sahifasi.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABO - Tizimga kirish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen justify-between">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-xl shadow">S</div>
+                <span class="text-xl font-extrabold text-slate-900">SABO</span>
+            </a>
+            <a href="index.html" class="text-sm font-semibold text-slate-600 hover:text-brand-600"><i class="fa-solid fa-arrow-left mr-1"></i> Bosh sahifa</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
+            <div class="text-center mb-8">
+                <div class="w-12 h-12 bg-emerald-50 text-brand-600 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold mb-3"><i class="fa-solid fa-lock"></i></div>
+                <h2 class="text-2xl font-extrabold text-slate-900">Tizimga kirish</h2>
+                <p class="text-sm text-slate-500 mt-1">SABO hisobingizga kiring</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Email yoki Telefon</label>
+                    <input type="text" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20 outline-none" placeholder="example@gmail.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Parol</label>
+                    <input type="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-600 focus:ring-2 focus:ring-brand-500/20 outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-lg shadow-brand-600/30 transition-all">Kirish</button>
+            </form>
+            <p class="text-center text-sm text-slate-500 mt-6">
+                Hisobingiz yo'qmi? <a href="register.html" class="text-brand-600 font-semibold hover:underline">Ro'yxatdan o'tish</a>
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500">
+        &copy; 2026 SABO Dairy Platform. Barcha huquqlar himoyalangan.
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

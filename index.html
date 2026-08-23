@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <!-- 
+      File: index.html
+      Description: SABO Dairy platformaning asosiy sahifasi (Bosh sahifa). 
+      Technologies: HTML5, Tailwind CSS, Vanilla JavaScript.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABO - Tabiiy Sut va Sut Mahsulotlari</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    S
+                </div>
+                <div>
+                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">SABO</span>
+                    <span class="block text-xs font-medium text-brand-600 tracking-wider uppercase">Tabiiy Sut Mahsulotlari</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-slate-600">
+                <a href="index.html" class="text-brand-600 font-semibold transition-colors">Bosh sahifa</a>
+                <a href="#products" class="hover:text-brand-600 transition-colors">Mahsulotlar</a>
+                <a href="dashboard.html" class="hover:text-brand-600 transition-colors">Dashboard</a>
+            </nav>
+
+            <!-- Actions & Cart -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="relative p-2.5 text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-full transition-colors">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-brand-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow">0</span>
+                </button>
+                <div class="hidden sm:flex items-center gap-3">
+                    <a href="login.html" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition-colors">Kirish</a>
+                    <a href="register.html" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-600/20 transition-all">Ro'yxatdan o'tish</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-brand-50/50 via-white to-white py-16 lg:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100 text-brand-700 text-sm font-semibold">
+                    <i class="fa-solid fa-seedling"></i> 100% Tabiiy va Toza
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    Har kuni toza va <span class="text-brand-600">tabiiy sut</span> mahsulotlari!
+                </h1>
+                <p class="text-lg text-slate-600 max-w-xl">
+                    SABO – fermadan to stolingizgacha bo'lgan yo'lda eng yuqori sifat va salomatlik kafolati. Yangi qatiq, qaymoq va pishloqlarni buyurtma qiling.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <a href="#products" class="px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-xl shadow-brand-600/30 transition-all flex items-center gap-3">
+                        <span>Katalogni ko'rish</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="profile.html" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-2xl border border-slate-200 shadow-sm transition-all flex items-center gap-3">
+                        <i class="fa-solid fa-user-circle text-brand-600 text-xl"></i>
+                        <span>Shaxsiy Kabinet</span>
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -inset-4 bg-gradient-to-tr from-brand-500/25 to-brand-300/25 rounded-3xl blur-2xl -z-10"></div>
+                <div class="bg-white p-4 rounded-3xl shadow-2xl border border-slate-100">
+                    <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=800&q=80" alt="Sabo Dairy Products" class="rounded-2xl w-full h-[380px] object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 lg:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-brand-600 font-semibold text-sm uppercase tracking-wider">Mahsulotlarimiz</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Bizning saralangan mahsulotlar</h2>
+                </div>
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
+                    <button onclick="filterProducts('all')" class="category-btn active px-4 py-2 rounded-xl text-sm font-semibold bg-brand-600 text-white shadow">Barchasi</button>
+                    <button onclick="filterProducts('sut')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Sut va Qaymoq</button>
+                    <button onclick="filterProducts('qatiq')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Qatiq va Tvorog</button>
+                    <button onclick="filterProducts('pishloq')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Pishloqlar</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="products-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dynamically injected via app.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping text-brand-600"></i> Savatcha
+                    </h3>
+                    <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+                <div class="p-6 border-t border-slate-100 bg-slate-50">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-slate-600 font-medium">Jami summa:</span>
+                        <span id="cart-total" class="text-2xl font-extrabold text-slate-900">0 so'm</span>
+                    </div>
+                    <button onclick="checkout()" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-600/30 transition-all">
+                        Buyurtma berish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2026 SABO Dairy Platform. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
