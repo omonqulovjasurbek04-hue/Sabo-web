@@ -1,167 +1,1160 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <!-- 
-      File: index.html
-      Description: SABO Dairy platformaning asosiy sahifasi (Bosh sahifa). 
-      Technologies: HTML5, Tailwind CSS, Vanilla JavaScript.
-    -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SABO - Tabiiy Sut va Sut Mahsulotlari</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SABO — Sut mahsulotlari</title>
+<meta name="description" content="SABO — sifatli sut mahsulotlari brendi. Mahsulotlar katalogi, ishlab chiqarish jarayoni va kompaniya haqida ma'lumot.">
+
+<!-- Flash oldini olish: mavzu va tilni sahifa chizilishidan OLDIN qo'llash -->
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('sabo-theme');
+    if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+      document.documentElement.classList.add('dark');
+    }
+    var l = localStorage.getItem('sabo-lang');
+    if(l){document.documentElement.lang=l;}
+  }catch(e){}
+})();
+</script>
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        bg:       'var(--bg)',
+        surface:  'var(--surface)',
+        elevated: 'var(--elevated)',
+        brand:    'var(--brand)',
+        nature:   'var(--nature)',
+        mint:     'var(--mint)',
+        skyb:     'var(--sky)',
+        softblue: 'var(--softblue)',
+        sabo:     'var(--sabo)',
+        sabodark: 'var(--sabo-dark)',
+        ink:      'var(--ink)',
+        mut:      'var(--muted)',
+        line:     'var(--line)'
+      },
+      fontFamily: {
+        display: ['"Playfair Display"','serif'],
+        body: ['Inter','ui-sans-serif','system-ui','sans-serif']
+      }
+    }
+  }
+}
+</script>
+
+<!-- SABO Natural Premium dizayn tokenlari -->
+<style>
+:root{
+  --bg:#F7F5EF; --surface:#FFFFFF; --elevated:#FFFFFF;
+  --brand:#2F6B45; --nature:#708B3E; --mint:#E7F0E5;
+  --sky:#95BFEE; --softblue:#E8F3FB;
+  --sabo:#C71925; --sabo-dark:#9F1720;
+  --ink:#24332B; --muted:#65716A; --line:#DDE4DE;
+}
+.dark{
+  --bg:#101A16; --surface:#17251F; --elevated:#203128;
+  --brand:#76A978; --nature:#8FAF58; --mint:#1C2B23;
+  --sky:#79AEDD; --softblue:#182631;
+  --sabo:#E53A43; --sabo-dark:#F0565D;
+  --ink:#F3F6F1; --muted:#AAB8AE; --line:#304139;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+.fade-in{animation:fadeIn .35s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card-hover{transition:transform .25s ease, box-shadow .25s ease}
+.card-hover:hover{transform:translateY(-4px) scale(1.02)}
+.no-scrollbar::-webkit-scrollbar{display:none}
+.no-scrollbar{scrollbar-width:none}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="frontend/public/images/logo.png">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
-    <!-- Header Navigation -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <!-- Logo -->
-            <a href="index.html" class="flex items-center gap-3 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-                    S
-                </div>
-                <div>
-                    <span class="text-2xl font-extrabold tracking-tight text-slate-900">SABO</span>
-                    <span class="block text-xs font-medium text-brand-600 tracking-wider uppercase">Tabiiy Sut Mahsulotlari</span>
-                </div>
-            </a>
+<body class="bg-bg text-ink font-body antialiased min-h-screen flex flex-col">
 
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-8 font-medium text-slate-600">
-                <a href="index.html" class="text-brand-600 font-semibold transition-colors">Bosh sahifa</a>
-                <a href="#products" class="hover:text-brand-600 transition-colors">Mahsulotlar</a>
-                <a href="dashboard.html" class="hover:text-brand-600 transition-colors">Dashboard</a>
-            </nav>
+<a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:left-2 focus:bg-surface focus:text-ink focus:px-4 focus:py-2 focus:rounded-lg focus:border focus:border-line"></a>
 
-            <!-- Actions & Cart -->
-            <div class="flex items-center gap-4">
-                <button onclick="toggleCart()" class="relative p-2.5 text-slate-600 hover:text-brand-600 hover:bg-slate-100 rounded-full transition-colors">
-                    <i class="fa-solid fa-cart-shopping text-xl"></i>
-                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-brand-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold shadow">0</span>
-                </button>
-                <div class="hidden sm:flex items-center gap-3">
-                    <a href="login.html" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition-colors">Kirish</a>
-                    <a href="register.html" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-600/20 transition-all">Ro'yxatdan o'tish</a>
-                </div>
-            </div>
+<!-- ============ HEADER ============ -->
+<header class="sticky top-0 z-50 bg-surface/95 backdrop-blur border-b border-line">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between gap-3">
+    <a href="#/" class="flex items-center gap-2.5 shrink-0">
+      <img src="frontend/public/images/logo.png" alt="SABO" class="w-10 h-10 md:w-12 md:h-12 rounded-xl object-contain bg-white p-0.5 border border-line">
+      <span class="leading-tight">
+        <span class="block font-display font-bold text-xl md:text-2xl tracking-tight text-ink">SABO</span>
+        <span id="logo-tagline" class="hidden sm:block text-[10px] md:text-xs uppercase tracking-widest text-brand font-medium"></span>
+      </span>
+    </a>
+
+    <nav id="desktop-nav" class="hidden lg:flex items-center gap-6 text-sm font-medium text-mut"></nav>
+
+    <div class="flex items-center gap-1.5 md:gap-2">
+      <select id="lang-select" aria-label="Til / Language"
+        class="hidden sm:block bg-surface border border-line rounded-lg px-2 py-2 text-sm text-ink cursor-pointer outline-none focus:border-brand">
+        <option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option>
+      </select>
+      <button id="theme-btn" aria-label="Theme" class="p-2.5 rounded-lg border border-line text-mut hover:text-brand hover:border-brand transition-colors">
+        <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      </button>
+      <a href="#/cart" aria-label="Cart" class="relative p-2.5 rounded-lg border border-line text-mut hover:text-brand hover:border-brand transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13 5.4 5M7 13l-2 5h14"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
+        <span id="cart-badge" class="hidden absolute -top-1.5 -right-1.5 bg-sabo text-white text-[11px] font-bold min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center"></span>
+      </a>
+      <button id="menu-btn" aria-label="Menu" class="lg:hidden p-2.5 rounded-lg border border-line text-mut hover:text-brand">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <!-- Mobil menyu -->
+  <div id="mobile-nav" class="hidden lg:hidden border-t border-line bg-surface px-4 py-4"></div>
+</header>
+
+<!-- ============ ASOSIY KONTENT (router bu yerga chizadi) ============ -->
+<main id="main" class="flex-1"></main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-line bg-surface mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid gap-10 md:grid-cols-3">
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <img src="frontend/public/images/logo.png" alt="SABO" class="w-9 h-9 rounded-lg object-contain bg-white p-0.5 border border-line">
+        <span class="font-display font-bold text-xl">SABO</span>
+      </div>
+      <p id="footer-desc" class="text-sm text-mut max-w-xs"></p>
+    </div>
+    <div>
+      <h3 id="footer-nav-title" class="font-semibold mb-3"></h3>
+      <nav id="footer-nav" class="grid grid-cols-2 gap-2 text-sm text-mut"></nav>
+    </div>
+    <div>
+      <h3 id="footer-contact-title" class="font-semibold mb-3"></h3>
+      <p id="footer-contact-note" class="text-sm text-mut"></p>
+    </div>
+  </div>
+  <div class="border-t border-line py-4 text-center text-xs text-mut">
+    © <span id="footer-year"></span> SABO. <span id="footer-rights"></span>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[90] hidden">
+  <div class="bg-elevated border border-line shadow-xl rounded-xl px-5 py-3 text-sm font-medium flex items-center gap-2">
+    <svg class="w-4 h-4 text-brand shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg>
+    <span id="toast-text"></span>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   SABO — Statik SPA (GitHub Pages uchun)
+   Ma'lumot manbai: frontend/src/data/*, frontend/src/locales/*
+   Backend YO'Q — hech qanday soxta "muvaffaqiyat" ko'rsatilmaydi.
+   ===================================================================== */
+
+/* ---------- 1. MA'LUMOTLAR (frontend/src/data/products.ts dan) ---------- */
+const IMG_BASE = 'frontend/public'; // GitHub Pages sub-path uchun relativ yo'l
+
+const PRODUCTS = [
+  {
+    id:'sabo-milk-1l', slug:'sabo-sut-3-2-1l',
+    name:{uz:'SABO Sut 3.2%',ru:'SABO Молоко 3.2%',en:'SABO Milk 3.2%'},
+    description:{
+      uz:"Tabiiy va toza sigir suti. Yangi sog'ilgan sutning tabiiy ta'mi va foydali moddalari to'liq saqlangan.",
+      ru:'Натуральное отборное коровье молоко. Сохранен натуральный вкус и польза свежего молока.',
+      en:'Natural premium cow milk. Preserved natural fresh taste and rich nutrients.'
+    },
+    category:'milk', image:'/images/products/Sabo_Milk.jpg',
+    volumes:['1 L','1.5 L'], fat:'3.2%', price:13000, availability:'in-stock',
+    badges:[{uz:'100% Tabiiy',ru:'100% Натуральное',en:'100% Natural'},{uz:'Eko Sifat',ru:'Эко Качество',en:'Eco Quality'}],
+    nutrition:{calories:60,protein:3.0,fat:3.2,carbohydrates:4.7,calcium:120,sugar:4.6},
+    storage:{tempMin:2,tempMax:6,
+      shelfLife:{uz:'10 kun',ru:'10 дней',en:'10 days'},
+      text:{uz:"Muzlatgichda saqlansin. Qadoq ochilgach 48 soatda iste'mol qiling.",ru:'Хранить в холодильнике. После вскрытия употребить за 48 часов.',en:'Store refrigerated. Consume within 48h after opening.'}}
+  },
+  {
+    id:'sabo-sutim-1l', slug:'sabo-sutim-1l',
+    name:{uz:'SABO Sutim 2.5%',ru:'SABO Sutim 2.5%',en:'SABO Sutim 2.5%'},
+    description:{
+      uz:"Kundalik iste'mol uchun yengil va to'yimli tabiiy sut.",
+      ru:'Легкое и питательное натуральное молоко для ежедневного употребления.',
+      en:'Light and nutritious fresh milk for daily family enjoyment.'
+    },
+    category:'milk', image:'/images/products/SaboSutim.jpg',
+    volumes:['1 L'], fat:'2.5%', price:11500, availability:'in-stock',
+    badges:[{uz:'Yengil Ta\'m',ru:'Легкий Вкус',en:'Light Taste'},{uz:'Kalsiyga Boy',ru:'Богато Кальцием',en:'Rich in Calcium'}],
+    nutrition:{calories:52,protein:2.9,fat:2.5,carbohydrates:4.7,calcium:115,sugar:4.5}
+  },
+  {
+    id:'sabo-kefir-1l', slug:'sabo-kefir-1l',
+    name:{uz:'SABO Kefir 1L',ru:'SABO Кефир 1L',en:'SABO Kefir 1L'},
+    description:{
+      uz:'Tabiiy tirik achitqi asosida tayyorlangan yumshoq va to\'yimli kefir.',
+      ru:'Нежный и полезный кефир на натуральной живой закваске.',
+      en:'Smooth and nutritious kefir made with natural live culture.'
+    },
+    category:'kefir', image:'/images/products/Sabo_Kefir.jpg',
+    volumes:['1 L'], fat:'3.2%', price:13500, availability:'in-stock',
+    badges:[{uz:'Tirik Bakteriyalar',ru:'Живые Бактерии',en:'Live Probiotics'},{uz:'Hazmga Foydali',ru:'Для Пищеварения',en:'Digestive Health'}],
+    nutrition:{calories:56,protein:3.1,fat:3.2,carbohydrates:4.0,calcium:130,sugar:3.8}
+  },
+  {
+    id:'sabo-kefir-05l', slug:'sabo-kefir-05l',
+    name:{uz:'SABO Kefir 0.5L',ru:'SABO Кефир 0.5L',en:'SABO Kefir 0.5L'},
+    description:{
+      uz:"Qulay ixcham hajmda tabiiy va sog'lom kefir.",
+      ru:'Натуральный полезный кефир в удобном компактном формате.',
+      en:'Pure healthy kefir in a convenient on-the-go bottle.'
+    },
+    category:'kefir', image:'/images/products/Sabo_Kefir_05.jpg',
+    volumes:['0.5 L'], fat:'3.2%', price:8000, availability:'in-stock',
+    badges:[{uz:'Ixcham Format',ru:'Компактный Формат',en:'On-the-go'}]
+  },
+  {
+    id:'sabo-yogurt-450g', slug:'sabo-yogurt-450g',
+    name:{uz:'SABO Yogurt',ru:'SABO Йогурт',en:'SABO Yogurt'},
+    description:{
+      uz:'Yumshoq va tabiiy yogurt, butun oila uchun foydali va lazzatli.',
+      ru:'Нежный натуральный йогурт, полезный и вкусный для всей семьи.',
+      en:'Smooth natural yogurt, healthy and delicious for the whole family.'
+    },
+    category:'yogurt', image:'/images/products/Sabo_Yogurt.jpg',
+    volumes:['450 g'], fat:'2.5%', price:14000, availability:'in-stock',
+    badges:[{uz:'Tabiiy Mevali Lazzat',ru:'Нежный Вкус',en:'Creamy Delight'},{uz:'Shakarsiz',ru:'Без Лишнего Сахара',en:'Pure Recipe'}],
+    nutrition:{calories:68,protein:3.4,fat:2.5,carbohydrates:6.2,calcium:125,sugar:5.0}
+  },
+  {
+    id:'sabo-smetana-400g', slug:'sabo-smetana-400g',
+    name:{uz:'SABO Smetana 20%',ru:'SABO Сметана 20%',en:'SABO Sour Cream 20%'},
+    description:{
+      uz:"Quyuq va mayin smetana, tabiiy qaymoqdan an'anaviy usulda tayyorlangan.",
+      ru:'Густая и нежная сметана из натуральных свежих сливок.',
+      en:'Rich and creamy smetana crafted from fresh natural cream.'
+    },
+    category:'sour-cream', image:'/images/products/Sabo_Smetana.jpg',
+    volumes:['400 g'], fat:'20%', price:17000, availability:'in-stock',
+    badges:[{uz:'Quyuq va Mayin',ru:'Густая Сметана',en:'Thick Cream'},{uz:'Traditsion Retsept',ru:'Традиционный',en:'Traditional'}],
+    nutrition:{calories:206,protein:2.5,fat:20.0,carbohydrates:3.4,calcium:90,sugar:3.2}
+  },
+  {
+    id:'sabo-qaymoq-400g', slug:'sabo-qaymoq-400g',
+    name:{uz:'SABO Qaymoq',ru:'SABO Сливки / Каймак',en:'SABO Cream / Qaymoq'},
+    description:{
+      uz:"Tabiiy sut qaymog'i — haqiqiy milliy lazzat va boy ta'm.",
+      ru:'Натуральные сливки (каймак) с традиционным богатым вкусом.',
+      en:'Pure natural cream (qaymoq) with authentic rich traditional flavor.'
+    },
+    category:'cream', image:'/images/products/Sabo_Qaymoq.jpg',
+    volumes:['400 g'], fat:'35%', price:24000, availability:'in-stock',
+    badges:[{uz:'Haqiqiy Qaymoq',ru:'Настоящий Каймак',en:'Authentic Qaymoq'},{uz:'Milliy Ta\'m',ru:'Традиция Вкуса',en:'National Taste'}],
+    nutrition:{calories:335,protein:2.2,fat:35.0,carbohydrates:2.8,calcium:80,sugar:2.6}
+  }
+];
+
+const CATEGORIES = [
+  {slug:'milk',       name:{uz:'Sut',ru:'Молоко',en:'Milk'},                     desc:{uz:'Tabiiy sigir suti',ru:'Натуральное коровье молоко',en:'Natural cow milk'}},
+  {slug:'kefir',      name:{uz:'Kefir',ru:'Кефир',en:'Kefir'},                   desc:{uz:'Toza va foydali kefir',ru:'Чистый и полезный кефир',en:'Clean and healthy kefir'}},
+  {slug:'yogurt',     name:{uz:'Yogurt',ru:'Йогурт',en:'Yogurt'},                desc:{uz:'Yumshoq va mazali yogurt',ru:'Нежный и вкусный йогурт',en:'Soft and tasty yogurt'}},
+  {slug:'sour-cream', name:{uz:'Qaymoq (smetana)',ru:'Сметана',en:'Sour cream'}, desc:{uz:'Qaymoq mahsulotlari',ru:'Сметанные продукты',en:'Sour cream products'}},
+  {slug:'cream',      name:{uz:'Qaymoq (krem)',ru:'Сливки',en:'Cream'},          desc:{uz:'Yumshoq qaymoq',ru:'Нежные сливки',en:'Smooth cream'}}
+];
+
+/* ---------- 2. TILLAR (frontend/src/locales/{uz,ru,en}.ts dan) ---------- */
+const DICTS = {
+uz:{
+  tagline:"Tabiiy Sut Mahsulotlari",
+  nav:{home:"Bosh sahifa",products:"Mahsulotlar",production:"Ishlab chiqarish",about:"Biz haqimizda",certificates:"Sertifikatlar",blog:"Blog",contact:"Aloqa"},
+  hero:{eyebrow:"SABO — Sut mahsulotlari",title:"Tabiatdan dasturxoningizgacha",
+    subtitle:"SABO sut mahsulotlari brendi — yangi, tabiiy va sifatli mahsulotlar. Katalogimizni ko'rib chiqing va sifat standartimiz bilan tanishing.",
+    ctaPrimary:"Mahsulotlarni ko'rish",ctaSecondary:"Biz haqimizda",
+    cardTag:"SABO Pure",cardTitle:"100% Tabiiy & Yangi Sut"},
+  home:{categoriesTitle:"Bizning mahsulotlarimiz",categoriesSubtitle:"Kategoriyalar bo'yicha mahsulotlarimiz bilan tanishing",
+    featuredTitle:"Mashhur mahsulotlar",featuredSubtitle:"Eng ko'p tanlangan mahsulotlarimiz",viewAll:"Barchasini ko'rish",
+    trustTitle:"Nega SABO?",trustSubtitle:"Bizning tamoyillarimiz har bir mahsulotda",
+    trustItems:[{title:"Sifatga e'tibor",text:"Har bir jarayon sifat nazoratidan o'tadi."},{title:"Tabiiylik",text:"Mahsulotlarimiz tabiiy xomashyodan tayyorlanadi."},{title:"Ishonch",text:"Brend sifatiga ishongan iste'molchilar tanlovi."}],
+    ctaTitle:"Mahsulotlarimiz bilan tanishing",ctaText:"Katalogimizda barcha mahsulotlarimiz haqida batafsil ma'lumot mavjud.",ctaButton:"Mahsulotlar katalogi"},
+  common:{all:"Barchasi",back:"Orqaga",notFoundTitle:"Sahifa topilmadi",notFoundText:"Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan.",goHome:"Bosh sahifaga qaytish"},
+  productsPage:{title:"Mahsulotlar",subtitle:"Barcha mahsulotlarimizni kategoriyalar bo'yicha ko'ring",searchPlaceholder:"Mahsulotlarni qidirish...",
+    noResults:"Mahsulot topilmadi.",noResultsHint:"Qidiruv so'zini o'zgartirib yoki filtrni almashtirib ko'ring.",count:"ta mahsulot",
+    filters:{all:"Barchasi",milk:"Sut",kefir:"Kefir",yogurt:"Yogurt","sour-cream":"Smetana",cream:"Qaymoq"}},
+  product:{volume:"Hajmi",fat:"Yog'liligi",description:"Tavsif",nutrition:"Ozuqaviy qiymati",storage:"Saqlash",
+    inStock:"Mavjud",related:"O'xshash mahsulotlar",addToCart:"Savatga qo'shish",brand:"Brend",
+    nl:{calories:"Kaloriya",protein:"Protein",fat:"Yog'",carbohydrates:"Uglevodlar",calcium:"Kalsiy",sugar:"Shakar"}},
+  production:{title:"Ishlab chiqarish",subtitle:"Xomashyodan tayyor mahsulotgacha bo'lgan yo'l",
+    hero:"SABO ishlab chiqarish jarayoni sifat nazoratiga asoslangan. Har bir bosqich ehtiyotkorlik bilan nazorat qilinadi.",
+    processTitle:"Ishlab chiqarish jarayoni",processSubtitle:"Jarayonning asosiy bosqichlari",
+    steps:[{title:"Xomashyo",text:"Yuqori sifatli sut xomashyosi qabul qilinadi."},{title:"Sifat nazorati",text:"Kiruvchi xomashyo laboratoriya sinovlaridan o'tadi."},{title:"Qayta ishlash",text:"Mahsulot zamonaviy uskunalarda tayyorlanadi."},{title:"O'ramlash",text:"Tayyor mahsulot toza va xavfsiz o'ramga joylanadi."},{title:"Yakuniy nazorat",text:"Mahsulot sotuvga chiqishdan oldin yakuniy tekshiruvdan o'tadi."}],
+    cards:[{title:"Sifat nazorati",text:"Sifat nazorati ishlab chiqarishning har bir bosqichida amalga oshiriladi."},{title:"Laboratoriya",text:"Mahsulot sifatini tasdiqlash uchun laboratoriya sinovlari o'tkaziladi."},{title:"O'ramlash",text:"Mahsulot xavfsizligi va yangiligini ta'minlaydigan o'ramlardan foydalaniladi."}],
+    note:"Yuqoridagi jarayon tasvirlari umumiy bo'lib, kompaniya tomonidan tasdiqlangan aniq ma'lumotlar bilan to'ldiriladi."},
+  about:{title:"Biz haqimizda",subtitle:"SABO brendi haqida",storyTitle:"Hikoyamiz",
+    storyText:"SABO — sut mahsulotlari ishlab chiqarishga mas'uliyat bilan yondashadigan brend. Kompaniya tarixi haqidagi batafsil ma'lumot tasdiqlangan manbalar asosida to'ldiriladi.",
+    missionTitle:"Missiyamiz",missionText:"Iste'molchilarga sifatli, toza va tabiiy sut mahsulotlarini taqdim etish.",
+    valuesTitle:"Qadriyatlarimiz",
+    values:[{title:"Sifat",text:"Mahsulot sifatini har qadamda nazorat qilamiz."},{title:"Ishonchlilik",text:"Iste'molchilar oldidagi majburiyatlarimizga sodiqmiz."},{title:"Rivojlanish",text:"Texnologiya va jarayonlarni doimiy ravishda takomillashtiramiz."}],
+    note:"Kompaniya haqidagi faktik ma'lumotlar tasdiqlangan manba mavjud bo'lganda to'ldiriladi."},
+  certificates:{title:"Sertifikatlar",subtitle:"Mahsulotlarimiz sifatini tasdiqlovchi hujjatlar",
+    empty:"Sertifikatlar hozircha mavjud emas",emptyHint:"Rasmiy hujjatlar tasdiqlangandan so'ng bu yerda ko'rsatiladi."},
+  blog:{title:"Blog",subtitle:"SABO bilan yangi, tabiiy va sifatli mahsulotlar haqida ma'lumotlar",comingSoon:"Blog bo'limi tez orada ishga tushadi"},
+  contact:{title:"Aloqa",subtitle:"Biz bilan bog'laning",infoTitle:"Aloqa ma'lumotlari",
+    infoNote:"Telefon, manzil va email ma'lumotlari kompaniya tomonidan tasdiqlangandan so'ng to'ldiriladi.",
+    formTitle:"Xabar yuborish",name:"Ism",namePlaceholder:"Ismingiz",phoneLabel:"Telefon",phonePlaceholder:"+998 __ ___ __ __",
+    emailLabel:"Email",emailPlaceholder:"email@example.com",message:"Xabar",messagePlaceholder:"Xabaringizni yozing...",submit:"Yuborish",
+    validation:{required:"Bu maydon to'ldirilishi shart",phone:"Telefon raqam noto'g'ri kiritildi",email:"Email manzil noto'g'ri kiritildi"},
+    formNote:"Xabar yuborish funksiyasi keyingi bosqichda backend va aloqa tizimiga ulanadi. Hozircha forma faqat ma'lumotni tekshiradi."},
+  cart:{title:"Savatcha",empty:"Savatcha bo'sh",emptyHint:"Katalogdan mahsulot tanlab, savatga qo'shing.",
+    addToCart:"Savatga qo'shish",quantity:"Soni",remove:"O'chirish",subtotal:"Jami",total:"Umumiy",
+    checkout:"Rasmiylashtirish",continueShopping:"Xaridni davom ettirish",items:"ta mahsulot",currency:"so'm"},
+  checkout:{title:"Rasmiylashtirish",subtitle:"Buyurtma ma'lumotlarini kiriting",customer:"Buyurtmachi ma'lumoti",
+    address:"Yetkazib berish manzili",addressPlaceholder:"Shahar, ko'cha, uy...",orderSummary:"Buyurtma tarkibi",
+    paymentNote:"To'lov tizimi (Click/Payme) backend va rasmiy API mavjud bo'lganda ulanadi. Hozircha buyurtma qayta ishlanmaydi.",
+    submitOrder:"Buyurtma berish",notSent:"Buyurtma yuborish hali backendga ulanmagan. Ma'lumotlar tekshirildi, lekin saqlanmadi.",
+    backToCart:"Savatchaga qaytish"},
+  footer:{description:"SABO — sifatli sut mahsulotlari ishlab chiqaruvchi brend.",navTitle:"Bo'limlar",contactTitle:"Aloqa",
+    rights:"Barcha huquqlar himoyalangan."}
+},
+ru:{
+  tagline:"Натуральные молочные продукты",
+  nav:{home:"Главная",products:"Продукция",production:"Производство",about:"О нас",certificates:"Сертификаты",blog:"Блог",contact:"Контакты"},
+  hero:{eyebrow:"SABO — Молочные продукты",title:"От природы к вашему столу",
+    subtitle:"SABO — бренд свежих, натуральных и качественных молочных продуктов. Ознакомьтесь с нашим каталогом и нашими стандартами качества.",
+    ctaPrimary:"Смотреть продукцию",ctaSecondary:"О нас",
+    cardTag:"SABO Pure",cardTitle:"100% Натуральное и свежее молоко"},
+  home:{categoriesTitle:"Наша продукция",categoriesSubtitle:"Познакомьтесь с нашей продукцией по категориям",
+    featuredTitle:"Популярные продукты",featuredSubtitle:"Самые выбираемые продукты",viewAll:"Смотреть все",
+    trustTitle:"Почему SABO?",trustSubtitle:"Наши принципы в каждом продукте",
+    trustItems:[{title:"Внимание к качеству",text:"Каждый процесс проходит контроль качества."},{title:"Натуральность",text:"Наша продукция изготавливается из натурального сырья."},{title:"Доверие",text:"Выбор потребителей, доверяющих качеству бренда."}],
+    ctaTitle:"Познакомьтесь с нашей продукцией",ctaText:"В нашем каталоге подробная информация обо всех продуктах.",ctaButton:"Каталог продукции"},
+  common:{all:"Все",back:"Назад",notFoundTitle:"Страница не найдена",notFoundText:"Страница, которую вы ищете, не существует или была перемещена.",goHome:"Вернуться на главную"},
+  productsPage:{title:"Продукция",subtitle:"Смотрите всю нашу продукцию по категориям",searchPlaceholder:"Поиск продукции...",
+    noResults:"Продукция не найдена.",noResultsHint:"Попробуйте изменить запрос или фильтр.",count:"продуктов",
+    filters:{all:"Все",milk:"Молоко",kefir:"Кефир",yogurt:"Йогурт","sour-cream":"Сметана",cream:"Сливки"}},
+  product:{volume:"Объём",fat:"Жирность",description:"Описание",nutrition:"Пищевая ценность",storage:"Хранение",
+    inStock:"В наличии",related:"Похожие продукты",addToCart:"В корзину",brand:"Бренд",
+    nl:{calories:"Калорийность",protein:"Белки",fat:"Жиры",carbohydrates:"Углеводы",calcium:"Кальций",sugar:"Сахар"}},
+  production:{title:"Производство",subtitle:"Путь от сырья до готового продукта",
+    hero:"Производственный процесс SABO основан на контроле качества. Каждый этап тщательно контролируется.",
+    processTitle:"Производственный процесс",processSubtitle:"Основные этапы процесса",
+    steps:[{title:"Сырьё",text:"Принимается качественное молочное сырьё."},{title:"Контроль качества",text:"Входящее сырьё проходит лабораторные испытания."},{title:"Переработка",text:"Продукт изготавливается на современном оборудовании."},{title:"Упаковка",text:"Готовый продукт помещается в чистую и безопасную упаковку."},{title:"Финальный контроль",text:"Продукт проходит финальную проверку перед продажей."}],
+    cards:[{title:"Контроль качества",text:"Контроль качества осуществляется на каждом этапе производства."},{title:"Лаборатория",text:"Для подтверждения качества продукции проводятся лабораторные испытания."},{title:"Упаковка",text:"Используется упаковка, обеспечивающая безопасность и свежесть продукта."}],
+    note:"Описание процесса является общим и будет дополнено точными данными, подтверждёнными компанией."},
+  about:{title:"О нас",subtitle:"О бренде SABO",storyTitle:"Наша история",
+    storyText:"SABO — бренд, ответственно подходящий к производству молочной продукции. Подробная история компании будет дополнена на основе подтверждённых источников.",
+    missionTitle:"Наша миссия",missionText:"Предоставлять потребителям качественные, чистые и натуральные молочные продукты.",
+    valuesTitle:"Наши ценности",
+    values:[{title:"Качество",text:"Мы контролируем качество продукции на каждом шагу."},{title:"Надёжность",text:"Мы верны своим обязательствам перед потребителями."},{title:"Развитие",text:"Мы постоянно совершенствуем технологии и процессы."}],
+    note:"Фактические данные о компании будут добавлены при наличии подтверждённых источников."},
+  certificates:{title:"Сертификаты",subtitle:"Документы, подтверждающие качество нашей продукции",
+    empty:"Сертификаты пока отсутствуют",emptyHint:"После подтверждения официальных документов они будут показаны здесь."},
+  blog:{title:"Блог",subtitle:"Подробная информация о новых и качественных продуктах SABO",comingSoon:"Раздел блога скоро запустится"},
+  contact:{title:"Контакты",subtitle:"Свяжитесь с нами",infoTitle:"Контактная информация",
+    infoNote:"Телефон, адрес и email будут заполнены после подтверждения компанией.",
+    formTitle:"Отправить сообщение",name:"Имя",namePlaceholder:"Ваше имя",phoneLabel:"Телефон",phonePlaceholder:"+998 __ ___ __ __",
+    emailLabel:"Email",emailPlaceholder:"email@example.com",message:"Сообщение",messagePlaceholder:"Напишите ваше сообщение...",submit:"Отправить",
+    validation:{required:"Это поле обязательно для заполнения",phone:"Номер телефона введён неверно",email:"Адрес email введён неверно"},
+    formNote:"Функция отправки сообщений будет подключена через backend позже. Сейчас форма только проверяет данные."},
+  cart:{title:"Корзина",empty:"Корзина пуста",emptyHint:"Выберите продукт в каталоге и добавьте в корзину.",
+    addToCart:"В корзину",quantity:"Количество",remove:"Удалить",subtotal:"Итого",total:"Всего",
+    checkout:"Оформление",continueShopping:"Продолжить покупки",items:"продуктов",currency:"сум"},
+  checkout:{title:"Оформление заказа",subtitle:"Введите данные заказа",customer:"Данные покупателя",
+    address:"Адрес доставки",addressPlaceholder:"Город, улица, дом...",orderSummary:"Состав заказа",
+    paymentNote:"Платёжная система (Click/Payme) будет подключена при наличии backend и официального API. Сейчас заказ не обрабатывается.",
+    submitOrder:"Оформить заказ",notSent:"Отправка заказа ещё не подключена к backend. Данные проверены, но не сохранены.",
+    backToCart:"Вернуться в корзину"},
+  footer:{description:"SABO — бренд качественных молочных продуктов.",navTitle:"Разделы",contactTitle:"Контакты",
+    rights:"Все права защищены."}
+},
+en:{
+  tagline:"Natural Dairy Products",
+  nav:{home:"Home",products:"Products",production:"Production",about:"About us",certificates:"Certificates",blog:"Blog",contact:"Contact"},
+  hero:{eyebrow:"SABO — Dairy Products",title:"From nature to your table",
+    subtitle:"SABO — a brand of fresh, natural and quality dairy products. Explore our catalog and learn about our quality standards.",
+    ctaPrimary:"View products",ctaSecondary:"About us",
+    cardTag:"SABO Pure",cardTitle:"100% Natural & Fresh Milk"},
+  home:{categoriesTitle:"Our products",categoriesSubtitle:"Explore our products by category",
+    featuredTitle:"Featured products",featuredSubtitle:"Our most chosen products",viewAll:"View all",
+    trustTitle:"Why SABO?",trustSubtitle:"Our principles in every product",
+    trustItems:[{title:"Quality focus",text:"Every process goes through quality control."},{title:"Naturalness",text:"Our products are made from natural raw materials."},{title:"Trust",text:"The choice of consumers who trust brand quality."}],
+    ctaTitle:"Explore our products",ctaText:"Our catalog contains detailed information about all products.",ctaButton:"Product catalog"},
+  common:{all:"All",back:"Back",notFoundTitle:"Page not found",notFoundText:"The page you are looking for does not exist or has been moved.",goHome:"Back to home"},
+  productsPage:{title:"Products",subtitle:"Browse all products by category",searchPlaceholder:"Search products...",
+    noResults:"No products found.",noResultsHint:"Try changing your search term or filter.",count:"products",
+    filters:{all:"All",milk:"Milk",kefir:"Kefir",yogurt:"Yogurt","sour-cream":"Sour cream",cream:"Cream"}},
+  product:{volume:"Volume",fat:"Fat",description:"Description",nutrition:"Nutrition facts",storage:"Storage",
+    inStock:"In stock",related:"Related products",addToCart:"Add to cart",brand:"Brand",
+    nl:{calories:"Calories",protein:"Protein",fat:"Fat",carbohydrates:"Carbohydrates",calcium:"Calcium",sugar:"Sugar"}},
+  production:{title:"Production",subtitle:"The path from raw material to finished product",
+    hero:"The SABO production process is based on quality control. Every stage is carefully monitored.",
+    processTitle:"Production process",processSubtitle:"Key stages of the process",
+    steps:[{title:"Raw material",text:"High-quality dairy raw material is received."},{title:"Quality control",text:"Incoming raw material passes laboratory tests."},{title:"Processing",text:"The product is made on modern equipment."},{title:"Packaging",text:"The finished product is placed in clean and safe packaging."},{title:"Final control",text:"The product passes final inspection before sale."}],
+    cards:[{title:"Quality control",text:"Quality control is carried out at every stage of production."},{title:"Laboratory",text:"Laboratory tests are performed to confirm product quality."},{title:"Packaging",text:"Packaging that ensures the safety and freshness of the product is used."}],
+    note:"The process description is general and will be completed with accurate data confirmed by the company."},
+  about:{title:"About us",subtitle:"About the SABO brand",storyTitle:"Our story",
+    storyText:"SABO — a brand with a responsible approach to dairy production. Detailed company history will be added based on verified sources.",
+    missionTitle:"Our mission",missionText:"To provide consumers with quality, clean and natural dairy products.",
+    valuesTitle:"Our values",
+    values:[{title:"Quality",text:"We control product quality at every step."},{title:"Reliability",text:"We stay true to our commitments to consumers."},{title:"Development",text:"We constantly improve technologies and processes."}],
+    note:"Factual company data will be added when a verified source is available."},
+  certificates:{title:"Certificates",subtitle:"Documents confirming the quality of our products",
+    empty:"No certificates available yet",emptyHint:"Once official documents are confirmed, they will be shown here."},
+  blog:{title:"Blog",subtitle:"Detailed information about new and quality SABO products",comingSoon:"The blog section will launch soon"},
+  contact:{title:"Contact",subtitle:"Get in touch with us",infoTitle:"Contact information",
+    infoNote:"Phone, address and email will be filled after confirmation by the company.",
+    formTitle:"Send a message",name:"Name",namePlaceholder:"Your name",phoneLabel:"Phone",phonePlaceholder:"+998 __ ___ __ __",
+    emailLabel:"Email",emailPlaceholder:"email@example.com",message:"Message",messagePlaceholder:"Write your message...",submit:"Send",
+    validation:{required:"This field is required",phone:"Phone number is invalid",email:"Email address is invalid"},
+    formNote:"The message sending feature will be connected via backend later. Currently the form only validates data."},
+  cart:{title:"Cart",empty:"Cart is empty",emptyHint:"Choose a product from the catalog and add it to the cart.",
+    addToCart:"Add to cart",quantity:"Quantity",remove:"Remove",subtotal:"Subtotal",total:"Total",
+    checkout:"Checkout",continueShopping:"Continue shopping",items:"items",currency:"UZS"},
+  checkout:{title:"Checkout",subtitle:"Enter your order details",customer:"Customer information",
+    address:"Delivery address",addressPlaceholder:"City, street, house...",orderSummary:"Order summary",
+    paymentNote:"Payment (Click/Payme) will be connected once backend and official API exist. Orders are not processed yet.",
+    submitOrder:"Place order",notSent:"Order submission is not connected to a backend yet. Data was validated but not saved.",
+    backToCart:"Back to cart"},
+  footer:{description:"SABO — a brand of quality dairy products.",navTitle:"Sections",contactTitle:"Contact",
+    rights:"All rights reserved."}
+}
+};
+
+/* ---------- 3. HOLAT (state) ---------- */
+let LANG = localStorage.getItem('sabo-lang') || 'uz';
+let CART = JSON.parse(localStorage.getItem('sabo-cart') || '{}');
+let FILTER = {cat:'all', q:''};
+
+const t = () => DICTS[LANG];
+const $  = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const img = p => IMG_BASE + p.image;
+const price = n => new Intl.NumberFormat('ru-RU').format(n);
+const money = n => price(n) + ' ' + t().cart.currency;
+
+function saveCart(){ localStorage.setItem('sabo-cart', JSON.stringify(CART)); updateBadge(); }
+function cartCount(){ return Object.values(CART).reduce((a,b)=>a+b,0); }
+function updateBadge(){
+  const n = cartCount(), b = $('#cart-badge');
+  if(!n){ b.classList.add('hidden'); return; }
+  b.textContent = n > 99 ? '99+' : n;
+  b.classList.remove('hidden');
+}
+function toast(msg){
+  $('#toast-text').textContent = msg;
+  const el = $('#toast');
+  el.classList.remove('hidden');
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>el.classList.add('hidden'), 2200);
+}
+
+/* ---------- 4. UI KOMPONENTLAR ---------- */
+function productCard(p){
+  return `
+  <a href="#/products/${p.slug}" class="card-hover group bg-surface border border-line rounded-2xl overflow-hidden flex flex-col">
+    <div class="aspect-square overflow-hidden bg-white">
+      <img src="${img(p)}" alt="${esc(p.name[LANG])}" loading="lazy"
+           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+    </div>
+    <div class="p-4 flex flex-col gap-2 flex-1">
+      <div class="flex flex-wrap gap-1.5">
+        ${(p.badges||[]).slice(0,1).map(b=>`<span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-mint text-brand">${esc(b[LANG])}</span>`).join('')}
+        ${p.fat?`<span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-softblue text-brand">${esc(p.fat)}</span>`:''}
+      </div>
+      <h3 class="font-semibold leading-snug">${esc(p.name[LANG])}</h3>
+      <p class="text-xs text-mut">${esc((p.volumes||[]).join(' · '))}</p>
+      <div class="mt-auto pt-2 flex items-center justify-between">
+        <span class="font-bold text-sabo">${money(p.price)}</span>
+        <button data-add="${p.id}" aria-label="${esc(t().product.addToCart)}"
+          class="p-2 rounded-lg bg-brand text-white hover:bg-nature transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </div>
+  </a>`;
+}
+
+function sectionHead(title, subtitle, linkHref, linkLabel){
+  return `
+  <div class="flex items-end justify-between gap-4 mb-8">
+    <div>
+      <h2 class="font-display text-2xl md:text-3xl font-bold">${esc(title)}</h2>
+      ${subtitle?`<p class="text-mut mt-1 text-sm md:text-base">${esc(subtitle)}</p>`:''}
+    </div>
+    ${linkHref?`<a href="${linkHref}" class="shrink-0 text-sm font-semibold text-brand hover:underline whitespace-nowrap">${esc(linkLabel)} →</a>`:''}
+  </div>`;
+}
+
+/* ---------- 5. SAHIFALAR ---------- */
+const PAGES = {
+
+home(){
+  const d = t();
+  return `
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-mint blur-3xl opacity-70 pointer-events-none"></div>
+    <div class="absolute top-40 -left-32 w-80 h-80 rounded-full bg-softblue blur-3xl opacity-70 pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 md:py-20 grid lg:grid-cols-2 gap-10 items-center relative">
+      <div class="fade-in">
+        <span class="inline-block text-xs font-semibold tracking-widest uppercase text-brand bg-mint px-3 py-1.5 rounded-full">${esc(d.hero.eyebrow)}</span>
+        <h1 class="font-display text-4xl md:text-5xl xl:text-6xl font-bold mt-5 leading-tight">${esc(d.hero.title)}</h1>
+        <p class="text-mut mt-5 text-base md:text-lg max-w-xl leading-relaxed">${esc(d.hero.subtitle)}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#/products" class="px-6 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors shadow-lg shadow-sabo/20">${esc(d.hero.ctaPrimary)}</a>
+          <a href="#/about" class="px-6 py-3.5 rounded-xl border border-line bg-surface font-semibold hover:border-brand hover:text-brand transition-colors">${esc(d.hero.ctaSecondary)}</a>
         </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-b from-brand-50/50 via-white to-white py-16 lg:py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
-            <div class="space-y-6">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100 text-brand-700 text-sm font-semibold">
-                    <i class="fa-solid fa-seedling"></i> 100% Tabiiy va Toza
-                </div>
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                    Har kuni toza va <span class="text-brand-600">tabiiy sut</span> mahsulotlari!
-                </h1>
-                <p class="text-lg text-slate-600 max-w-xl">
-                    SABO – fermadan to stolingizgacha bo'lgan yo'lda eng yuqori sifat va salomatlik kafolati. Yangi qatiq, qaymoq va pishloqlarni buyurtma qiling.
-                </p>
-                <div class="flex flex-wrap gap-4 pt-4">
-                    <a href="#products" class="px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-xl shadow-brand-600/30 transition-all flex items-center gap-3">
-                        <span>Katalogni ko'rish</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a href="profile.html" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-2xl border border-slate-200 shadow-sm transition-all flex items-center gap-3">
-                        <i class="fa-solid fa-user-circle text-brand-600 text-xl"></i>
-                        <span>Shaxsiy Kabinet</span>
-                    </a>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="absolute -inset-4 bg-gradient-to-tr from-brand-500/25 to-brand-300/25 rounded-3xl blur-2xl -z-10"></div>
-                <div class="bg-white p-4 rounded-3xl shadow-2xl border border-slate-100">
-                    <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=800&q=80" alt="Sabo Dairy Products" class="rounded-2xl w-full h-[380px] object-cover">
-                </div>
-            </div>
+      </div>
+      <div class="fade-in relative">
+        <div class="rounded-3xl overflow-hidden border border-line shadow-2xl bg-white aspect-[4/3]">
+          <video autoplay muted loop playsinline poster="${IMG_BASE}/images/products/SaboSutim.jpg"
+            class="w-full h-full object-cover" src="${IMG_BASE}/video/sabo-milk-pour.mp4"></video>
         </div>
-    </section>
-
-    <!-- Products Section -->
-    <section id="products" class="py-16 lg:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-                <div>
-                    <span class="text-brand-600 font-semibold text-sm uppercase tracking-wider">Mahsulotlarimiz</span>
-                    <h2 class="text-3xl font-extrabold text-slate-900 mt-1">Bizning saralangan mahsulotlar</h2>
-                </div>
-                <!-- Category Filters -->
-                <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
-                    <button onclick="filterProducts('all')" class="category-btn active px-4 py-2 rounded-xl text-sm font-semibold bg-brand-600 text-white shadow">Barchasi</button>
-                    <button onclick="filterProducts('sut')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Sut va Qaymoq</button>
-                    <button onclick="filterProducts('qatiq')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Qatiq va Tvorog</button>
-                    <button onclick="filterProducts('pishloq')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">Pishloqlar</button>
-                </div>
-            </div>
-
-            <!-- Products Grid -->
-            <div id="products-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Dynamically injected via app.js -->
-            </div>
+        <div class="absolute -bottom-5 left-5 bg-surface border border-line rounded-2xl shadow-xl px-5 py-4 flex items-center gap-3">
+          <span class="w-10 h-10 rounded-xl bg-mint flex items-center justify-center text-brand font-bold">✓</span>
+          <div>
+            <p class="text-xs text-mut">${esc(d.hero.cardTag)}</p>
+            <p class="font-semibold text-sm">${esc(d.hero.cardTitle)}</p>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Shopping Cart Drawer -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
-        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        <i class="fa-solid fa-cart-shopping text-brand-600"></i> Savatcha
-                    </h3>
-                    <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
-                        <i class="fa-solid fa-xmark text-xl"></i>
-                    </button>
-                </div>
-                <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-                <div class="p-6 border-t border-slate-100 bg-slate-50">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-slate-600 font-medium">Jami summa:</span>
-                        <span id="cart-total" class="text-2xl font-extrabold text-slate-900">0 so'm</span>
-                    </div>
-                    <button onclick="checkout()" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-600/30 transition-all">
-                        Buyurtma berish
-                    </button>
-                </div>
-            </div>
-        </div>
+  <!-- KATEGORIYALAR -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+    ${sectionHead(d.home.categoriesTitle, d.home.categoriesSubtitle, '#/products', d.home.viewAll)}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      ${CATEGORIES.map(c=>`
+      <a href="#/products?cat=${c.slug}" class="card-hover bg-surface border border-line rounded-2xl p-5 text-center">
+        <span class="w-12 h-12 mx-auto rounded-2xl bg-mint flex items-center justify-center text-2xl mb-3">${
+          {milk:'🥛',kefir:'🥤',yogurt:'🍧','sour-cream':'🥣',cream:'🍯'}[c.slug] || '🌾'
+        }</span>
+        <h3 class="font-semibold text-sm">${esc(c.name[LANG])}</h3>
+        <p class="text-xs text-mut mt-1">${esc(c.desc[LANG])}</p>
+      </a>`).join('')}
+    </div>
+  </section>
+
+  <!-- MASHHUR MAHSULOTLAR -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+    ${sectionHead(d.home.featuredTitle, d.home.featuredSubtitle, '#/products', d.home.viewAll)}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">${PRODUCTS.slice(0,4).map(productCard).join('')}</div>
+  </section>
+
+  <!-- NEGA SABO -->
+  <section class="bg-mint/60 dark:bg-elevated/60 border-y border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+      <div class="text-center mb-10">
+        <h2 class="font-display text-2xl md:text-3xl font-bold">${esc(d.home.trustTitle)}</h2>
+        <p class="text-mut mt-2">${esc(d.home.trustSubtitle)}</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-5">
+        ${d.home.trustItems.map((it,i)=>`
+        <div class="bg-surface border border-line rounded-2xl p-6 text-center">
+          <span class="w-12 h-12 mx-auto rounded-2xl bg-brand text-white flex items-center justify-center text-xl font-bold mb-4">${i+1}</span>
+          <h3 class="font-semibold mb-2">${esc(it.title)}</h3>
+          <p class="text-sm text-mut">${esc(it.text)}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+    <div class="rounded-3xl bg-gradient-to-r from-brand to-nature text-white p-10 md:p-14 text-center">
+      <h2 class="font-display text-2xl md:text-4xl font-bold">${esc(d.home.ctaTitle)}</h2>
+      <p class="mt-3 opacity-90 max-w-xl mx-auto">${esc(d.home.ctaText)}</p>
+      <a href="#/products" class="inline-block mt-7 px-8 py-3.5 rounded-xl bg-white text-brand font-bold hover:bg-mint transition-colors">${esc(d.home.ctaButton)}</a>
+    </div>
+  </section>`;
+},
+
+products(query){
+  FILTER.cat = query.get('cat') || 'all';
+  FILTER.q = '';
+  const d = t();
+  const cats = [{slug:'all'}, ...CATEGORIES];
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.productsPage.title)}</h1>
+    <p class="text-mut mt-2">${esc(d.productsPage.subtitle)}</p>
+
+    <div class="mt-8 flex flex-col md:flex-row gap-4 md:items-center">
+      <div class="relative flex-1 max-w-md">
+        <svg class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-mut" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search-input" type="search" placeholder="${esc(d.productsPage.searchPlaceholder)}" autocomplete="off"
+          class="w-full pl-11 pr-4 py-3 rounded-xl bg-surface border border-line outline-none focus:border-brand transition-colors">
+      </div>
+      <div id="filter-chips" class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        ${cats.map(c=>`
+        <button data-cat="${c.slug}"
+          class="chip whitespace-nowrap px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${FILTER.cat===c.slug?'bg-brand text-white border-brand':'bg-surface border-line text-mut hover:border-brand hover:text-brand'}">
+          ${esc(c.slug==='all'?d.productsPage.filters.all:d.productsPage.filters[c.slug]||c.name[LANG])}
+        </button>`).join('')}
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-            <p>&copy; 2026 SABO Dairy Platform. Barcha huquqlar himoyalangan.</p>
-        </div>
-    </footer>
+    <p id="result-count" class="mt-6 text-sm text-mut"></p>
+    <div id="products-grid" class="mt-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"></div>
+    <div id="no-results" class="hidden mt-10 text-center py-16 bg-surface border border-line rounded-2xl">
+      <p class="text-4xl mb-3">🔍</p>
+      <p class="font-semibold">${esc(d.productsPage.noResults)}</p>
+      <p class="text-sm text-mut mt-1">${esc(d.productsPage.noResultsHint)}</p>
+    </div>
+  </section>`;
+},
 
-    <!-- App JavaScript -->
-    <script src="js/app.js"></script>
+productDetail(slug){
+  const p = PRODUCTS.find(x=>x.slug===slug);
+  if(!p) return PAGES.notFound();
+  const d = t();
+  const related = PRODUCTS.filter(x=>x.id!==p.id && x.category===p.category)
+                          .concat(PRODUCTS.filter(x=>x.id!==p.id && x.category!==p.category)).slice(0,3);
+  const nut = p.nutrition;
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <a href="#/products" class="inline-flex items-center gap-1.5 text-sm text-mut hover:text-brand mb-6">← ${esc(d.common.back)}</a>
+    <div class="grid lg:grid-cols-2 gap-10">
+      <div class="fade-in">
+        <div class="rounded-3xl overflow-hidden border border-line bg-white shadow-lg">
+          <img src="${img(p)}" alt="${esc(p.name[LANG])}" class="w-full aspect-square object-cover">
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="flex flex-wrap gap-2 mb-4">
+          ${(p.badges||[]).map(b=>`<span class="text-xs font-medium px-3 py-1 rounded-full bg-mint text-brand">${esc(b[LANG])}</span>`).join('')}
+        </div>
+        <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(p.name[LANG])}</h1>
+        <p class="text-3xl font-bold text-sabo mt-4">${money(p.price)}</p>
+        <dl class="mt-6 grid grid-cols-2 gap-3 text-sm">
+          <div class="bg-surface border border-line rounded-xl px-4 py-3"><dt class="text-mut text-xs">${esc(d.product.volume)}</dt><dd class="font-semibold mt-0.5">${esc((p.volumes||[]).join(', '))}</dd></div>
+          <div class="bg-surface border border-line rounded-xl px-4 py-3"><dt class="text-mut text-xs">${esc(d.product.fat)}</dt><dd class="font-semibold mt-0.5">${esc(p.fat)}</dd></div>
+          <div class="bg-surface border border-line rounded-xl px-4 py-3"><dt class="text-mut text-xs">${esc(d.productsPage.filters[p.category]||p.category)}</dt><dd class="font-semibold mt-0.5">${esc(CATEGORIES.find(c=>c.slug===p.category)?.name[LANG]||p.category)}</dd></div>
+          <div class="bg-surface border border-line rounded-xl px-4 py-3"><dt class="text-mut text-xs">SABO</dt><dd class="font-semibold mt-0.5 text-brand">● ${esc(d.product.inStock)}</dd></div>
+        </dl>
+        <p class="text-mut mt-6 leading-relaxed">${esc(p.description[LANG])}</p>
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <div class="flex items-center border border-line rounded-xl overflow-hidden bg-surface">
+            <button data-qty="-1" class="qty-btn px-4 py-3 hover:bg-mint transition-colors font-bold">−</button>
+            <span id="detail-qty" class="px-4 font-semibold">1</span>
+            <button data-qty="1" class="qty-btn px-4 py-3 hover:bg-mint transition-colors font-bold">+</button>
+          </div>
+          <button data-add-detail="${p.id}" class="flex-1 min-w-[200px] px-6 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors shadow-lg shadow-sabo/20">
+            ${esc(d.product.addToCart)}
+          </button>
+        </div>
+
+        ${nut?`
+        <div class="mt-8 bg-surface border border-line rounded-2xl overflow-hidden">
+          <h2 class="font-semibold px-5 py-3.5 border-b border-line">${esc(d.product.nutrition)} <span class="text-xs text-mut font-normal">(100 g/ml)</span></h2>
+          <table class="w-full text-sm">
+            <tbody>
+              ${Object.entries(nut).map(([k,v],i)=>`
+              <tr class="${i%2?'bg-mint/30 dark:bg-elevated/40':''}">
+                <td class="px-5 py-2.5 text-mut">${esc(d.product.nl[k]||k)}</td>
+                <td class="px-5 py-2.5 text-right font-semibold">${price(v)} ${k==='calories'?'kcal':k==='calcium'?'mg':'g'}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`:''}
+
+        ${p.storage?`
+        <div class="mt-4 bg-softblue border border-line rounded-2xl px-5 py-4 text-sm">
+          <h3 class="font-semibold mb-1">${esc(d.product.storage)}</h3>
+          <p class="text-mut">${p.storage.tempMin}–${p.storage.tempMax}°C · ${esc(p.storage.shelfLife[LANG])}. ${esc(p.storage.text[LANG])}</p>
+        </div>`:''}
+      </div>
+    </div>
+
+    <div class="mt-16">
+      ${sectionHead(d.product.related)}
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">${related.map(productCard).join('')}</div>
+    </div>
+  </section>`;
+},
+
+production(){
+  const d = t();
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.production.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.production.subtitle)}</p>
+    <p class="mt-5 max-w-3xl text-lg leading-relaxed">${esc(d.production.hero)}</p>
+
+    <div class="mt-12">
+      <h2 class="font-display text-2xl font-bold">${esc(d.production.processTitle)}</h2>
+      <p class="text-mut text-sm mt-1">${esc(d.production.processSubtitle)}</p>
+      <div class="mt-8 space-y-4">
+        ${d.production.steps.map((s,i)=>`
+        <div class="flex gap-5 bg-surface border border-line rounded-2xl p-5 md:p-6 card-hover">
+          <span class="shrink-0 w-11 h-11 rounded-2xl bg-brand text-white flex items-center justify-center font-bold">${i+1}</span>
+          <div>
+            <h3 class="font-semibold">${esc(s.title)}</h3>
+            <p class="text-sm text-mut mt-1">${esc(s.text)}</p>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-5">
+      ${d.production.cards.map(c=>`
+      <div class="bg-surface border border-line rounded-2xl p-6">
+        <span class="w-11 h-11 rounded-2xl bg-mint flex items-center justify-center text-xl mb-4">✓</span>
+        <h3 class="font-semibold mb-2">${esc(c.title)}</h3>
+        <p class="text-sm text-mut">${esc(c.text)}</p>
+      </div>`).join('')}
+    </div>
+
+    <p class="mt-10 text-xs text-mut bg-softblue border border-line rounded-xl px-4 py-3">${esc(d.production.note)}</p>
+
+    <div class="mt-10 rounded-3xl overflow-hidden border border-line">
+      <img src="${IMG_BASE}/images/photo_2026-08-20_02-38-18.jpg" alt="${esc(d.production.title)}" loading="lazy" class="w-full h-56 md:h-72 object-cover">
+    </div>
+  </section>`;
+},
+
+about(){
+  const d = t();
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.about.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.about.subtitle)}</p>
+
+    <div class="mt-10 grid lg:grid-cols-2 gap-10 items-center">
+      <div class="rounded-3xl overflow-hidden border border-line shadow-lg">
+        <img src="${IMG_BASE}/images/photo_2026-08-20_02-40-56.jpg" alt="${esc(d.about.storyTitle)}" loading="lazy" class="w-full h-72 md:h-80 object-cover">
+      </div>
+      <div>
+        <h2 class="font-display text-2xl font-bold">${esc(d.about.storyTitle)}</h2>
+        <p class="text-mut mt-3 leading-relaxed">${esc(d.about.storyText)}</p>
+        <div class="mt-6 bg-mint border border-line rounded-2xl px-5 py-4">
+          <h3 class="font-semibold">${esc(d.about.missionTitle)}</h3>
+          <p class="text-sm text-mut mt-1">${esc(d.about.missionText)}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14">
+      <h2 class="font-display text-2xl font-bold mb-6">${esc(d.about.valuesTitle)}</h2>
+      <div class="grid md:grid-cols-3 gap-5">
+        ${d.about.values.map(v=>`
+        <div class="bg-surface border border-line rounded-2xl p-6 card-hover">
+          <span class="w-11 h-11 rounded-2xl bg-brand text-white flex items-center justify-center text-lg font-bold mb-4">★</span>
+          <h3 class="font-semibold mb-2">${esc(v.title)}</h3>
+          <p class="text-sm text-mut">${esc(v.text)}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <p class="mt-10 text-xs text-mut bg-softblue border border-line rounded-xl px-4 py-3">${esc(d.about.note)}</p>
+  </section>`;
+},
+
+certificates(){
+  const d = t();
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.certificates.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.certificates.subtitle)}</p>
+    <div class="mt-10 text-center py-16 bg-surface border border-dashed border-line rounded-3xl">
+      <p class="text-5xl mb-4">📜</p>
+      <h2 class="font-semibold text-lg">${esc(d.certificates.empty)}</h2>
+      <p class="text-sm text-mut mt-2 max-w-md mx-auto">${esc(d.certificates.emptyHint)}</p>
+    </div>
+  </section>`;
+},
+
+blog(){
+  const d = t();
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.blog.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.blog.subtitle)}</p>
+    <div class="mt-10 text-center py-16 bg-surface border border-dashed border-line rounded-3xl">
+      <p class="text-5xl mb-4">✍️</p>
+      <h2 class="font-semibold text-lg">${esc(d.blog.comingSoon)}</h2>
+    </div>
+  </section>`;
+},
+
+contact(){
+  const d = t();
+  const field = (id,label,placeholder,type='text')=>`
+    <label class="block">
+      <span class="text-sm font-medium">${esc(label)}</span>
+      <input id="${id}" type="${type}" placeholder="${esc(placeholder)}" autocomplete="off"
+        class="mt-1.5 w-full px-4 py-3 rounded-xl bg-surface border border-line outline-none focus:border-brand transition-colors">
+      <span class="err hidden text-xs text-sabo mt-1"></span>
+    </label>`;
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.contact.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.contact.subtitle)}</p>
+    <div class="mt-10 grid lg:grid-cols-5 gap-8">
+      <aside class="lg:col-span-2 bg-surface border border-line rounded-3xl p-7 h-fit">
+        <h2 class="font-semibold text-lg mb-3">${esc(d.contact.infoTitle)}</h2>
+        <div class="space-y-4 text-sm text-mut">
+          <div class="flex items-start gap-3"><span class="text-xl">📞</span><p>${esc(d.contact.infoNote)}</p></div>
+        </div>
+      </aside>
+      <div class="lg:col-span-3 bg-surface border border-line rounded-3xl p-7">
+        <h2 class="font-semibold text-lg mb-5">${esc(d.contact.formTitle)}</h2>
+        <form id="contact-form" novalidate class="grid sm:grid-cols-2 gap-5">
+          ${field('cf-name', d.contact.name, d.contact.namePlaceholder)}
+          ${field('cf-phone', d.contact.phoneLabel, d.contact.phonePlaceholder, 'tel')}
+          <div class="sm:col-span-2">${field('cf-email', d.contact.emailLabel, d.contact.emailPlaceholder, 'email')}</div>
+          <label class="block sm:col-span-2">
+            <span class="text-sm font-medium">${esc(d.contact.message)}</span>
+            <textarea id="cf-message" rows="4" placeholder="${esc(d.contact.messagePlaceholder)}"
+              class="mt-1.5 w-full px-4 py-3 rounded-xl bg-surface border border-line outline-none focus:border-brand transition-colors resize-y"></textarea>
+            <span class="err hidden text-xs text-sabo mt-1"></span>
+          </label>
+          <div class="sm:col-span-2 flex flex-wrap items-center gap-4">
+            <button type="submit" class="px-7 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors">${esc(d.contact.submit)}</button>
+            <p id="cf-result" class="hidden text-sm text-mut flex-1 bg-softblue border border-line rounded-xl px-4 py-3">${esc(d.contact.formNote)}</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>`;
+},
+
+cart(){
+  const d = t();
+  const entries = Object.entries(CART).map(([id,qty])=>{
+    const p = PRODUCTS.find(x=>x.id===id);
+    return p?{p,qty}:null;
+  }).filter(Boolean);
+  const subtotal = entries.reduce((a,{p,qty})=>a+p.price*qty,0);
+
+  if(!entries.length){
+    return `
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 py-16 text-center">
+      <p class="text-6xl mb-4">🛒</p>
+      <h1 class="font-display text-2xl md:text-3xl font-bold">${esc(d.cart.empty)}</h1>
+      <p class="text-mut mt-2">${esc(d.cart.emptyHint)}</p>
+      <a href="#/products" class="inline-block mt-7 px-7 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors">${esc(d.cart.continueShopping)}</a>
+    </section>`;
+  }
+
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.cart.title)}</h1>
+    <p class="text-mut mt-1 text-sm">${entries.length} ${esc(d.cart.items)}</p>
+    <div class="mt-8 grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-4">
+        ${entries.map(({p,qty})=>`
+        <div class="flex gap-4 bg-surface border border-line rounded-2xl p-4">
+          <a href="#/products/${p.slug}" class="shrink-0"><img src="${img(p)}" alt="${esc(p.name[LANG])}" class="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover bg-white border border-line"></a>
+          <div class="flex-1 min-w-0">
+            <a href="#/products/${p.slug}" class="font-semibold hover:text-brand line-clamp-1">${esc(p.name[LANG])}</a>
+            <p class="text-xs text-mut mt-0.5">${esc((p.volumes||[]).join(', '))} · ${esc(p.fat)}</p>
+            <div class="flex items-center justify-between mt-3 gap-3">
+              <div class="flex items-center border border-line rounded-lg overflow-hidden text-sm">
+                <button data-cart-dec="${p.id}" class="px-3 py-1.5 hover:bg-mint font-bold">−</button>
+                <span class="px-3 font-semibold">${qty}</span>
+                <button data-cart-inc="${p.id}" class="px-3 py-1.5 hover:bg-mint font-bold">+</button>
+              </div>
+              <span class="font-bold text-sabo whitespace-nowrap">${money(p.price*qty)}</span>
+              <button data-cart-del="${p.id}" aria-label="${esc(d.cart.remove)}" class="text-mut hover:text-sabo transition-colors ml-auto">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+      <aside class="bg-surface border border-line rounded-3xl p-6 h-fit sticky top-24">
+        <h2 class="font-semibold text-lg mb-4">${esc(d.cart.total)}</h2>
+        <div class="space-y-2.5 text-sm">
+          <div class="flex justify-between"><span class="text-mut">${esc(d.cart.subtotal)}</span><span class="font-semibold">${money(subtotal)}</span></div>
+        </div>
+        <div class="border-t border-line my-4"></div>
+        <div class="flex justify-between"><span class="font-semibold">${esc(d.cart.total)}</span><span class="font-bold text-sabo text-lg">${money(subtotal)}</span></div>
+        <a href="#/checkout" class="block mt-6 text-center px-6 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors">${esc(d.cart.checkout)}</a>
+        <a href="#/products" class="block mt-3 text-center text-sm text-mut hover:text-brand">${esc(d.cart.continueShopping)}</a>
+      </aside>
+    </div>
+  </section>`;
+},
+
+checkout(){
+  const d = t();
+  const entries = Object.entries(CART).map(([id,qty])=>{
+    const p = PRODUCTS.find(x=>x.id===id); return p?{p,qty}:null;
+  }).filter(Boolean);
+  const total = entries.reduce((a,{p,qty})=>a+p.price*qty,0);
+  if(!entries.length) return PAGES.cart();
+
+  const field=(id,label,ph,type='text')=>`
+    <label class="block">
+      <span class="text-sm font-medium">${esc(label)}</span>
+      <input id="${id}" type="${type}" placeholder="${esc(ph)}" autocomplete="off"
+        class="mt-1.5 w-full px-4 py-3 rounded-xl bg-surface border border-line outline-none focus:border-brand transition-colors">
+      <span class="err hidden text-xs text-sabo mt-1"></span>
+    </label>`;
+  return `
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="font-display text-3xl md:text-4xl font-bold">${esc(d.checkout.title)}</h1>
+    <p class="text-mut mt-1">${esc(d.checkout.subtitle)}</p>
+    <div class="mt-8 grid lg:grid-cols-3 gap-8">
+      <form id="checkout-form" novalidate class="lg:col-span-2 bg-surface border border-line rounded-3xl p-7 space-y-5">
+        <h2 class="font-semibold text-lg">${esc(d.checkout.customer)}</h2>
+        <div class="grid sm:grid-cols-2 gap-5">
+          ${field('co-name', d.contact.name, d.contact.namePlaceholder)}
+          ${field('co-phone', d.contact.phoneLabel, d.contact.phonePlaceholder, 'tel')}
+        </div>
+        ${field('co-address', d.checkout.address, d.checkout.addressPlaceholder)}
+        <div class="bg-softblue border border-line rounded-xl px-4 py-3 text-xs text-mut">${esc(d.checkout.paymentNote)}</div>
+        <div class="flex flex-wrap items-center gap-4">
+          <button type="submit" class="px-7 py-3.5 rounded-xl bg-sabo text-white font-semibold hover:bg-sabodark transition-colors">${esc(d.checkout.submitOrder)}</button>
+          <a href="#/cart" class="text-sm text-mut hover:text-brand">← ${esc(d.checkout.backToCart)}</a>
+        </div>
+        <p id="co-result" class="hidden text-sm text-ink bg-mint border border-line rounded-xl px-4 py-3"></p>
+      </form>
+      <aside class="bg-surface border border-line rounded-3xl p-6 h-fit sticky top-24">
+        <h2 class="font-semibold text-lg mb-4">${esc(d.checkout.orderSummary)}</h2>
+        <div class="space-y-3">
+          ${entries.map(({p,qty})=>`
+          <div class="flex items-center gap-3 text-sm">
+            <img src="${img(p)}" alt="" class="w-11 h-11 rounded-lg object-cover bg-white border border-line">
+            <span class="flex-1 min-w-0 truncate">${esc(p.name[LANG])} × ${qty}</span>
+            <span class="font-semibold whitespace-nowrap">${money(p.price*qty)}</span>
+          </div>`).join('')}
+        </div>
+        <div class="border-t border-line my-4"></div>
+        <div class="flex justify-between"><span class="font-semibold">${esc(d.cart.total)}</span><span class="font-bold text-sabo text-lg">${money(total)}</span></div>
+      </aside>
+    </div>
+  </section>`;
+},
+
+notFound(){
+  const d = t();
+  return `
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-24 text-center">
+    <p class="font-display text-7xl font-bold text-brand">404</p>
+    <h1 class="font-display text-2xl font-bold mt-4">${esc(d.common.notFoundTitle)}</h1>
+    <p class="text-mut mt-2">${esc(d.common.notFoundText)}</p>
+    <a href="#/" class="inline-block mt-7 px-7 py-3.5 rounded-xl bg-brand text-white font-semibold hover:bg-nature transition-colors">${esc(d.common.goHome)}</a>
+  </section>`;
+}
+};
+
+/* ---------- 6. VALIDATSIYA ---------- */
+const RE_PHONE = /^\+?[\d\s\-()]{7,}$/;
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function setErr(input, msg){
+  const err = input.parentElement.querySelector('.err');
+  if(msg){ err.textContent = msg; err.classList.remove('hidden'); input.classList.add('border-sabo'); }
+  else{ err.classList.add('hidden'); input.classList.remove('border-sabo'); }
+  return !msg;
+}
+
+function bindForms(root){
+  // Aloqa formasi — FAQAT tekshiruv, backend yo'q (soxta muvaffaqiyat ko'rsatilmaydi)
+  const cf = root.querySelector('#contact-form');
+  if(cf){
+    cf.addEventListener('submit', e=>{
+      e.preventDefault();
+      const v = t().contact.validation;
+      let ok = true;
+      ok = setErr($('#cf-name'),  $('#cf-name').value.trim()  ? '' : v.required) && ok;
+      ok = setErr($('#cf-phone'), RE_PHONE.test($('#cf-phone').value.trim()) ? '' : v.phone) && ok;
+      ok = setErr($('#cf-email'), RE_EMAIL.test($('#cf-email').value.trim()) ? '' : v.email) && ok;
+      ok = setErr($('#cf-message'), $('#cf-message').value.trim() ? '' : v.required) && ok;
+      if(ok) $('#cf-result').classList.remove('hidden');
+    });
+  }
+  // Buyurtma formasi — FAQAT tekshiruv, buyurtma saqlanmaydi/yuborilmaydi
+  const co = root.querySelector('#checkout-form');
+  if(co){
+    co.addEventListener('submit', e=>{
+      e.preventDefault();
+      const v = t().contact.validation;
+      let ok = true;
+      ok = setErr($('#co-name'),  $('#co-name').value.trim()  ? '' : v.required) && ok;
+      ok = setErr($('#co-phone'), RE_PHONE.test($('#co-phone').value.trim()) ? '' : v.phone) && ok;
+      ok = setErr($('#co-address'), $('#co-address').value.trim() ? '' : v.required) && ok;
+      if(ok){
+        const res = $('#co-result');
+        res.textContent = t().checkout.notSent;
+        res.classList.remove('hidden');
+      }
+    });
+  }
+}
+
+/* ---------- 7. MAHSULOTLAR FILTRI ---------- */
+function applyFilter(){
+  const grid = $('#products-grid'), none = $('#no-results'), cnt = $('#result-count');
+  if(!grid) return;
+  const d = t();
+  const q = FILTER.q.toLowerCase();
+  const list = PRODUCTS.filter(p =>
+    (FILTER.cat==='all' || p.category===FILTER.cat) &&
+    (!q || p.name.uz.toLowerCase().includes(q) || p.name.ru.toLowerCase().includes(q) || p.name.en.toLowerCase().includes(q))
+  );
+  cnt.textContent = `${list.length} ${d.productsPage.count}`;
+  none.classList.toggle('hidden', list.length>0);
+  grid.innerHTML = list.map(productCard).join('');
+}
+
+function bindProductsPage(){
+  const inp = $('#search-input');
+  if(!inp) return;
+  inp.addEventListener('input', ()=>{ FILTER.q = inp.value; applyFilter(); });
+  document.querySelectorAll('#filter-chips [data-cat]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      FILTER.cat = btn.dataset.cat;
+      document.querySelectorAll('#filter-chips [data-cat]').forEach(b=>{
+        const active = b.dataset.cat===FILTER.cat;
+        b.className = `chip whitespace-nowrap px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${active?'bg-brand text-white border-brand':'bg-surface border-line text-mut hover:border-brand hover:text-brand'}`;
+      });
+      history.replaceState(null,'',`#/products${FILTER.cat!=='all'?`?cat=${FILTER.cat}`:''}`);
+      applyFilter();
+    });
+  });
+  applyFilter();
+}
+
+/* ---------- 8. STATIK MATNLAR (header/footer) ---------- */
+const NAV_ROUTES = [
+  ['#/', 'home'], ['#/products','products'], ['#/production','production'],
+  ['#/about','about'], ['#/certificates','certificates'], ['#/blog','blog'], ['#/contact','contact']
+];
+
+function applyStatic(){
+  const d = t();
+  document.documentElement.lang = LANG;
+  document.title = LANG==='uz' ? 'SABO — Sut mahsulotlari' : LANG==='ru' ? 'SABO — Молочные продукты' : 'SABO — Dairy Products';
+  $('#logo-tagline').textContent = d.tagline;
+
+  const links = NAV_ROUTES.map(([href,key])=>{
+    const route = location.hash.split('?')[0] || '#/';
+    const active = href==='#/' ? route==='#/' : route.startsWith(href);
+    return `<a href="${href}" class="${active?'text-brand font-semibold':'hover:text-brand'} transition-colors">${esc(d.nav[key])}</a>`;
+  });
+  $('#desktop-nav').innerHTML = links.join('');
+  $('#mobile-nav').innerHTML =
+    `<select id="lang-select-m" class="sm:hidden mb-3 w-full bg-surface border border-line rounded-lg px-2 py-2.5 text-sm outline-none">
+       <option value="uz" ${LANG==='uz'?'selected':''}>UZ</option><option value="ru" ${LANG==='ru'?'selected':''}>RU</option><option value="en" ${LANG==='en'?'selected':''}>EN</option>
+     </select>` +
+    `<nav class="grid gap-1">${links.map(l=>`<div class="py-2 border-b border-line last:border-0">${l.replace('transition-colors','transition-colors block')}</div>`).join('')}</nav>`;
+  $('#mobile-nav').querySelector('#lang-select-m').addEventListener('change', e=>setLang(e.target.value));
+
+  $('#footer-desc').textContent = d.footer.description;
+  $('#footer-nav-title').textContent = d.footer.navTitle;
+  $('#footer-contact-title').textContent = d.footer.contactTitle;
+  $('#footer-contact-note').textContent = d.contact.infoNote;
+  $('#footer-rights').textContent = d.footer.rights;
+  $('#footer-year').textContent = new Date().getFullYear();
+  $('#footer-nav').innerHTML = NAV_ROUTES.slice(1).map(([href,key])=>`<a href="${href}" class="hover:text-brand transition-colors">${esc(d.nav[key])}</a>`).join('');
+  $('#lang-select').value = LANG;
+}
+
+function setLang(l){
+  LANG = l;
+  localStorage.setItem('sabo-lang', l);
+  applyStatic(); render();
+}
+
+/* ---------- 9. ROUTER ---------- */
+function parseHash(){
+  const raw = location.hash.replace(/^#/,'') || '/';
+  const [pathPart, queryPart] = raw.split('?');
+  return { path:'/'+pathPart.replace(/^\/+/,''), query:new URLSearchParams(queryPart||'') };
+}
+
+function render(){
+  const {path, query} = parseHash();
+  const app = $('#main');
+  let html;
+
+  if(path==='/' )                       html = PAGES.home();
+  else if(path==='/products')           { html = PAGES.products(query); }
+  else if(path.startsWith('/products/'))html = PAGES.productDetail(decodeURIComponent(path.split('/')[2]));
+  else if(path==='/production')         html = PAGES.production();
+  else if(path==='/about')              html = PAGES.about();
+  else if(path==='/certificates')       html = PAGES.certificates();
+  else if(path==='/blog')               html = PAGES.blog();
+  else if(path==='/contact')            html = PAGES.contact();
+  else if(path==='/cart')               html = PAGES.cart();
+  else if(path==='/checkout')           html = PAGES.checkout();
+  else                                  html = PAGES.notFound();
+
+  app.innerHTML = html;
+  window.scrollTo({top:0});
+  bindForms(app);
+  bindProductsPage();
+  applyStatic(); // aktiv navigatsiya holatini yangilash
+}
+
+/* ---------- 10. GLOBAL HODISALAR ---------- */
+document.addEventListener('click', e=>{
+  const add = e.target.closest('[data-add]');
+  if(add){
+    const id = add.dataset.add;
+    CART[id] = (CART[id]||0)+1;
+    saveCart();
+    toast(t().product.addToCart + ' ✓');
+    return;
+  }
+  const addDetail = e.target.closest('[data-add-detail]');
+  if(addDetail){
+    const id = addDetail.dataset.addDetail;
+    const qtyEl = $('#detail-qty');
+    const qty = Math.max(1, parseInt(qtyEl.textContent)||1);
+    CART[id] = (CART[id]||0)+qty;
+    saveCart();
+    toast(t().product.addToCart + ' ✓');
+    return;
+  }
+  const qtyBtn = e.target.closest('.qty-btn');
+  if(qtyBtn){
+    const el = $('#detail-qty');
+    el.textContent = Math.max(1,(parseInt(el.textContent)||1)+parseInt(qtyBtn.dataset.qty));
+    return;
+  }
+  const inc = e.target.closest('[data-cart-inc]');
+  if(inc){ CART[inc.dataset.cartInc]++; saveCart(); render(); return; }
+  const dec = e.target.closest('[data-cart-dec]');
+  if(dec){
+    const id = dec.dataset.cartDec;
+    CART[id]--;
+    if(CART[id]<=0) delete CART[id];
+    saveCart(); render(); return;
+  }
+  const del = e.target.closest('[data-cart-del]');
+  if(del){ delete CART[del.dataset.cartDel]; saveCart(); render(); return; }
+
+  if(e.target.closest('#theme-btn')){
+    const dark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('sabo-theme', dark?'dark':'light');
+  }
+  if(e.target.closest('#menu-btn')){
+    $('#mobile-nav').classList.toggle('hidden');
+  }
+  if(e.target.closest('#mobile-nav a')){
+    $('#mobile-nav').classList.add('hidden');
+  }
+});
+
+$('#lang-select').addEventListener('change', e=>setLang(e.target.value));
+window.addEventListener('hashchange', render);
+
+/* ---------- START ---------- */
+updateBadge();
+render();
+</script>
 </body>
 </html>
