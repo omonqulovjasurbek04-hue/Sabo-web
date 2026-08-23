@@ -1,4 +1,4 @@
-const DEFAULT_SITE_URL = "https://sabo.example.com";
+const DEFAULT_SITE_URL = "https://sabo.uz";
 
 export function getSiteUrl(): string {
   const env = process.env.NEXT_PUBLIC_SITE_URL;

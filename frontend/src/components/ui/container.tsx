@@ -9,10 +9,10 @@ export function Container({ as = "div", className, ...props }: ContainerProps) {
   return (
     <Tag
       className={cn(
-        "mx-auto w-full max-w-[var(--container-max)] px-6 max-sm:px-4",
+        "mx-auto w-full max-w-[var(--container-max)] px-[calc(var(--spacing)*6)] max-sm:px-[calc(var(--spacing)*4)]",
         className
       )}
       {...props}
     />
   );
-}
+}

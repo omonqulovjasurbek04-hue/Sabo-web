@@ -146,13 +146,13 @@ export function Navbar({
     <>
       <header
         className={`sticky top-0 transition-all duration-300 ${
-          menuOpen ? "z-[9999]" : "z-50"
-        } bg-surface/85 backdrop-blur-[12px] border-b ${
-        isScrolled
-          ? "border-border shadow-md dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
-          : "border-border/40 shadow-none"
-      }`}
-    >
+          menuOpen ? "z-[1000005]" : "z-50"
+        } bg-surface/95 backdrop-blur-[12px] border-b ${
+          isScrolled || menuOpen
+            ? "border-border shadow-md dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+            : "border-border/40 shadow-none"
+        }`}
+      >
         {/* Scroll indicator - appears when scrolled down */}
         <div
           className={`absolute top-0 left-0 h-[2.5px] bg-action-red transition-all duration-150 pointer-events-none z-50 ${
@@ -178,159 +178,145 @@ export function Navbar({
             />
           </LocalizedLink>
 
-        <nav className="hidden lg:flex items-center gap-1" aria-label={dict.nav.menu}>
-          {links.map((link) => (
-            <LocalizedLink
-              key={link.href}
-              href={link.href}
-              locale={locale}
-              className="px-3 py-2 rounded-lg text-[15px] font-medium text-muted hover:text-action-red hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-            >
-              {link.label}
-            </LocalizedLink>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          {searchOpen ? (
-            <form className="flex items-center gap-2" onSubmit={submitSearch} role="search">
-              <input
-                ref={searchRef}
-                type="search"
-                className="w-[min(260px,40vw)] px-4 py-2 text-sm border border-border-strong rounded-full bg-background text-foreground focus:outline-none focus:border-action-red focus:ring-2 focus:ring-action-red/20"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={dict.nav.searchPlaceholder}
-                aria-label={dict.nav.search}
-              />
-              <button
-                type="button"
-                className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
-                onClick={() => setSearchOpen(false)}
-                aria-label={dict.nav.close}
+          <nav className="hidden lg:flex items-center gap-1" aria-label={dict.nav.menu}>
+            {links.map((link) => (
+              <LocalizedLink
+                key={link.href}
+                href={link.href}
+                locale={locale}
+                className="px-3 py-2 rounded-lg text-[15px] font-medium text-muted hover:text-action-red hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
               >
-                <CloseIcon width={18} height={18} />
-              </button>
-            </form>
-          ) : (
-            <button
-              type="button"
-              className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
-              onClick={() => setSearchOpen(true)}
-              aria-label={dict.nav.search}
-            >
-              <SearchIcon width={18} height={18} />
-            </button>
-          )}
+                {link.label}
+              </LocalizedLink>
+            ))}
+          </nav>
 
-          <div className="hidden lg:flex items-center gap-2">
-            <LocaleSwitcher locale={locale} dict={dict} />
-            <ThemeToggle dict={dict} />
-          </div>
-
-          <LocalizedLink
-            href="/cart"
-            locale={locale}
-            className="relative inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
-            aria-label={dict.cart.title}
-          >
-            <CartIcon width={20} height={20} />
-            {mounted && totalQuantity > 0 ? (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center size-5 text-xs font-bold text-white bg-action-red rounded-full">
-                {totalQuantity}
-              </span>
-            ) : null}
-          </LocalizedLink>
-
-          <button
-            type="button"
-            className="lg:hidden inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-all cursor-pointer"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label={menuOpen ? dict.nav.close : dict.nav.menu}
-            aria-expanded={menuOpen}
-            ref={menuToggleRef}
-          >
-            {menuOpen ? (
-              <CloseIcon width={22} height={22} className="text-action-red" />
-            ) : (
-              <MenuIcon width={24} height={24} />
-            )}
-          </button>
-        </div>
-      </Container>
-    </header>
-
-    {/* Mobile Navigation Drawer rendered via React Portal directly into document.body */}
-    {mounted && menuOpen && typeof document !== "undefined"
-      ? createPortal(
-          <div
-            className="fixed inset-0 z-[999999]"
-            role="dialog"
-            aria-modal="true"
-            aria-label={dict.nav.menu}
-          >
-            {/* Backdrop overlay */}
-            <button
-              type="button"
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm cursor-pointer w-full h-full border-none z-[999999]"
-              onClick={() => setMenuOpen(false)}
-              aria-label={dict.nav.close}
-            />
-
-            {/* Slide-out Drawer Panel */}
-            <div
-              className="fixed top-0 right-0 h-full w-[min(360px,85vw)] bg-surface shadow-2xl flex flex-col overflow-y-auto border-l border-border transition-transform z-[1000000]"
-              ref={drawerPanelRef}
-            >
-              <div className="flex items-center justify-between h-[var(--header-height)] px-6 max-sm:px-4 border-b border-border shrink-0 bg-surface">
-                <Image
-                  src={brandLogo}
-                  alt="SABO"
-                  width={1230}
-                  height={678}
-                  className="w-auto h-10 lg:h-11 object-contain"
+          <div className="flex items-center gap-2">
+            {searchOpen ? (
+              <form className="flex items-center gap-2" onSubmit={submitSearch} role="search">
+                <input
+                  ref={searchRef}
+                  type="search"
+                  className="w-[min(260px,40vw)] px-4 py-2 text-sm border border-border-strong rounded-full bg-background text-foreground focus:outline-none focus:border-action-red focus:ring-2 focus:ring-action-red/20"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={dict.nav.searchPlaceholder}
+                  aria-label={dict.nav.search}
                 />
                 <button
                   type="button"
-                  className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:bg-action-red/10 hover:border-action-red transition-colors cursor-pointer"
-                  onClick={() => setMenuOpen(false)}
+                  className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
+                  onClick={() => setSearchOpen(false)}
                   aria-label={dict.nav.close}
                 >
-                  <CloseIcon width={22} height={22} />
+                  <CloseIcon width={18} height={18} />
                 </button>
-              </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                className="inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
+                onClick={() => setSearchOpen(true)}
+                aria-label={dict.nav.search}
+              >
+                <SearchIcon width={18} height={18} />
+              </button>
+            )}
 
-              <nav className="flex flex-col p-3 flex-1 bg-surface" aria-label={dict.nav.menu}>
-                {[{ href: "/", label: dict.nav.home }, ...links].map((link) => (
-                  <LocalizedLink
-                    key={link.href}
-                    href={link.href}
-                    locale={locale}
-                    className="px-4 py-3.5 rounded-lg text-base font-bold text-foreground hover:bg-primary-soft hover:text-primary transition-colors"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {link.label}
-                  </LocalizedLink>
-                ))}
-              </nav>
+            <div className="hidden lg:flex items-center gap-2">
+              <LocaleSwitcher locale={locale} dict={dict} />
+              <ThemeToggle dict={dict} />
+            </div>
 
-              <div className="flex items-center justify-between gap-4 p-5 sm:p-6 border-t border-border bg-surface-soft/40">
-                {/* Left: Language Selection */}
-                <LocaleSwitcher locale={locale} dict={dict} variant="mobile" />
+            <LocalizedLink
+              href="/cart"
+              locale={locale}
+              className="relative inline-flex items-center justify-center size-10 rounded-full border border-border bg-surface text-muted hover:text-action-red hover:border-action-red transition-colors"
+              aria-label={dict.cart.title}
+            >
+              <CartIcon width={20} height={20} />
+              {mounted && totalQuantity > 0 ? (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center size-5 text-xs font-bold text-white bg-action-red rounded-full">
+                  {totalQuantity}
+                </span>
+              ) : null}
+            </LocalizedLink>
 
-                {/* Right: Theme Toggle */}
-                <div className="flex flex-col items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted text-center">
-                    {dict.nav.theme}
-                  </span>
-                  <ThemeToggle dict={dict} />
+            <button
+              type="button"
+              className={`lg:hidden inline-flex items-center justify-center size-10 rounded-full border transition-all cursor-pointer ${
+                menuOpen
+                  ? "border-action-red bg-action-red/10 text-action-red"
+                  : "border-border bg-surface text-muted hover:text-action-red hover:border-action-red"
+              }`}
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label={menuOpen ? dict.nav.close : dict.nav.menu}
+              aria-expanded={menuOpen}
+              ref={menuToggleRef}
+            >
+              {menuOpen ? (
+                <CloseIcon width={22} height={22} className="text-action-red animate-in fade-in zoom-in-75 duration-200" />
+              ) : (
+                <MenuIcon width={24} height={24} className="animate-in fade-in zoom-in-75 duration-200" />
+              )}
+            </button>
+          </div>
+        </Container>
+      </header>
+
+      {/* Mobile Navigation Drawer rendered via React Portal directly into document.body */}
+      {mounted && menuOpen && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed inset-x-0 top-[var(--header-height)] bottom-0 z-[1000000] flex justify-end"
+              role="dialog"
+              aria-modal="true"
+              aria-label={dict.nav.menu}
+            >
+              {/* Backdrop overlay below header */}
+              <button
+                type="button"
+                className="fixed inset-x-0 top-[var(--header-height)] bottom-0 bg-black/60 backdrop-blur-sm cursor-pointer w-full border-none z-[1000000] animate-in fade-in duration-200"
+                onClick={() => setMenuOpen(false)}
+                aria-label={dict.nav.close}
+              />
+
+              {/* Slide-out Drawer Panel */}
+              <div
+                className="relative h-full w-[min(380px,100vw)] bg-surface shadow-2xl flex flex-col justify-between overflow-y-auto border-l border-border transition-all z-[1000001] animate-in slide-in-from-right duration-300"
+                ref={drawerPanelRef}
+              >
+                <nav className="flex flex-col p-4 sm:p-6 gap-1.5" aria-label={dict.nav.menu}>
+                  {[{ href: "/", label: dict.nav.home }, ...links].map((link) => (
+                    <LocalizedLink
+                      key={link.href}
+                      href={link.href}
+                      locale={locale}
+                      className="px-4 py-3.5 rounded-xl text-base font-bold text-foreground hover:bg-primary-soft hover:text-primary active:scale-[0.98] transition-all"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {link.label}
+                    </LocalizedLink>
+                  ))}
+                </nav>
+
+                <div className="flex items-center justify-between gap-4 p-5 sm:p-6 border-t border-border bg-surface-soft/40 mt-auto">
+                  {/* Left: Language Selection */}
+                  <LocaleSwitcher locale={locale} dict={dict} variant="mobile" />
+
+                  {/* Right: Theme Toggle */}
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted text-center">
+                      {dict.nav.theme}
+                    </span>
+                    <ThemeToggle dict={dict} />
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>,
-          document.body
-        )
-      : null}
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }

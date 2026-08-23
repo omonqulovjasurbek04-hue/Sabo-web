@@ -178,11 +178,14 @@ export default function AdminPage() {
       // API call failed, check offline credentials below
     }
 
-    // Fallback for admin credentials
+    // Fallback for offline/demo admin credentials (configurable via env)
+    const adminUser = (process.env.NEXT_PUBLIC_ADMIN_USER || "Bekzodbek").toLowerCase();
+    const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASS || "Admin0525";
+
     if (
-      (trimmedUser.toLowerCase() === "bekzodbek" ||
-        trimmedUser.toLowerCase() === "bekzodbek@sabo.uz") &&
-      passwordInput === "Admin0525"
+      (trimmedUser.toLowerCase() === adminUser ||
+        trimmedUser.toLowerCase() === `${adminUser}@sabo.uz`) &&
+      passwordInput === adminPass
     ) {
       const fallbackToken = "admin_session_" + Date.now();
       if (typeof window !== "undefined") {
