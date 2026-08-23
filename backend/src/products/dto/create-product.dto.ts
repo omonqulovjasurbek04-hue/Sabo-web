@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ProductImageType, ProductStatus } from '@prisma/client';
-import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ProductImageType, ProductStatus } from "@prisma/client";
+import { Type } from "class-transformer";
 import {
   IsArray,
   IsBoolean,
@@ -12,15 +12,15 @@ import {
   IsString,
   IsUUID,
   ValidateNested,
-} from 'class-validator';
+} from "class-validator";
 
 export class ProductTranslationDto {
-  @ApiProperty({ example: 'uz' })
+  @ApiProperty({ example: "uz" })
   @IsNotEmpty()
   @IsString()
   locale!: string;
 
-  @ApiProperty({ example: 'Kefir 1L' })
+  @ApiProperty({ example: "Kefir 1L" })
   @IsNotEmpty()
   @IsString()
   name!: string;
@@ -61,7 +61,10 @@ export class ProductImageDto {
   @IsUUID()
   mediaId!: string;
 
-  @ApiPropertyOptional({ enum: ProductImageType, default: ProductImageType.GALLERY })
+  @ApiPropertyOptional({
+    enum: ProductImageType,
+    default: ProductImageType.GALLERY,
+  })
   @IsOptional()
   @IsEnum(ProductImageType)
   type?: ProductImageType;
@@ -88,17 +91,17 @@ export class ProductVariantDto {
   @IsUUID()
   id?: string;
 
-  @ApiProperty({ example: '1 L' })
+  @ApiProperty({ example: "1 L" })
   @IsNotEmpty()
   @IsString()
   name!: string;
 
-  @ApiPropertyOptional({ example: '1' })
+  @ApiPropertyOptional({ example: "1" })
   @IsOptional()
   @IsString()
   volume?: string;
 
-  @ApiPropertyOptional({ example: 'L' })
+  @ApiPropertyOptional({ example: "L" })
   @IsOptional()
   @IsString()
   unit?: string;
@@ -113,12 +116,15 @@ export class ProductVariantDto {
   @IsString()
   barcode?: string;
 
-  @ApiPropertyOptional({ example: 1200000, description: 'Price in minor units (e.g. 12000 UZS)' })
+  @ApiPropertyOptional({
+    example: 1200000,
+    description: "Price in minor units (e.g. 12000 UZS)",
+  })
   @IsOptional()
   @IsInt()
   priceMinor?: number;
 
-  @ApiPropertyOptional({ default: 'UZS' })
+  @ApiPropertyOptional({ default: "UZS" })
   @IsOptional()
   @IsString()
   currency?: string;
@@ -204,12 +210,12 @@ export class ProductStorageDto {
 }
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'sabo-kefir-1l' })
+  @ApiProperty({ example: "sabo-kefir-1l" })
   @IsNotEmpty()
   @IsString()
   slug!: string;
 
-  @ApiProperty({ example: 'SABO Kefir 1L' })
+  @ApiProperty({ example: "SABO Kefir 1L" })
   @IsNotEmpty()
   @IsString()
   name!: string;
@@ -229,7 +235,7 @@ export class CreateProductDto {
   @IsUUID()
   categoryId?: string;
 
-  @ApiPropertyOptional({ default: 'SABO' })
+  @ApiPropertyOptional({ default: "SABO" })
   @IsOptional()
   @IsString()
   brand?: string;

@@ -1,13 +1,12 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import * as argon2 from 'argon2';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { PrismaService } from '../prisma/prisma.service';
-import { ChangePasswordDto, UpdateUserDto } from './dto/update-user.dto';
+} from "@nestjs/common";
+import * as argon2 from "argon2";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { PrismaService } from "../prisma/prisma.service";
+import { ChangePasswordDto, UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -50,7 +49,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException({
         code: ErrorCode.USER_NOT_FOUND,
-        message: 'User not found',
+        message: "User not found",
       });
     }
 
@@ -94,7 +93,7 @@ export class UsersService {
     if (!isValid) {
       throw new UnauthorizedException({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: 'Old password is incorrect',
+        message: "Old password is incorrect",
       });
     }
 
@@ -110,7 +109,7 @@ export class UsersService {
       data: { isRevoked: true, revokedAt: new Date() },
     });
 
-    return { message: 'Password updated successfully' };
+    return { message: "Password updated successfully" };
   }
 
   async getSessions(userId: string) {
@@ -122,7 +121,7 @@ export class UsersService {
         createdAt: true,
         expiresAt: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -134,7 +133,7 @@ export class UsersService {
     if (!session) {
       throw new NotFoundException({
         code: ErrorCode.RESOURCE_NOT_FOUND,
-        message: 'Session not found',
+        message: "Session not found",
       });
     }
 
@@ -143,6 +142,6 @@ export class UsersService {
       data: { isRevoked: true, revokedAt: new Date() },
     });
 
-    return { message: 'Session revoked successfully' };
+    return { message: "Session revoked successfully" };
   }
 }

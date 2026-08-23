@@ -4,15 +4,19 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import { APP_CONSTANTS } from '../config/constants';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { PrismaService } from '../prisma/prisma.service';
-import { UploadMediaDto } from './dto/upload-media.dto';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import * as path from "path";
+import { v4 as uuidv4 } from "uuid";
+import { APP_CONSTANTS } from "../config/constants";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { PrismaService } from "../prisma/prisma.service";
+import { UploadMediaDto } from "./dto/upload-media.dto";
 
 @Injectable()
 export class MediaService {
@@ -25,24 +29,42 @@ export class MediaService {
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
   ) {
-    this.bucket = this.configService.get<string>('s3.bucket', 'sabo-media');
-    this.publicUrl = this.configService.get<string>('s3.publicUrl', 'http://localhost:9000/sabo-media');
+    this.bucket = this.configService.get<string>("s3.bucket", "sabo-media");
+    this.publicUrl = this.configService.get<string>(
+      "s3.publicUrl",
+      "http://localhost:9000/sabo-media",
+    );
 
     this.s3Client = new S3Client({
-      endpoint: this.configService.get<string>('s3.endpoint'),
-      region: this.configService.get<string>('s3.region', 'us-east-1'),
+      endpoint: this.configService.get<string>("s3.endpoint"),
+      region: this.configService.get<string>("s3.region", "us-east-1"),
       credentials: {
-        accessKeyId: this.configService.get<string>('s3.accessKey', 'minioadmin'),
-        secretAccessKey: this.configService.get<string>('s3.secretKey', 'minioadmin'),
+        accessKeyId: this.configService.get<string>(
+          "s3.accessKey",
+          "minioadmin",
+        ),
+        secretAccessKey: this.configService.get<string>(
+          "s3.secretKey",
+          "minioadmin",
+        ),
       },
-      forcePathStyle: this.configService.get<boolean>('s3.forcePathStyle', true),
+      forcePathStyle: this.configService.get<boolean>(
+        "s3.forcePathStyle",
+        true,
+      ),
     });
   }
 
   validateFile(file: Express.Multer.File) {
-    const isImage = (APP_CONSTANTS.MEDIA.ALLOWED_IMAGE_MIMES as readonly string[]).includes(file.mimetype);
-    const isDoc = (APP_CONSTANTS.MEDIA.ALLOWED_DOC_MIMES as readonly string[]).includes(file.mimetype);
-    const is3D = (APP_CONSTANTS.MEDIA.ALLOWED_3D_MIMES as readonly string[]).includes(file.mimetype);
+    const isImage = (
+      APP_CONSTANTS.MEDIA.ALLOWED_IMAGE_MIMES as readonly string[]
+    ).includes(file.mimetype);
+    const isDoc = (
+      APP_CONSTANTS.MEDIA.ALLOWED_DOC_MIMES as readonly string[]
+    ).includes(file.mimetype);
+    const is3D = (
+      APP_CONSTANTS.MEDIA.ALLOWED_3D_MIMES as readonly string[]
+    ).includes(file.mimetype);
 
     if (!isImage && !isDoc && !is3D) {
       throw new BadRequestException({
@@ -73,12 +95,18 @@ export class MediaService {
     }
   }
 
-  async uploadFile(file: Express.Multer.File, dto: UploadMediaDto, userId?: string) {
+  async uploadFile(
+    file: Express.Multer.File,
+    dto: UploadMediaDto,
+    userId?: string,
+  ) {
     this.validateFile(file);
 
     const ext = path.extname(file.originalname).toLowerCase();
-    const sanitizedBase = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
-    const folder = (dto.folder || 'general').replace(/[^a-zA-Z0-9_-]/g, '');
+    const sanitizedBase = path
+      .basename(file.originalname, ext)
+      .replace(/[^a-zA-Z0-9_-]/g, "_");
+    const folder = (dto.folder || "general").replace(/[^a-zA-Z0-9_-]/g, "");
     const storageKey = `${folder}/${uuidv4()}-${sanitizedBase}${ext}`;
 
     try {
@@ -93,7 +121,7 @@ export class MediaService {
     } catch (err: any) {
       this.logger.error(`Failed to upload to S3: ${err.message}`, err.stack);
       // If S3 is not available in local test mode, we still create media metadata
-      this.logger.warn('Continuing with metadata creation...');
+      this.logger.warn("Continuing with metadata creation...");
     }
 
     const url = `${this.publicUrl}/${storageKey}`;
@@ -122,7 +150,7 @@ export class MediaService {
     if (!media) {
       throw new NotFoundException({
         code: ErrorCode.MEDIA_NOT_FOUND,
-        message: 'Media not found',
+        message: "Media not found",
       });
     }
     return media;
@@ -143,7 +171,8 @@ export class MediaService {
     if (productCount > 0 || blogCount > 0 || certCount > 0) {
       throw new ConflictException({
         code: ErrorCode.MEDIA_IN_USE,
-        message: 'Cannot delete media because it is referenced in active content.',
+        message:
+          "Cannot delete media because it is referenced in active content.",
       });
     }
 
@@ -159,7 +188,7 @@ export class MediaService {
     }
 
     await this.prisma.media.delete({ where: { id } });
-    return { success: true, message: 'Media deleted successfully' };
+    return { success: true, message: "Media deleted successfully" };
   }
 
   async listMedia(folder?: string, page = 1, limit = 20) {
@@ -169,7 +198,7 @@ export class MediaService {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.media.count({ where }),
     ]);

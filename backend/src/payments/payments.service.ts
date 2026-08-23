@@ -3,12 +3,16 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-} from '@nestjs/common';
-import { OrderStatus, PaymentProviderType, PaymentStatus } from '@prisma/client';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { PrismaService } from '../prisma/prisma.service';
-import { ClickPaymentProvider } from './providers/click-payment.provider';
-import { PaymePaymentProvider } from './providers/payme-payment.provider';
+} from "@nestjs/common";
+import {
+  OrderStatus,
+  PaymentProviderType,
+  PaymentStatus,
+} from "@prisma/client";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { PrismaService } from "../prisma/prisma.service";
+import { ClickPaymentProvider } from "./providers/click-payment.provider";
+import { PaymePaymentProvider } from "./providers/payme-payment.provider";
 
 @Injectable()
 export class PaymentsService {
@@ -20,7 +24,11 @@ export class PaymentsService {
     private readonly paymeProvider: PaymePaymentProvider,
   ) {}
 
-  async createPaymentUrl(orderId: string, provider: PaymentProviderType, returnUrl?: string) {
+  async createPaymentUrl(
+    orderId: string,
+    provider: PaymentProviderType,
+    returnUrl?: string,
+  ) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: { payments: true },
@@ -29,14 +37,14 @@ export class PaymentsService {
     if (!order) {
       throw new NotFoundException({
         code: ErrorCode.ORDER_NOT_FOUND,
-        message: 'Order not found',
+        message: "Order not found",
       });
     }
 
     if (order.paymentStatus === PaymentStatus.PAID) {
       throw new BadRequestException({
         code: ErrorCode.ORDER_ALREADY_PAID,
-        message: 'Order is already paid',
+        message: "Order is already paid",
       });
     }
 
@@ -58,13 +66,13 @@ export class PaymentsService {
       return {
         paymentUrl: null,
         status: PaymentStatus.PENDING,
-        message: 'Cash on delivery selected',
+        message: "Cash on delivery selected",
       };
     }
 
     // Update payment record
     await this.prisma.payment.upsert({
-      where: { id: order.payments[0]?.id || 'new' },
+      where: { id: order.payments[0]?.id || "new" },
       update: {
         provider,
         paymentUrl: result.paymentUrl,
@@ -83,13 +91,17 @@ export class PaymentsService {
     return result;
   }
 
-  async processWebhook(provider: string, headers: Record<string, any>, payload: Record<string, any>) {
+  async processWebhook(
+    provider: string,
+    headers: Record<string, any>,
+    payload: Record<string, any>,
+  ) {
     this.logger.log(`Processing payment webhook from provider: ${provider}`);
 
     let webhookResult;
-    if (provider.toLowerCase() === 'click') {
+    if (provider.toLowerCase() === "click") {
       webhookResult = await this.clickProvider.handleWebhook(headers, payload);
-    } else if (provider.toLowerCase() === 'payme') {
+    } else if (provider.toLowerCase() === "payme") {
       webhookResult = await this.paymeProvider.handleWebhook(headers, payload);
     } else {
       throw new BadRequestException(`Unknown payment provider: ${provider}`);
@@ -107,7 +119,10 @@ export class PaymentsService {
             where: { id: order.id },
             data: {
               paymentStatus: PaymentStatus.PAID,
-              status: order.status === OrderStatus.PENDING ? OrderStatus.CONFIRMED : order.status,
+              status:
+                order.status === OrderStatus.PENDING
+                  ? OrderStatus.CONFIRMED
+                  : order.status,
             },
           });
 
@@ -115,11 +130,14 @@ export class PaymentsService {
             where: { orderId: order.id },
             data: {
               status: PaymentStatus.PAID,
-              externalTransactionId: webhookResult.externalTransactionId || null,
+              externalTransactionId:
+                webhookResult.externalTransactionId || null,
             },
           });
 
-          this.logger.log(`✅ Order ${order.orderNumber} successfully marked as PAID via ${provider}`);
+          this.logger.log(
+            `✅ Order ${order.orderNumber} successfully marked as PAID via ${provider}`,
+          );
         }
       });
     }

@@ -2,12 +2,12 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { ProductStatus } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { PrismaService } from '../prisma/prisma.service';
-import { AddCartItemDto, UpdateCartItemDto } from './dto/add-cart-item.dto';
+} from "@nestjs/common";
+import { ProductStatus } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { PrismaService } from "../prisma/prisma.service";
+import { AddCartItemDto, UpdateCartItemDto } from "./dto/add-cart-item.dto";
 
 @Injectable()
 export class CartService {
@@ -24,13 +24,16 @@ export class CartService {
                 include: {
                   product: {
                     include: {
-                      images: { include: { media: true }, where: { isPrimary: true } },
+                      images: {
+                        include: { media: true },
+                        where: { isPrimary: true },
+                      },
                     },
                   },
                 },
               },
             },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: "asc" },
           },
         },
       });
@@ -45,7 +48,10 @@ export class CartService {
                   include: {
                     product: {
                       include: {
-                        images: { include: { media: true }, where: { isPrimary: true } },
+                        images: {
+                          include: { media: true },
+                          where: { isPrimary: true },
+                        },
                       },
                     },
                   },
@@ -69,13 +75,16 @@ export class CartService {
               include: {
                 product: {
                   include: {
-                    images: { include: { media: true }, where: { isPrimary: true } },
+                    images: {
+                      include: { media: true },
+                      where: { isPrimary: true },
+                    },
                   },
                 },
               },
             },
           },
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: "asc" },
         },
       },
     });
@@ -90,7 +99,10 @@ export class CartService {
                 include: {
                   product: {
                     include: {
-                      images: { include: { media: true }, where: { isPrimary: true } },
+                      images: {
+                        include: { media: true },
+                        where: { isPrimary: true },
+                      },
                     },
                   },
                 },
@@ -126,7 +138,7 @@ export class CartService {
     ) {
       throw new BadRequestException({
         code: ErrorCode.PRODUCT_INACTIVE,
-        message: 'Product variant is unavailable or inactive',
+        message: "Product variant is unavailable or inactive",
       });
     }
 
@@ -147,7 +159,7 @@ export class CartService {
       if (newQty > 50) {
         throw new BadRequestException({
           code: ErrorCode.INVALID_QUANTITY,
-          message: 'Maximum limit of 50 per item reached',
+          message: "Maximum limit of 50 per item reached",
         });
       }
 
@@ -168,7 +180,12 @@ export class CartService {
     return this.getCart(userId, cart.sessionId || undefined);
   }
 
-  async updateItemQuantity(itemId: string, dto: UpdateCartItemDto, userId?: string, sessionId?: string) {
+  async updateItemQuantity(
+    itemId: string,
+    dto: UpdateCartItemDto,
+    userId?: string,
+    sessionId?: string,
+  ) {
     const cart = await this.getOrCreateCart(userId, sessionId);
     const item = await this.prisma.cartItem.findFirst({
       where: { id: itemId, cartId: cart.id },
@@ -177,7 +194,7 @@ export class CartService {
     if (!item) {
       throw new NotFoundException({
         code: ErrorCode.CART_ITEM_NOT_FOUND,
-        message: 'Cart item not found',
+        message: "Cart item not found",
       });
     }
 
@@ -202,7 +219,7 @@ export class CartService {
     await this.prisma.cartItem.deleteMany({
       where: { cartId: cart.id },
     });
-    return { success: true, message: 'Cart cleared' };
+    return { success: true, message: "Cart cleared" };
   }
 
   async mergeGuestCart(userId: string, sessionId: string) {
@@ -259,14 +276,14 @@ export class CartService {
         id: item.id,
         variantId: variant.id,
         productId: product?.id || null,
-        productName: product?.name || 'Product',
-        productSlug: product?.slug || '',
+        productName: product?.name || "Product",
+        productSlug: product?.slug || "",
         variantName: variant.name,
         volume: variant.volume,
         unit: variant.unit,
         unitPriceMinor: variant.priceMinor,
         subtotalMinor: itemSubtotal,
-        currency: variant.currency || 'UZS',
+        currency: variant.currency || "UZS",
         quantity: item.quantity,
         imageUrl: primaryImg,
       };
@@ -277,7 +294,10 @@ export class CartService {
       sessionId: cart.sessionId,
       currency: cart.currency,
       subtotalMinor,
-      itemsCount: items.reduce((acc: number, cur: any) => acc + cur.quantity, 0),
+      itemsCount: items.reduce(
+        (acc: number, cur: any) => acc + cur.quantity,
+        0,
+      ),
       items,
     };
   }

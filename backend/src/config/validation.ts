@@ -1,10 +1,16 @@
-import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
+import { plainToInstance } from "class-transformer";
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  validateSync,
+} from "class-validator";
 
 enum Environment {
-  Development = 'development',
-  Production = 'production',
-  Test = 'test',
+  Development = "development",
+  Production = "production",
+  Test = "test",
 }
 
 class EnvironmentVariables {
@@ -21,15 +27,15 @@ class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  REDIS_URL: string = 'redis://localhost:6379';
+  REDIS_URL: string = "redis://localhost:6379";
 
   @IsString()
   @IsOptional()
-  JWT_ACCESS_SECRET: string = 'dev_secret_access_key_min_32_chars_123';
+  JWT_ACCESS_SECRET: string = "dev_secret_access_key_min_32_chars_123";
 
   @IsString()
   @IsOptional()
-  JWT_REFRESH_SECRET: string = 'dev_secret_refresh_key_min_32_chars_123';
+  JWT_REFRESH_SECRET: string = "dev_secret_refresh_key_min_32_chars_123";
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -43,9 +49,20 @@ export function validate(config: Record<string, unknown>) {
 
   if (errors.length > 0) {
     const formattedErrors = errors
-      .map((err) => Object.values(err.constraints || {}).join(', '))
-      .join('; ');
+      .map((err) => Object.values(err.constraints || {}).join(", "))
+      .join("; ");
     throw new Error(`❌ Environment validation error: ${formattedErrors}`);
+  }
+
+  if (
+    validatedConfig.NODE_ENV === Environment.Production &&
+    (validatedConfig.JWT_ACCESS_SECRET ===
+      "dev_secret_access_key_min_32_chars_123" ||
+      validatedConfig.JWT_ACCESS_SECRET.length < 32)
+  ) {
+    throw new Error(
+      "❌ Insecure configuration: JWT_ACCESS_SECRET must be at least 32 characters in production!",
+    );
   }
 
   return validatedConfig;

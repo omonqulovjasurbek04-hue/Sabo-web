@@ -1,5 +1,4 @@
 import React from 'react';
-import { CreditCard, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 export const PaymentsAdminPage: React.FC = () => {
   return (

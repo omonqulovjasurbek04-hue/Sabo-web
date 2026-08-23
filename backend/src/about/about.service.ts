@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class AboutService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getPublicAboutPage(locale = 'uz') {
+  async getPublicAboutPage(locale = "uz") {
     const page = await this.prisma.aboutPage.findFirst({
-      where: { status: 'PUBLISHED' },
+      where: { status: "PUBLISHED" },
       include: {
         translations: true,
         heroImage: true,
         timelines: {
           include: { image: true },
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
         },
         values: {
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
         },
       },
     });
@@ -25,7 +25,7 @@ export class AboutService {
     const team = await this.prisma.teamMember.findMany({
       where: { isActive: true },
       include: { photo: true },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { sortOrder: "asc" },
     });
 
     if (!page) {
@@ -50,7 +50,9 @@ export class AboutService {
       id: page.id,
       heroTitle: trans?.title || page.heroTitle,
       heroDescription: trans?.description || page.heroDescription,
-      heroImage: page.heroImage ? { id: page.heroImage.id, url: page.heroImage.url } : null,
+      heroImage: page.heroImage
+        ? { id: page.heroImage.id, url: page.heroImage.url }
+        : null,
       timelines: page.timelines.map((t) => ({
         id: t.id,
         year: t.year,

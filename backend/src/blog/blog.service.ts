@@ -1,16 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { BlogStatus, Prisma } from '@prisma/client';
-import { PaginatedResult, PaginationQueryDto } from '../common/dto/pagination.dto';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { BlogStatus, Prisma } from "@prisma/client";
+import {
+  PaginatedResult,
+  PaginationQueryDto,
+} from "../common/dto/pagination.dto";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class BlogService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAllPublic(query: PaginationQueryDto, categorySlug?: string) {
-    const { page, limit, search, locale = 'uz' } = query;
+    const { page, limit, search, locale = "uz" } = query;
     const skip = query.skip;
 
     const where: Prisma.BlogPostWhereInput = {
@@ -26,8 +29,8 @@ export class BlogService {
       where.translations = {
         some: {
           OR: [
-            { title: { contains: search, mode: 'insensitive' } },
-            { content: { contains: search, mode: 'insensitive' } },
+            { title: { contains: search, mode: "insensitive" } },
+            { content: { contains: search, mode: "insensitive" } },
           ],
         },
       };
@@ -38,7 +41,7 @@ export class BlogService {
         where,
         skip,
         take: limit,
-        orderBy: { publishedAt: 'desc' },
+        orderBy: { publishedAt: "desc" },
         include: {
           translations: true,
           coverImage: true,
@@ -53,7 +56,7 @@ export class BlogService {
     return new PaginatedResult(formatted, total, page, limit);
   }
 
-  async findBySlug(slug: string, locale = 'uz') {
+  async findBySlug(slug: string, locale = "uz") {
     const post = await this.prisma.blogPost.findUnique({
       where: { slug },
       include: {
@@ -67,17 +70,17 @@ export class BlogService {
     if (!post || post.status !== BlogStatus.PUBLISHED || post.deletedAt) {
       throw new NotFoundException({
         code: ErrorCode.BLOG_POST_NOT_FOUND,
-        message: 'Blog post not found',
+        message: "Blog post not found",
       });
     }
 
     return this.formatPublicPostDetail(post, locale);
   }
 
-  async getCategories(locale = 'uz') {
+  async getCategories(locale = "uz") {
     const categories = await this.prisma.blogCategory.findMany({
       include: { translations: true },
-      orderBy: { name: 'asc' },
+      orderBy: { name: "asc" },
     });
 
     return categories.map((cat) => {
@@ -93,12 +96,14 @@ export class BlogService {
 
   private formatPublicPost(post: any, locale: string) {
     const trans = pickTranslation(post.translations, locale);
-    const catTrans = post.category ? pickTranslation(post.category.translations, locale) : null;
+    const catTrans = post.category
+      ? pickTranslation(post.category.translations, locale)
+      : null;
 
     return {
       id: post.id,
       slug: post.slug,
-      title: trans?.title || 'SABO Blog',
+      title: trans?.title || "SABO Blog",
       excerpt: trans?.excerpt || null,
       publishedAt: post.publishedAt,
       coverImageUrl: post.coverImage?.url || null,
@@ -110,7 +115,7 @@ export class BlogService {
           }
         : null,
       authorName: post.author
-        ? `${post.author.firstName || ''} ${post.author.lastName || ''}`.trim()
+        ? `${post.author.firstName || ""} ${post.author.lastName || ""}`.trim()
         : null,
     };
   }
@@ -121,7 +126,7 @@ export class BlogService {
 
     return {
       ...base,
-      content: trans?.content || '',
+      content: trans?.content || "",
       seo: {
         title: trans?.seoTitle || trans?.title || null,
         description: trans?.seoDescription || trans?.excerpt || null,

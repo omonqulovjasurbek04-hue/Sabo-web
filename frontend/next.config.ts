@@ -51,6 +51,23 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    const backendUrl = process.env.BACKEND_API_URL || "http://localhost:4000";
+    return {
+      beforeFiles: [],
+      afterFiles: [],
+      fallback: [
+        {
+          source: "/docs",
+          destination: `${backendUrl}/docs`,
+        },
+        {
+          source: "/docs/:path*",
+          destination: `${backendUrl}/docs/:path*`,
+        },
+      ],
+    };
+  },
 };
 
 export default nextConfig;

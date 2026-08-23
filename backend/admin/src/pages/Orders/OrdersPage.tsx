@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Search, Filter, Eye, CheckCircle2, Clock, Truck, XCircle, ChevronDown, ShoppingCart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Eye } from 'lucide-react';
+import { apiClient } from '../../api/client';
 import type { Order, OrderStatus } from '../../types';
 
 const initialOrders: Order[] = [
@@ -36,22 +37,6 @@ const initialOrders: Order[] = [
     paymentMethod: 'PAYME',
     createdAt: '2026-08-22 09:45',
   },
-  {
-    id: 'ord_3',
-    orderNumber: 'ORD-2026-8939',
-    customerName: 'Madina Alimova',
-    customerPhone: '+998 97 555 11 22',
-    deliveryAddress: 'Toshkent sh., Mirzo Ulug‘bek tumani, 4-tor ko‘cha',
-    items: [
-      { id: 'item_4', productName: 'SABO Yogurt 2.5%', variant: '450g', quantity: 4, priceMinor: 13000, totalMinor: 52000 },
-    ],
-    totalMinor: 52000,
-    currency: 'UZS',
-    status: 'DELIVERED',
-    paymentStatus: 'PAID',
-    paymentMethod: 'CASH',
-    createdAt: '2026-08-21 16:30',
-  },
 ];
 
 export const OrdersPage: React.FC = () => {
@@ -60,7 +45,48 @@ export const OrdersPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
 
-  const handleUpdateStatus = (orderId: string, status: OrderStatus) => {
+  const fetchOrders = () => {
+    apiClient
+      .get('/admin/orders')
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        if (Array.isArray(data)) {
+          setOrders(
+            data.map((o: any) => ({
+              id: o.id,
+              orderNumber: o.orderNumber,
+              customerName: o.customerName,
+              customerPhone: o.customerPhone,
+              deliveryAddress: o.address ? `${o.address.city || ''} ${o.address.street || ''}`.trim() : 'Yetkazib berish manzili',
+              items: (o.items || []).map((it: any) => ({
+                id: it.id,
+                productName: it.productName,
+                variant: it.variantName || '1L',
+                quantity: it.quantity,
+                priceMinor: it.unitPriceMinor,
+                totalMinor: it.subtotalMinor,
+              })),
+              totalMinor: o.totalMinor,
+              currency: o.currency || 'UZS',
+              status: o.status,
+              paymentStatus: o.paymentStatus,
+              paymentMethod: o.payments?.[0]?.provider || 'CASH',
+              createdAt: new Date(o.createdAt).toLocaleString(),
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const handleUpdateStatus = async (orderId: string, status: OrderStatus) => {
+    try {
+      await apiClient.patch(`/admin/orders/${orderId}/status`, { status });
+    } catch {}
     setOrders(orders.map((o) => (o.id === orderId ? { ...o, status } : o)));
     if (activeOrder && activeOrder.id === orderId) {
       setActiveOrder({ ...activeOrder, status });

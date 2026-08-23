@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import { AdminLayout } from './components/layout/AdminLayout';
-import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { ProductsList } from './pages/Products/ProductsList';
 import { CategoriesPage } from './pages/Products/CategoriesPage';
@@ -22,28 +21,13 @@ import { UsersRolesPage } from './pages/Users/UsersRolesPage';
 import { AuditLogsPage } from './pages/AuditLogs/AuditLogsPage';
 import { SettingsAdminPage } from './pages/Settings/SettingsAdminPage';
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  return <>{children}</>;
-};
-
 export const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductsList />} />
             <Route path="products/categories" element={<CategoriesPage />} />
@@ -71,3 +55,4 @@ export const App: React.FC = () => {
 };
 
 export default App;
+

@@ -132,8 +132,8 @@ export function Navbar({
     setSearchOpen(false);
   };
 
-  // Hide website navbar when on admin dashboard or login page
-  if (pathname?.includes("/admin") || pathname?.includes("/login")) {
+  // Hide website navbar when on admin dashboard
+  if (pathname?.includes("/admin")) {
     return null;
   }
 

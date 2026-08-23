@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { BlogStatus, ProductStatus } from '@prisma/client';
-import { RedisService } from '../common/redis/redis.service';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { BlogStatus, ProductStatus } from "@prisma/client";
+import { RedisService } from "../common/redis/redis.service";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class HomeService {
@@ -11,7 +11,7 @@ export class HomeService {
     private readonly redis: RedisService,
   ) {}
 
-  async getHomeData(locale = 'uz') {
+  async getHomeData(locale = "uz") {
     const cacheKey = `home:${locale}`;
     const cached = await this.redis.get(cacheKey);
     if (cached) {
@@ -20,77 +20,93 @@ export class HomeService {
       } catch {}
     }
 
-    const [hero, featuredCategories, featuredProducts, production, about, certificates, recentBlog] =
-      await Promise.all([
-        // 1. Hero
-        this.prisma.homeHero.findFirst({
-          where: { isActive: true },
-          include: { backgroundImage: true, productImage: true },
-          orderBy: { sortOrder: 'asc' },
-        }),
+    const [
+      hero,
+      featuredCategories,
+      featuredProducts,
+      production,
+      about,
+      certificates,
+      recentBlog,
+    ] = await Promise.all([
+      // 1. Hero
+      this.prisma.homeHero.findFirst({
+        where: { isActive: true },
+        include: { backgroundImage: true, productImage: true },
+        orderBy: { sortOrder: "asc" },
+      }),
 
-        // 2. Featured Categories
-        this.prisma.category.findMany({
-          where: { isActive: true, parentId: null },
-          include: { translations: true, image: true },
-          take: 6,
-          orderBy: { sortOrder: 'asc' },
-        }),
+      // 2. Featured Categories
+      this.prisma.category.findMany({
+        where: { isActive: true, parentId: null },
+        include: { translations: true, image: true },
+        take: 6,
+        orderBy: { sortOrder: "asc" },
+      }),
 
-        // 3. Featured Products
-        this.prisma.product.findMany({
-          where: { isActive: true, status: ProductStatus.ACTIVE, isFeatured: true, deletedAt: null },
-          take: 8,
-          include: {
-            translations: true,
-            category: { include: { translations: true } },
-            images: { include: { media: true }, orderBy: { sortOrder: 'asc' } },
-            variants: { where: { isAvailable: true } },
-            availability: true,
+      // 3. Featured Products
+      this.prisma.product.findMany({
+        where: {
+          isActive: true,
+          status: ProductStatus.ACTIVE,
+          isFeatured: true,
+          deletedAt: null,
+        },
+        take: 8,
+        include: {
+          translations: true,
+          category: { include: { translations: true } },
+          images: { include: { media: true }, orderBy: { sortOrder: "asc" } },
+          variants: { where: { isAvailable: true } },
+          availability: true,
+        },
+        orderBy: { sortOrder: "asc" },
+      }),
+
+      // 4. Production preview
+      this.prisma.productionPage.findFirst({
+        where: { status: "PUBLISHED" },
+        include: {
+          translations: true,
+          heroImage: true,
+          steps: {
+            include: { image: true },
+            take: 4,
+            orderBy: { sortOrder: "asc" },
           },
-          orderBy: { sortOrder: 'asc' },
-        }),
+        },
+      }),
 
-        // 4. Production preview
-        this.prisma.productionPage.findFirst({
-          where: { status: 'PUBLISHED' },
-          include: {
-            translations: true,
-            heroImage: true,
-            steps: { include: { image: true }, take: 4, orderBy: { sortOrder: 'asc' } },
-          },
-        }),
+      // 5. About preview
+      this.prisma.aboutPage.findFirst({
+        where: { status: "PUBLISHED" },
+        include: {
+          translations: true,
+          heroImage: true,
+          values: { take: 3, orderBy: { sortOrder: "asc" } },
+        },
+      }),
 
-        // 5. About preview
-        this.prisma.aboutPage.findFirst({
-          where: { status: 'PUBLISHED' },
-          include: {
-            translations: true,
-            heroImage: true,
-            values: { take: 3, orderBy: { sortOrder: 'asc' } },
-          },
-        }),
+      // 6. Certificates preview
+      this.prisma.certificate.findMany({
+        where: { isActive: true },
+        include: { previewMedia: true, documentMedia: true },
+        take: 4,
+        orderBy: { sortOrder: "asc" },
+      }),
 
-        // 6. Certificates preview
-        this.prisma.certificate.findMany({
-          where: { isActive: true },
-          include: { previewMedia: true, documentMedia: true },
-          take: 4,
-          orderBy: { sortOrder: 'asc' },
-        }),
-
-        // 7. Recent Blog posts
-        this.prisma.blogPost.findMany({
-          where: { status: BlogStatus.PUBLISHED, deletedAt: null },
-          include: {
-            translations: true,
-            coverImage: true,
-            category: { include: { translations: true } },
-          },
-          take: 3,
-          orderBy: { publishedAt: 'desc' },
-        }),
-      ]);
+      // 7. Recent Blog posts
+      this.prisma.blogPost.findMany({
+        where: { status: BlogStatus.PUBLISHED, deletedAt: null },
+        include: {
+          translations: true,
+          coverImage: true,
+          category: { include: { translations: true } },
+        },
+        take: 3,
+        orderBy: { publishedAt: "desc" },
+      }),
+    ]);
 
     const result = {
       hero: hero
@@ -118,7 +134,9 @@ export class HomeService {
 
       featuredProducts: featuredProducts.map((p) => {
         const trans = pickTranslation(p.translations, locale);
-        const catTrans = p.category ? pickTranslation(p.category.translations, locale) : null;
+        const catTrans = p.category
+          ? pickTranslation(p.category.translations, locale)
+          : null;
         return {
           id: p.id,
           slug: p.slug,
@@ -142,8 +160,12 @@ export class HomeService {
 
       productionPreview: production
         ? {
-            title: pickTranslation(production.translations, locale)?.title || production.heroTitle,
-            description: pickTranslation(production.translations, locale)?.description || production.heroDescription,
+            title:
+              pickTranslation(production.translations, locale)?.title ||
+              production.heroTitle,
+            description:
+              pickTranslation(production.translations, locale)?.description ||
+              production.heroDescription,
             heroImageUrl: production.heroImage?.url || null,
             steps: production.steps.map((s) => ({
               id: s.id,
@@ -155,8 +177,12 @@ export class HomeService {
 
       aboutPreview: about
         ? {
-            title: pickTranslation(about.translations, locale)?.title || about.heroTitle,
-            description: pickTranslation(about.translations, locale)?.description || about.heroDescription,
+            title:
+              pickTranslation(about.translations, locale)?.title ||
+              about.heroTitle,
+            description:
+              pickTranslation(about.translations, locale)?.description ||
+              about.heroDescription,
             values: about.values.map((v) => ({
               id: v.id,
               title: v.title,
@@ -179,7 +205,7 @@ export class HomeService {
         return {
           id: b.id,
           slug: b.slug,
-          title: trans?.title || 'SABO Blog',
+          title: trans?.title || "SABO Blog",
           excerpt: trans?.excerpt || null,
           coverImageUrl: b.coverImage?.url || null,
           publishedAt: b.publishedAt,

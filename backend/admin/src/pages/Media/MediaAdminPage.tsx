@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image as ImageIcon, Upload, Trash2 } from 'lucide-react';
+import { Image as ImageIcon, Upload } from 'lucide-react';
 
 export const MediaAdminPage: React.FC = () => {
   const mediaItems = [

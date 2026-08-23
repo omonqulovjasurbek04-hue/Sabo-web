@@ -1,19 +1,18 @@
 import {
   ExecutionContext,
   Injectable,
+  SetMetadata,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { ErrorCode } from '../enums/error-code.enum';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { AuthGuard } from "@nestjs/passport";
+import { ErrorCode } from "../enums/error-code.enum";
 
-export const IS_PUBLIC_KEY = 'isPublic';
-export const Public = () => (target: object, key?: any, descriptor?: any) => {
-  Reflector.createDecorator<boolean>()(true)(target, key, descriptor);
-};
+export const IS_PUBLIC_KEY = "isPublic";
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class JwtAuthGuard extends AuthGuard("jwt") {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -37,7 +36,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         err ||
         new UnauthorizedException({
           code: ErrorCode.AUTH_UNAUTHORIZED,
-          message: info?.message || 'Unauthorized access',
+          message: info?.message || "Unauthorized access",
         })
       );
     }

@@ -320,8 +320,23 @@ const dict = {
   },
   blog: {
     title: "Блог",
+    subtitle: "Подробная информация о новых и качественных продуктах SABO",
     comingSoon: "Раздел блога скоро запустится",
     noArticle: "Статья не найдена",
+    recentArticles: "Последние статьи",
+    categories: {
+      products: "Продукты",
+      production: "Производство",
+      about: "О нас",
+      certificates: "Сертификаты",
+    },
+    tags: {
+      quality: "Качество",
+      natural: "Естественный",
+      recipes: "Рецепты",
+      news: "Новости",
+    },
+    viewAll: "Все статьи",
   },
   footer: {
     description: "SABO — бренд качественных молочных продуктов.",

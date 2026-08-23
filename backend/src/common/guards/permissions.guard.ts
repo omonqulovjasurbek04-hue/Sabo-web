@@ -3,11 +3,11 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
-} from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { RoleType } from '@prisma/client';
-import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
-import { ErrorCode } from '../enums/error-code.enum';
+} from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
+import { RoleType } from "@prisma/client";
+import { PERMISSIONS_KEY } from "../decorators/permissions.decorator";
+import { ErrorCode } from "../enums/error-code.enum";
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
@@ -27,7 +27,7 @@ export class PermissionsGuard implements CanActivate {
     if (!user) {
       throw new ForbiddenException({
         code: ErrorCode.AUTH_FORBIDDEN,
-        message: 'Access denied: unauthenticated',
+        message: "Access denied: unauthenticated",
       });
     }
 
@@ -44,7 +44,7 @@ export class PermissionsGuard implements CanActivate {
     if (!hasAllPermissions) {
       throw new ForbiddenException({
         code: ErrorCode.AUTH_FORBIDDEN,
-        message: `Access denied: missing required permissions [${requiredPermissions.join(', ')}]`,
+        message: `Access denied: missing required permissions [${requiredPermissions.join(", ")}]`,
       });
     }
 

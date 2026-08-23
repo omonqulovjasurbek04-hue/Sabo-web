@@ -320,8 +320,23 @@ const dict = {
   },
   blog: {
     title: "Blog",
+    subtitle: "Detailed information about new and quality SABO products",
     comingSoon: "The blog section will launch soon",
     noArticle: "Article not found",
+    recentArticles: "Latest articles",
+    categories: {
+      products: "Products",
+      production: "Production",
+      about: "About us",
+      certificates: "Certificates",
+    },
+    tags: {
+      quality: "Quality",
+      natural: "Natural",
+      recipes: "Recipes",
+      news: "News",
+    },
+    viewAll: "All articles",
   },
   footer: {
     description: "SABO — a brand of quality dairy products.",

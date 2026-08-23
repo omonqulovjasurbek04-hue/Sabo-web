@@ -20,8 +20,8 @@ import type { Locale } from "@/lib/i18n/locales";
 export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const pathname = usePathname();
 
-  // Do not render website footer on admin dashboard or login page
-  if (pathname?.includes("/admin") || pathname?.includes("/login")) {
+  // Do not render website footer on admin dashboard
+  if (pathname?.includes("/admin")) {
     return null;
   }
 
@@ -31,7 +31,6 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
     { href: "/about", label: dict.nav.about },
     { href: "/certificates", label: dict.nav.certificates },
     { href: "/contact", label: dict.nav.contact },
-    { href: "/account", label: dict.account.title },
   ];
 
   const contactItems = [
@@ -109,10 +108,17 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           </div>
         </div>
 
-        <div className="py-5 border-t border-border text-center text-xs sm:text-sm text-muted">
+        <div className="py-5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs sm:text-sm text-muted">
           <p>
             © {new Date().getFullYear()} SABO. {dict.footer.rights}
           </p>
+          <LocalizedLink
+            href="/admin"
+            locale={locale}
+            className="text-[11px] font-semibold text-muted/60 hover:text-primary transition-colors"
+          >
+            Admin Panel
+          </LocalizedLink>
         </div>
       </Container>
     </footer>

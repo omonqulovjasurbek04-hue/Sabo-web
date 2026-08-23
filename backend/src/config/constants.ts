@@ -1,6 +1,6 @@
 export const APP_CONSTANTS = {
-  DEFAULT_LOCALE: 'uz',
-  SUPPORTED_LOCALES: ['uz', 'ru', 'en'] as const,
+  DEFAULT_LOCALE: "uz",
+  SUPPORTED_LOCALES: ["uz", "ru", "en"] as const,
   PAGINATION: {
     DEFAULT_PAGE: 1,
     DEFAULT_LIMIT: 12,
@@ -18,9 +18,19 @@ export const APP_CONSTANTS = {
     MAX_IMAGE_SIZE_BYTES: 10 * 1024 * 1024, // 10MB
     MAX_PDF_SIZE_BYTES: 25 * 1024 * 1024, // 25MB
     MAX_3D_SIZE_BYTES: 50 * 1024 * 1024, // 50MB
-    ALLOWED_IMAGE_MIMES: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/svg+xml'],
-    ALLOWED_DOC_MIMES: ['application/pdf'],
-    ALLOWED_3D_MIMES: ['model/gltf-binary', 'model/gltf+json', 'application/octet-stream'],
+    ALLOWED_IMAGE_MIMES: [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/avif",
+      "image/svg+xml",
+    ],
+    ALLOWED_DOC_MIMES: ["application/pdf"],
+    ALLOWED_3D_MIMES: [
+      "model/gltf-binary",
+      "model/gltf+json",
+      "application/octet-stream",
+    ],
   },
 } as const;
 

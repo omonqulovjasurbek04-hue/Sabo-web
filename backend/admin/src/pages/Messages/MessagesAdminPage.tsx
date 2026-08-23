@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageSquare, CheckCircle2, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { apiClient } from '../../api/client';
 import type { ContactMessage } from '../../types';
 
 const initialMessages: ContactMessage[] = [
@@ -12,24 +12,46 @@ const initialMessages: ContactMessage[] = [
     status: 'NEW',
     createdAt: 'Bugun, 08:15',
   },
-  {
-    id: 'msg_2',
-    name: 'Sardor Yusupov',
-    phone: '+998 94 321 00 11',
-    subject: 'Sertifikatlar bo‘yicha savol',
-    message: 'SABO Yogurt mahsulotlarining Halol va ISO sifat sertifikatlari bilan qanday tanishsa bo‘ladi?',
-    status: 'READ',
-    createdAt: 'Kecha, 14:20',
-  },
 ];
 
 export const MessagesAdminPage: React.FC = () => {
   const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
 
-  const toggleStatus = (id: string) => {
+  const fetchMessages = () => {
+    apiClient
+      .get('/admin/messages')
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        if (Array.isArray(data)) {
+          setMessages(
+            data.map((m: any) => ({
+              id: m.id,
+              name: m.name,
+              phone: m.phone || '—',
+              subject: m.subject || 'Aloqa xabari',
+              message: m.message,
+              status: m.status,
+              createdAt: new Date(m.createdAt).toLocaleString(),
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const toggleStatus = async (id: string) => {
+    const current = messages.find((m) => m.id === id);
+    const newStatus = current?.status === 'NEW' ? 'READ' : 'NEW';
+    try {
+      await apiClient.patch(`/admin/messages/${id}/status`, { status: newStatus });
+    } catch {}
     setMessages(
       messages.map((m) =>
-        m.id === id ? { ...m, status: m.status === 'NEW' ? 'READ' : 'NEW' } : m
+        m.id === id ? { ...m, status: newStatus } : m
       )
     );
   };

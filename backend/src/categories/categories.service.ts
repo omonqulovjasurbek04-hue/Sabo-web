@@ -2,12 +2,12 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { RedisService } from '../common/redis/redis.service';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
+} from "@nestjs/common";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { RedisService } from "../common/redis/redis.service";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateCategoryDto } from "./dto/create-category.dto";
 
 @Injectable()
 export class CategoriesService {
@@ -16,7 +16,7 @@ export class CategoriesService {
     private readonly redis: RedisService,
   ) {}
 
-  async findAllPublic(locale = 'uz') {
+  async findAllPublic(locale = "uz") {
     const cacheKey = `categories:public:${locale}`;
     const cached = await this.redis.get(cacheKey);
     if (cached) {
@@ -38,10 +38,10 @@ export class CategoriesService {
             translations: true,
             image: { select: { id: true, url: true, altText: true } },
           },
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
         },
       },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { sortOrder: "asc" },
     });
 
     const formatted = categories
@@ -52,7 +52,7 @@ export class CategoriesService {
     return formatted;
   }
 
-  async findBySlug(slug: string, locale = 'uz') {
+  async findBySlug(slug: string, locale = "uz") {
     const category = await this.prisma.category.findUnique({
       where: { slug },
       include: {
@@ -63,10 +63,10 @@ export class CategoriesService {
           include: { translations: true, image: true },
         },
         products: {
-          where: { isActive: true, status: 'ACTIVE' },
+          where: { isActive: true, status: "ACTIVE" },
           include: {
             translations: true,
-            images: { include: { media: true }, orderBy: { sortOrder: 'asc' } },
+            images: { include: { media: true }, orderBy: { sortOrder: "asc" } },
             variants: { where: { isAvailable: true } },
           },
         },
@@ -76,7 +76,7 @@ export class CategoriesService {
     if (!category || !category.isActive) {
       throw new NotFoundException({
         code: ErrorCode.CATEGORY_NOT_FOUND,
-        message: 'Category not found',
+        message: "Category not found",
       });
     }
 
@@ -90,7 +90,7 @@ export class CategoriesService {
     if (existing) {
       throw new ConflictException({
         code: ErrorCode.CATEGORY_SLUG_EXISTS,
-        message: 'A category with this slug already exists',
+        message: "A category with this slug already exists",
       });
     }
 
@@ -129,14 +129,18 @@ export class CategoriesService {
     }
 
     if (dto.slug && dto.slug !== category.slug) {
-      const existing = await this.prisma.category.findUnique({ where: { slug: dto.slug } });
+      const existing = await this.prisma.category.findUnique({
+        where: { slug: dto.slug },
+      });
       if (existing) {
         throw new ConflictException({ code: ErrorCode.CATEGORY_SLUG_EXISTS });
       }
     }
 
     if (dto.translations) {
-      await this.prisma.categoryTranslation.deleteMany({ where: { categoryId: id } });
+      await this.prisma.categoryTranslation.deleteMany({
+        where: { categoryId: id },
+      });
     }
 
     const updated = await this.prisma.category.update({
@@ -170,11 +174,12 @@ export class CategoriesService {
 
   async delete(id: string) {
     const category = await this.prisma.category.findUnique({ where: { id } });
-    if (!category) throw new NotFoundException({ code: ErrorCode.CATEGORY_NOT_FOUND });
+    if (!category)
+      throw new NotFoundException({ code: ErrorCode.CATEGORY_NOT_FOUND });
 
     await this.prisma.category.delete({ where: { id } });
     await this.invalidateCache();
-    return { success: true, message: 'Category deleted' };
+    return { success: true, message: "Category deleted" };
   }
 
   private formatCategory(category: any, locale: string) {
@@ -184,14 +189,18 @@ export class CategoriesService {
       slug: category.slug,
       name: translation?.name || category.name,
       description: translation?.description || category.description,
-      image: category.image ? { id: category.image.id, url: category.image.url } : null,
-      children: category.children?.map((child: any) => this.formatCategory(child, locale)),
+      image: category.image
+        ? { id: category.image.id, url: category.image.url }
+        : null,
+      children: category.children?.map((child: any) =>
+        this.formatCategory(child, locale),
+      ),
       sortOrder: category.sortOrder,
       isActive: category.isActive,
     };
   }
 
   private async invalidateCache() {
-    await this.redis.delPattern('categories:*');
+    await this.redis.delPattern("categories:*");
   }
 }

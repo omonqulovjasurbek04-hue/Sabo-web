@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "@/components/ui/icons";
+import { apiClient } from "@/lib/api-client";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,8 @@ export function ContactForm({ dict }: ContactFormProps) {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const setField = (field: keyof FormValues, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
@@ -55,12 +58,30 @@ export function ContactForm({ dict }: ContactFormProps) {
     return next;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const next = validate();
     setErrors(next);
     if (Object.keys(next).length > 0) return;
-    setSubmitted(true);
+
+    setLoading(true);
+    setSubmitError(null);
+
+    const res = await apiClient.sendContactMessage({
+      name: values.name.trim(),
+      phone: values.phone.trim(),
+      email: values.email.trim(),
+      message: values.message.trim(),
+      subject: "Mijoz qayta aloqa xabari",
+    });
+
+    setLoading(false);
+
+    if (res.success || res.data) {
+      setSubmitted(true);
+    } else {
+      setSubmitError(res.error?.message || "Xabar yuborishda xatolik yuz berdi");
+    }
   };
 
   if (submitted) {
@@ -172,8 +193,14 @@ export function ContactForm({ dict }: ContactFormProps) {
         ) : null}
       </div>
 
-      <Button type="submit" size="lg" className="w-full font-bold">
-        {dict.contact.submit}
+      {submitError ? (
+        <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
+          {submitError}
+        </div>
+      ) : null}
+
+      <Button type="submit" size="lg" className="w-full font-bold" disabled={loading}>
+        {loading ? "Yuborilmoqda..." : dict.contact.submit}
       </Button>
 
       <p className="text-xs text-muted leading-relaxed">{dict.contact.formNote}</p>

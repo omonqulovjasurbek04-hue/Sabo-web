@@ -51,23 +51,22 @@ export function validateRegister(body: Record<string, unknown>): ValidationResul
   };
 }
 
-export function validateLogin(body: Record<string, unknown>): ValidationResult<{ phone?: string; email?: string; password?: string }> {
+export function validateLogin(body: Record<string, unknown>): ValidationResult<{ identifier?: string; phone?: string; email?: string; password?: string }> {
   const errors: Record<string, string> = {};
 
-  const phone = typeof body.phone === "string" ? body.phone : undefined;
-  const email = typeof body.email === "string" ? body.email : undefined;
+  const identifier = typeof body.identifier === "string" ? body.identifier.trim() : undefined;
+  const phone = typeof body.phone === "string" ? body.phone.trim() : undefined;
+  const email = typeof body.email === "string" ? body.email.trim() : undefined;
   const password = typeof body.password === "string" ? body.password : undefined;
 
-  if (!phone && !email) {
-    errors.identifier = "Telefon raqam yoki email kiritilishi shart";
+  const resolvedIdentifier = identifier || phone || email;
+
+  if (!resolvedIdentifier) {
+    errors.identifier = "Login, telefon raqam yoki email kiritilishi shart";
   }
 
-  if (phone && !validatePhone(phone)) {
-    errors.phone = "Yaroqsiz telefon raqami";
-  }
-
-  if (email && !validateEmail(email)) {
-    errors.email = "Yaroqsiz email";
+  if (!password || password.length === 0) {
+    errors.password = "Parol kiritilishi shart";
   }
 
   if (Object.keys(errors).length > 0) {
@@ -77,6 +76,7 @@ export function validateLogin(body: Record<string, unknown>): ValidationResult<{
   return {
     success: true,
     data: {
+      identifier: resolvedIdentifier,
       phone: phone ? phone.replace(/[\s-()]/g, "") : undefined,
       email: email?.trim().toLowerCase(),
       password,

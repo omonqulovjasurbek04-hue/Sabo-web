@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class CertificatesService {
@@ -12,7 +12,7 @@ export class CertificatesService {
         documentMedia: true,
         previewMedia: true,
       },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { sortOrder: "asc" },
     });
 
     return certificates.map((cert) => ({
@@ -35,7 +35,7 @@ export class CertificatesService {
     });
 
     if (!cert || !cert.isActive) {
-      throw new NotFoundException('Certificate not found');
+      throw new NotFoundException("Certificate not found");
     }
 
     return {

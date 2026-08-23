@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Plus, Eye, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import type { BlogPost } from '../../types';
 
 const initialPosts: BlogPost[] = [
@@ -28,7 +28,7 @@ const initialPosts: BlogPost[] = [
 ];
 
 export const BlogAdminPage: React.FC = () => {
-  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  const [posts] = useState<BlogPost[]>(initialPosts);
 
   return (
     <div className="space-y-6">

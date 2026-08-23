@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Award, Plus, Check, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import type { Certificate } from '../../types';
 
 const initialCertificates: Certificate[] = [

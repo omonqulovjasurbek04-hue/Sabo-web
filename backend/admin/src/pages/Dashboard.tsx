@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TrendingUp,
   ShoppingCart,
@@ -11,8 +11,6 @@ import {
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
@@ -21,9 +19,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from 'recharts';
 import { Link } from 'react-router-dom';
+import { apiClient } from '../api/client';
 
 const salesData = [
   { month: 'Yan', daromad: 42000000, buyurtmalar: 320 },
@@ -44,7 +42,7 @@ const categoryData = [
   { name: 'Sariyog‘', value: 10, color: '#B7E4C7' },
 ];
 
-const recentOrders = [
+const defaultRecentOrders = [
   {
     id: 'ORD-2026-8941',
     customer: 'Jasurbek Omonqulov',
@@ -53,7 +51,6 @@ const recentOrders = [
     total: 36000,
     payment: 'Click',
     status: 'CONFIRMED',
-    time: '10 daqiqa oldin',
   },
   {
     id: 'ORD-2026-8940',
@@ -63,31 +60,31 @@ const recentOrders = [
     total: 45000,
     payment: 'Payme',
     status: 'PENDING',
-    time: '25 daqiqa oldin',
-  },
-  {
-    id: 'ORD-2026-8939',
-    customer: 'Madina Alimova',
-    phone: '+998 97 555 11 22',
-    product: 'SABO Yogurt 2.5% (4 dona), SABO Sutim (2 dona)',
-    total: 52000,
-    payment: 'Naqd',
-    status: 'DELIVERED',
-    time: '1 soat oldin',
-  },
-  {
-    id: 'ORD-2026-8938',
-    customer: 'Anvar Qodirov',
-    phone: '+998 99 888 77 66',
-    product: 'SABO Smetana 15% (2 dona)',
-    total: 28000,
-    payment: 'Click',
-    status: 'DELIVERED',
-    time: '2 soat oldin',
   },
 ];
 
 export const Dashboard: React.FC = () => {
+  const [stats, setStats] = useState<{
+    ordersCount: number;
+    pendingOrdersCount: number;
+    confirmedOrdersCount: number;
+    completedOrdersCount: number;
+    productsCount: number;
+    activeProductsCount: number;
+    usersCount: number;
+    newMessagesCount: number;
+    recentOrders?: any[];
+  } | null>(null);
+
+  useEffect(() => {
+    apiClient
+      .get('/admin/dashboard')
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        if (data) setStats(data);
+      })
+      .catch(() => {});
+  }, []);
   return (
     <div className="space-y-8">
       {/* Title & Actions */}
@@ -148,10 +145,10 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="mt-4">
             <div className="text-2xl sm:text-3xl font-black text-[#0E3B2E]">
-              840 <span className="text-sm font-bold text-[#52796F]">ta</span>
+              {stats ? stats.ordersCount : 840} <span className="text-sm font-bold text-[#52796F]">ta</span>
             </div>
             <span className="text-xs text-blue-600 font-bold block mt-1">
-              42 ta yangi kutilayotgan
+              {stats ? stats.pendingOrdersCount : 42} ta yangi kutilayotgan
             </span>
           </div>
         </div>
@@ -167,10 +164,10 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="mt-4">
             <div className="text-2xl sm:text-3xl font-black text-[#0E3B2E]">
-              18 <span className="text-sm font-bold text-[#52796F]">xil</span>
+              {stats ? stats.activeProductsCount : 18} <span className="text-sm font-bold text-[#52796F]">xil</span>
             </div>
             <span className="text-xs text-[#2D6A4F] font-bold block mt-1">
-              7 ta asosiy toifada
+              {stats ? `${stats.productsCount} ta jami katalogda` : '7 ta asosiy toifada'}
             </span>
           </div>
         </div>
@@ -178,7 +175,7 @@ export const Dashboard: React.FC = () => {
         <div className="p-6 rounded-3xl bg-white border border-[#EBE3DA] shadow-xs flex flex-col justify-between hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-extrabold uppercase tracking-wider text-[#52796F]">
-              Mijozlar bazasi
+              Mijozlar &amp; Xabarlar
             </span>
             <div className="p-2.5 rounded-2xl bg-amber-50 text-amber-700">
               <Users className="size-5" />
@@ -186,10 +183,10 @@ export const Dashboard: React.FC = () => {
           </div>
           <div className="mt-4">
             <div className="text-2xl sm:text-3xl font-black text-[#0E3B2E]">
-              1,245 <span className="text-sm font-bold text-[#52796F]">nafar</span>
+              {stats ? stats.usersCount : 1245} <span className="text-sm font-bold text-[#52796F]">nafar</span>
             </div>
             <span className="text-xs text-amber-600 font-bold block mt-1">
-              +112 ta yangi ro‘yxatdan o‘tgan
+              {stats ? `${stats.newMessagesCount} ta yangi murojaat` : '+112 ta yangi ro‘yxatdan o‘tgan'}
             </span>
           </div>
         </div>
@@ -327,22 +324,22 @@ export const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EBE3DA]/60">
-              {recentOrders.map((ord) => (
+              {(stats?.recentOrders?.length ? stats.recentOrders : defaultRecentOrders).map((ord: any) => (
                 <tr key={ord.id} className="hover:bg-[#F8F6F0] transition-colors">
-                  <td className="py-3.5 px-4 font-mono font-bold text-[#0E3B2E]">{ord.id}</td>
+                  <td className="py-3.5 px-4 font-mono font-bold text-[#0E3B2E]">{ord.orderNumber || ord.id}</td>
                   <td className="py-3.5 px-4">
-                    <div className="font-bold text-[#1A2E26]">{ord.customer}</div>
-                    <div className="text-[11px] text-[#52796F]">{ord.phone}</div>
+                    <div className="font-bold text-[#1A2E26]">{ord.customerName || ord.customer || 'Mijoz'}</div>
+                    <div className="text-[11px] text-[#52796F]">{ord.customerPhone || ord.phone || '—'}</div>
                   </td>
                   <td className="py-3.5 px-4 text-[#52796F] max-w-xs truncate font-medium">
-                    {ord.product}
+                    {ord.product || 'SABO Mahsulotlari'}
                   </td>
                   <td className="py-3.5 px-4 font-black text-[#0E3B2E]">
-                    {ord.total.toLocaleString()} UZS
+                    {(ord.totalMinor ? ord.totalMinor : (ord.total || 0)).toLocaleString()} UZS
                   </td>
                   <td className="py-3.5 px-4">
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-[#EBF7EE] text-[#0E3B2E] uppercase">
-                      {ord.payment}
+                      {ord.paymentMethod || ord.payment || 'CASH'}
                     </span>
                   </td>
                   <td className="py-3.5 px-4">

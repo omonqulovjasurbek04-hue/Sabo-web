@@ -4,18 +4,18 @@ import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { RoleType } from '@prisma/client';
-import * as argon2 from 'argon2';
-import * as crypto from 'crypto';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { RedisService } from '../common/redis/redis.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoginDto } from './dto/login.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RegisterDto } from './dto/register.dto';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { RoleType } from "@prisma/client";
+import * as argon2 from "argon2";
+import * as crypto from "crypto";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { RedisService } from "../common/redis/redis.service";
+import { PrismaService } from "../prisma/prisma.service";
+import { LoginDto } from "./dto/login.dto";
+import { RefreshTokenDto } from "./dto/refresh-token.dto";
+import { RegisterDto } from "./dto/register.dto";
 
 @Injectable()
 export class AuthService {
@@ -27,14 +27,14 @@ export class AuthService {
   ) {}
 
   private hashToken(token: string): string {
-    return crypto.createHash('sha256').update(token).digest('hex');
+    return crypto.createHash("sha256").update(token).digest("hex");
   }
 
   async register(dto: RegisterDto) {
     if (!dto.email && !dto.phone) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
-        message: 'Either email or phone is required to register',
+        message: "Either email or phone is required to register",
       });
     }
 
@@ -45,7 +45,7 @@ export class AuthService {
       if (existingEmail) {
         throw new ConflictException({
           code: ErrorCode.USER_ALREADY_EXISTS,
-          message: 'A user with this email already exists',
+          message: "A user with this email already exists",
         });
       }
     }
@@ -57,7 +57,7 @@ export class AuthService {
       if (existingPhone) {
         throw new ConflictException({
           code: ErrorCode.USER_ALREADY_EXISTS,
-          message: 'A user with this phone number already exists',
+          message: "A user with this phone number already exists",
         });
       }
     }
@@ -76,7 +76,7 @@ export class AuthService {
         passwordHash,
         firstName: dto.firstName || null,
         lastName: dto.lastName || null,
-        locale: dto.locale || 'uz',
+        locale: dto.locale || "uz",
         isVerified: false,
         isActive: true,
         userRoles: customerRole
@@ -106,12 +106,12 @@ export class AuthService {
   }
 
   async login(dto: LoginDto, ip?: string) {
-    const rateLimitKey = `rate:login:${ip || 'ip'}:${dto.identifier.toLowerCase()}`;
+    const rateLimitKey = `rate:login:${ip || "ip"}:${dto.identifier.toLowerCase()}`;
     const attempts = await this.redis.get(rateLimitKey);
     if (attempts && parseInt(attempts, 10) >= 5) {
       throw new ForbiddenException({
         code: ErrorCode.RATE_LIMIT_EXCEEDED,
-        message: 'Too many login attempts. Please try again in 15 minutes.',
+        message: "Too many login attempts. Please try again in 15 minutes.",
       });
     }
 
@@ -141,16 +141,19 @@ export class AuthService {
       await this.recordFailedAttempt(rateLimitKey);
       throw new UnauthorizedException({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: 'Invalid credentials or inactive account',
+        message: "Invalid credentials or inactive account",
       });
     }
 
-    const isPasswordValid = await argon2.verify(user.passwordHash, dto.password);
+    const isPasswordValid = await argon2.verify(
+      user.passwordHash,
+      dto.password,
+    );
     if (!isPasswordValid) {
       await this.recordFailedAttempt(rateLimitKey);
       throw new UnauthorizedException({
         code: ErrorCode.AUTH_INVALID_CREDENTIALS,
-        message: 'Invalid credentials or inactive account',
+        message: "Invalid credentials or inactive account",
       });
     }
 
@@ -209,7 +212,7 @@ export class AuthService {
     ) {
       throw new UnauthorizedException({
         code: ErrorCode.AUTH_REFRESH_REVOKED,
-        message: 'Refresh token is expired, revoked, or invalid',
+        message: "Refresh token is expired, revoked, or invalid",
       });
     }
 
@@ -220,7 +223,11 @@ export class AuthService {
     });
 
     // Generate new pair
-    return this.generateTokens(tokenRecord.userId, tokenRecord.deviceInfo || undefined, ip);
+    return this.generateTokens(
+      tokenRecord.userId,
+      tokenRecord.deviceInfo || undefined,
+      ip,
+    );
   }
 
   async logout(userId: string, refreshToken?: string) {
@@ -240,7 +247,11 @@ export class AuthService {
     return { success: true };
   }
 
-  private async generateTokens(userId: string, deviceInfo?: string, ip?: string) {
+  private async generateTokens(
+    userId: string,
+    deviceInfo?: string,
+    ip?: string,
+  ) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -280,11 +291,11 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('jwt.accessSecret'),
-      expiresIn: this.configService.get<string>('jwt.accessExpiresIn', '15m'),
+      secret: this.configService.get<string>("jwt.accessSecret"),
+      expiresIn: this.configService.get<string>("jwt.accessExpiresIn", "15m"),
     });
 
-    const rawRefreshToken = crypto.randomBytes(64).toString('hex');
+    const rawRefreshToken = crypto.randomBytes(64).toString("hex");
     const refreshExpiresAt = new Date();
     refreshExpiresAt.setDate(refreshExpiresAt.getDate() + 7);
 
@@ -293,7 +304,9 @@ export class AuthService {
         userId: user.id,
         tokenHash: this.hashToken(rawRefreshToken),
         deviceInfo: deviceInfo || null,
-        ipHash: ip ? crypto.createHash('sha256').update(ip).digest('hex') : null,
+        ipHash: ip
+          ? crypto.createHash("sha256").update(ip).digest("hex")
+          : null,
         expiresAt: refreshExpiresAt,
       },
     });

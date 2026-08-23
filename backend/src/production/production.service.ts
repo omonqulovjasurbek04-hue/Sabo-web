@@ -1,21 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from "@nestjs/common";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class ProductionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getPublicProductionPage(locale = 'uz') {
+  async getPublicProductionPage(locale = "uz") {
     const page = await this.prisma.productionPage.findFirst({
-      where: { status: 'PUBLISHED' },
+      where: { status: "PUBLISHED" },
       include: {
         translations: true,
         heroImage: true,
         steps: {
           include: { image: true },
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
         },
       },
     });
@@ -29,7 +28,9 @@ export class ProductionService {
       id: page.id,
       heroTitle: trans?.title || page.heroTitle,
       heroDescription: trans?.description || page.heroDescription,
-      heroImage: page.heroImage ? { id: page.heroImage.id, url: page.heroImage.url } : null,
+      heroImage: page.heroImage
+        ? { id: page.heroImage.id, url: page.heroImage.url }
+        : null,
       steps: page.steps.map((step) => ({
         id: step.id,
         sortOrder: step.sortOrder,

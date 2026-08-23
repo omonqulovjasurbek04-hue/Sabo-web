@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import {
   BlogStatus,
   ContactMessageStatus,
   OrderStatus,
   ProductStatus,
-} from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+} from "@prisma/client";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class AdminService {
@@ -32,13 +32,19 @@ export class AdminService {
       this.prisma.order.count({ where: { status: OrderStatus.CONFIRMED } }),
       this.prisma.order.count({ where: { status: OrderStatus.DELIVERED } }),
       this.prisma.product.count({ where: { deletedAt: null } }),
-      this.prisma.product.count({ where: { status: ProductStatus.ACTIVE, deletedAt: null } }),
+      this.prisma.product.count({
+        where: { status: ProductStatus.ACTIVE, deletedAt: null },
+      }),
       this.prisma.user.count({ where: { deletedAt: null } }),
-      this.prisma.contactMessage.count({ where: { status: ContactMessageStatus.NEW } }),
-      this.prisma.blogPost.count({ where: { status: BlogStatus.PUBLISHED, deletedAt: null } }),
+      this.prisma.contactMessage.count({
+        where: { status: ContactMessageStatus.NEW },
+      }),
+      this.prisma.blogPost.count({
+        where: { status: BlogStatus.PUBLISHED, deletedAt: null },
+      }),
       this.prisma.order.findMany({
         take: 10,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         select: {
           id: true,
           orderNumber: true,
@@ -71,7 +77,11 @@ export class AdminService {
   /**
    * Get all orders with pagination and filtering
    */
-  async getOrders(query: { page?: number; limit?: number; status?: OrderStatus }) {
+  async getOrders(query: {
+    page?: number;
+    limit?: number;
+    status?: OrderStatus;
+  }) {
     const page = Math.max(1, query.page || 1);
     const limit = Math.min(50, Math.max(1, query.limit || 20));
     const skip = (page - 1) * limit;
@@ -87,7 +97,7 @@ export class AdminService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
           items: true,
           address: true,
@@ -111,7 +121,9 @@ export class AdminService {
    * Update order status
    */
   async updateOrderStatus(orderId: string, status: OrderStatus) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
     if (!order) {
       throw new NotFoundException(`Buyurtma topilmadi: ${orderId}`);
     }
@@ -125,7 +137,11 @@ export class AdminService {
   /**
    * Get contact messages with filtering
    */
-  async getMessages(query: { page?: number; limit?: number; status?: ContactMessageStatus }) {
+  async getMessages(query: {
+    page?: number;
+    limit?: number;
+    status?: ContactMessageStatus;
+  }) {
     const page = Math.max(1, query.page || 1);
     const limit = Math.min(50, Math.max(1, query.limit || 20));
     const skip = (page - 1) * limit;
@@ -141,7 +157,7 @@ export class AdminService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
     ]);
 
@@ -160,7 +176,9 @@ export class AdminService {
    * Update contact message status
    */
   async updateMessageStatus(messageId: string, status: ContactMessageStatus) {
-    const message = await this.prisma.contactMessage.findUnique({ where: { id: messageId } });
+    const message = await this.prisma.contactMessage.findUnique({
+      where: { id: messageId },
+    });
     if (!message) {
       throw new NotFoundException(`Xabar topilmadi: ${messageId}`);
     }
@@ -176,13 +194,13 @@ export class AdminService {
    */
   async getSystemInfo() {
     return {
-      platform: 'SABO Dairy Backend Platform',
-      version: '1.0.0',
+      platform: "SABO Dairy Backend Platform",
+      version: "1.0.0",
       nodeVersion: process.version,
       uptimeSeconds: Math.floor(process.uptime()),
-      environment: process.env.NODE_ENV || 'development',
-      database: 'PostgreSQL (Prisma ORM)',
-      cache: 'Redis Active',
+      environment: process.env.NODE_ENV || "development",
+      database: "PostgreSQL (Prisma ORM)",
+      cache: "Redis Active",
       serverTime: new Date().toISOString(),
     };
   }

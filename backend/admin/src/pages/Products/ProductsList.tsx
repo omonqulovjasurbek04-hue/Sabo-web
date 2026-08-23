@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Eye, Edit2, Trash2, Check, Package, X } from 'lucide-react';
+import { Plus, Search, Trash2, Check, Package, X } from 'lucide-react';
 import type { Product } from '../../types';
 
 const initialProducts: Product[] = [

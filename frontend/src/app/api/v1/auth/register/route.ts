@@ -4,9 +4,11 @@ import { validateRegister } from "@/lib/backend/validation";
 import { hashPassword, signJwt } from "@/lib/backend/auth";
 import { db } from "@/lib/backend/db";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const validation = validateRegister(body);
 
     if (!validation.success || !validation.data) {

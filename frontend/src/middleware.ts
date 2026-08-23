@@ -42,20 +42,19 @@ export function middleware(request: NextRequest) {
   );
 
   if (matchedLocale) {
-    // Redirect to clean root URL without /uz prefix and remember this locale in the cookie
-    const cleanPath = pathname.slice(matchedLocale.length + 1) || "/";
-    const redirectUrl = new URL(cleanPath, request.url);
-    redirectUrl.search = request.nextUrl.search;
-    const response = NextResponse.redirect(redirectUrl);
-    response.cookies.set("sabo_locale", matchedLocale, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-    });
+    // URL has an explicit locale: serve content directly (200 OK) and save locale in cookie
+    const response = NextResponse.next();
+    if (request.cookies.get("sabo_locale")?.value !== matchedLocale) {
+      response.cookies.set("sabo_locale", matchedLocale, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+      });
+    }
     return response;
   }
 
-  // Clean URL (e.g. /, /products, /about, /cart)
+  // Clean unprefixed URL (e.g. /, /products, /about, /cart)
   const locale = getSavedLocale(request);
 
   // Internally rewrite to the [locale] dynamic route without changing the browser URL

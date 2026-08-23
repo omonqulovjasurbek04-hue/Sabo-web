@@ -1,8 +1,16 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+} from "class-validator";
 
 export class AddCartItemDto {
-  @ApiProperty({ description: 'Product Variant UUID' })
+  @ApiProperty({ description: "Product Variant UUID" })
   @IsNotEmpty()
   @IsUUID()
   productVariantId!: string;
@@ -13,7 +21,7 @@ export class AddCartItemDto {
   @Max(50)
   quantity!: number;
 
-  @ApiPropertyOptional({ description: 'Guest session identifier' })
+  @ApiPropertyOptional({ description: "Guest session identifier" })
   @IsOptional()
   @IsString()
   sessionId?: string;

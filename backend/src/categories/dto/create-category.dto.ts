@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import {
   IsArray,
   IsBoolean,
@@ -9,37 +9,37 @@ import {
   IsString,
   IsUUID,
   ValidateNested,
-} from 'class-validator';
+} from "class-validator";
 
 export class CategoryTranslationDto {
-  @ApiProperty({ example: 'uz' })
+  @ApiProperty({ example: "uz" })
   @IsNotEmpty()
   @IsString()
   locale!: string;
 
-  @ApiProperty({ example: 'Kefir' })
+  @ApiProperty({ example: "Kefir" })
   @IsNotEmpty()
   @IsString()
   name!: string;
 
-  @ApiPropertyOptional({ example: 'Tabiiy va foydali kefir mahsulotlari' })
+  @ApiPropertyOptional({ example: "Tabiiy va foydali kefir mahsulotlari" })
   @IsOptional()
   @IsString()
   description?: string;
 }
 
 export class CreateCategoryDto {
-  @ApiProperty({ example: 'kefir' })
+  @ApiProperty({ example: "kefir" })
   @IsNotEmpty()
   @IsString()
   slug!: string;
 
-  @ApiProperty({ example: 'Kefir' })
+  @ApiProperty({ example: "Kefir" })
   @IsNotEmpty()
   @IsString()
   name!: string;
 
-  @ApiPropertyOptional({ example: 'Tabiiy kefir mahsulotlari' })
+  @ApiPropertyOptional({ example: "Tabiiy kefir mahsulotlari" })
   @IsOptional()
   @IsString()
   description?: string;

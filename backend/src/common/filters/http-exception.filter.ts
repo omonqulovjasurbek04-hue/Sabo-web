@@ -5,9 +5,9 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ErrorCode } from '../enums/error-code.enum';
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { ErrorCode } from "../enums/error-code.enum";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -18,26 +18,33 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const requestId = (request.headers['x-request-id'] as string) || 'unknown';
-    const isProduction = process.env.NODE_ENV === 'production';
+    const requestId = (request.headers["x-request-id"] as string) || "unknown";
+    const isProduction = process.env.NODE_ENV === "production";
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let code: string = ErrorCode.INTERNAL_ERROR;
-    let message = 'An unexpected internal error occurred';
+    let message = "An unexpected internal error occurred";
     let details: any = undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse() as any;
 
-      if (typeof res === 'string') {
+      if (typeof res === "string") {
         message = res;
-      } else if (typeof res === 'object' && res !== null) {
+      } else if (typeof res === "object" && res !== null) {
         message = res.message || exception.message;
-        code = res.code || (status === 404 ? ErrorCode.RESOURCE_NOT_FOUND : (status === 400 ? ErrorCode.VALIDATION_ERROR : ErrorCode.INTERNAL_ERROR));
-        details = res.details || (Array.isArray(res.message) ? res.message : undefined);
+        code =
+          res.code ||
+          (status === 404
+            ? ErrorCode.RESOURCE_NOT_FOUND
+            : status === 400
+              ? ErrorCode.VALIDATION_ERROR
+              : ErrorCode.INTERNAL_ERROR);
+        details =
+          res.details || (Array.isArray(res.message) ? res.message : undefined);
         if (Array.isArray(res.message)) {
-          message = 'Validation failed';
+          message = "Validation failed";
           code = ErrorCode.VALIDATION_ERROR;
         }
       }

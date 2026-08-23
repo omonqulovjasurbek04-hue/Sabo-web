@@ -1,5 +1,5 @@
 import React from 'react';
-import { Factory, CheckCircle2, AlertTriangle, Droplet, ShieldCheck, Thermometer } from 'lucide-react';
+import { Droplet, ShieldCheck, Thermometer } from 'lucide-react';
 
 export const ProductionPage: React.FC = () => {
   return (

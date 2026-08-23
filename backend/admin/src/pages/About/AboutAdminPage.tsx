@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Info, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 export const AboutAdminPage: React.FC = () => {
   const [content, setContent] = useState({

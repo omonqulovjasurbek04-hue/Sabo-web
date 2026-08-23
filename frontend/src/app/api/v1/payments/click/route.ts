@@ -2,9 +2,11 @@ import { NextRequest } from "next/server";
 import { apiSuccess, apiError } from "@/lib/backend/response";
 import { db } from "@/lib/backend/db";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { click_trans_id, merchant_trans_id, action, error } = body;
 
     if (error && error < 0) {

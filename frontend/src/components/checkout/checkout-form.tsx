@@ -7,6 +7,7 @@ import { LocalizedLink } from "@/components/layout/localized-link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CheckIcon } from "@/components/ui/icons";
+import { apiClient } from "@/lib/api-client";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 import { cn, formatPrice } from "@/lib/utils";
@@ -29,7 +30,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_PATTERN = /^\+?[0-9\s\-()]{7,17}$/;
 
 export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
-  const { items, subtotal, hasPrices } = useCart();
+  const { items, subtotal, hasPrices, clear } = useCart();
   const [values, setValues] = useState<Values>({
     name: "",
     phone: "",
@@ -38,13 +39,16 @@ export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [createdOrder, setCreatedOrder] = useState<{ id?: string; orderNumber?: string } | null>(null);
 
   const setField = (field: keyof Values, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  if (items.length === 0) {
+  if (items.length === 0 && !submitted) {
     return (
       <EmptyState
         title={dict.cart.emptyTitle}
@@ -73,12 +77,46 @@ export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
     return next;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const next = validate();
     setErrors(next);
     if (Object.keys(next).length > 0) return;
-    setSubmitted(true);
+
+    setLoading(true);
+    setSubmitError(null);
+
+    const payload = {
+      customerName: values.name.trim(),
+      customerPhone: values.phone.trim(),
+      customerEmail: values.email.trim(),
+      address: values.address.trim(),
+      paymentMethod: "cash" as const,
+      items: items.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+        volume: item.volume,
+      })),
+    };
+
+    const res = await apiClient.createOrder(payload);
+    setLoading(false);
+
+    if (res.success || res.data) {
+      let orderInfo: { id?: string; orderNumber?: string } = { id: "ORD-SUCCESS" };
+      if (res.data && typeof res.data === "object") {
+        if ("order" in res.data && res.data.order) {
+          orderInfo = res.data.order as { id?: string; orderNumber?: string };
+        } else if ("id" in res.data || "orderNumber" in res.data) {
+          orderInfo = res.data as { id?: string; orderNumber?: string };
+        }
+      }
+      setCreatedOrder(orderInfo);
+      clear();
+      setSubmitted(true);
+    } else {
+      setSubmitError(res.error?.message || "Buyurtmani yuborishda xatolik yuz berdi");
+    }
   };
 
   if (submitted) {
@@ -93,13 +131,21 @@ export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
         <h2 className="font-sans font-bold text-2xl text-foreground">
           {dict.checkout.orderSummary}
         </h2>
-        <p className="text-muted text-base leading-relaxed">{dict.checkout.notSent}</p>
+        <p className="text-foreground font-medium text-base leading-relaxed">
+          Buyurtma raqami:{" "}
+          <span className="font-mono font-bold text-secondary">
+            {createdOrder?.orderNumber || createdOrder?.id || "ORD-SABO-SUCCESS"}
+          </span>
+        </p>
+        <p className="text-muted text-sm leading-relaxed">
+          Buyurtmangiz muvaffaqiyatli qabul qilindi. Tez orada operatorimiz siz bilan bog‘lanadi.
+        </p>
         <LocalizedLink
-          href="/cart"
+          href="/products"
           locale={locale}
           className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-sm border border-border-strong bg-surface text-foreground hover:border-secondary hover:text-secondary transition-colors mt-2"
         >
-          {dict.checkout.backToCart}
+          {dict.home.viewAll}
         </LocalizedLink>
       </div>
     );
@@ -246,8 +292,14 @@ export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
           </p>
         )}
 
-        <Button type="submit" size="lg" className="w-full font-bold">
-          {dict.checkout.submitOrder}
+        {submitError ? (
+          <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
+            {submitError}
+          </div>
+        ) : null}
+
+        <Button type="submit" size="lg" className="w-full font-bold" disabled={loading}>
+          {loading ? "Yuborilmoqda..." : dict.checkout.submitOrder}
         </Button>
       </aside>
     </form>

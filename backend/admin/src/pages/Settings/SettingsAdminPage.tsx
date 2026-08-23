@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, Server, Database, Save, CheckCircle2 } from 'lucide-react';
+import { Settings, Server } from 'lucide-react';
 
 export const SettingsAdminPage: React.FC = () => {
   return (

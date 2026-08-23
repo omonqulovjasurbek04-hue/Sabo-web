@@ -32,12 +32,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const initial = getInitialTheme();
     setThemeState(initial);
     document.documentElement.setAttribute("data-theme", initial);
+    document.documentElement.classList.toggle("dark", initial === "dark");
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
     window.localStorage.setItem(STORAGE_KEY, theme);
   }, [theme, mounted]);
 

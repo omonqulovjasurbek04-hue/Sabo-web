@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Languages, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 export const TranslationsAdminPage: React.FC = () => {
   const [activeLang, setActiveLang] = useState<'uz' | 'ru' | 'en'>('uz');

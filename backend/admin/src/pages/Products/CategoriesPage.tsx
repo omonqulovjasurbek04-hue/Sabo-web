@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FolderTree, Plus, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import type { Category } from '../../types';
 
 const initialCategories: Category[] = [

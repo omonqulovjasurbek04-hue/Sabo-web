@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Users, Search, Phone, Mail, ShoppingBag } from 'lucide-react';
 import type { Customer } from '../../types';
 
 const initialCustomers: Customer[] = [

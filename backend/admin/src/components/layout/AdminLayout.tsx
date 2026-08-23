@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -23,10 +23,9 @@ import {
   Menu,
   X,
   ExternalLink,
-  Sparkles,
   ChevronRight,
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 
 interface NavItem {
   title: string;
@@ -81,13 +80,12 @@ const navItems: NavItem[] = [
 export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    window.location.href = 'http://localhost:3000';
   };
 
   const toggleSubmenu = (title: string) => {
@@ -254,13 +252,22 @@ export const AdminLayout: React.FC = () => {
               </button>
             </div>
 
+            {/* Logout / Exit Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-white text-xs font-bold transition-all cursor-pointer mb-2"
+            >
+              <LogOut className="size-3.5" />
+              <span>Admindan chiqish</span>
+            </button>
+
             <a
               href="http://localhost:3000"
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] font-bold text-[#D8F3DC] transition-colors"
             >
-              <span>Public Store</span>
+              <span>Asosiy do'kon sayti</span>
               <ExternalLink className="size-3" />
             </a>
           </div>
@@ -307,6 +314,15 @@ export const AdminLayout: React.FC = () => {
               </div>
               <span className="text-xs font-bold text-[#1A2E26]">Bekzodbek</span>
             </div>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition-colors cursor-pointer ml-1"
+              title="Admindan chiqish va asosiy saytga o'tish"
+            >
+              <LogOut className="size-3.5" />
+              <span className="hidden sm:inline">Admindan chiqish</span>
+            </button>
           </div>
         </header>
 

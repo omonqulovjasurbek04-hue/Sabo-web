@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { ProductStatus } from '@prisma/client';
-import { ErrorCode } from '../../common/enums/error-code.enum';
-import { PrismaService } from '../../prisma/prisma.service';
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { ProductStatus } from "@prisma/client";
+import { ErrorCode } from "../../common/enums/error-code.enum";
+import { PrismaService } from "../../prisma/prisma.service";
 
 export interface CalculatedPricingItem {
   variantId: string;
@@ -32,12 +32,12 @@ export class OrderPricingService {
   async calculatePricing(
     requestedItems: { productVariantId: string; quantity: number }[],
     deliveryMinor = 0,
-    currency = 'UZS',
+    currency = "UZS",
   ): Promise<CalculatedOrderPricing> {
     if (!requestedItems || requestedItems.length === 0) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
-        message: 'Order must contain at least one item',
+        message: "Order must contain at least one item",
       });
     }
 
@@ -70,7 +70,7 @@ export class OrderPricingService {
       if (reqItem.quantity <= 0 || reqItem.quantity > 100) {
         throw new BadRequestException({
           code: ErrorCode.INVALID_QUANTITY,
-          message: 'Invalid item quantity',
+          message: "Invalid item quantity",
         });
       }
 

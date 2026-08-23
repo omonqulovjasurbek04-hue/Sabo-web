@@ -52,8 +52,11 @@ services:
     ports:
       - "1025:1025" # SMTP port
       - "8025:8025" # Web UI
+    volumes:
+      - sabo_mailpit_data:/data
 
 volumes:
   sabo_postgres_data:
   sabo_redis_data:
   sabo_minio_data:
+  sabo_mailpit_data:

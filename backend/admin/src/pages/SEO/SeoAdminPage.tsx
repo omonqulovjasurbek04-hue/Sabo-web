@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 export const SeoAdminPage: React.FC = () => {
   return (

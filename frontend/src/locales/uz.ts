@@ -321,8 +321,23 @@ const dict = {
   },
   blog: {
     title: "Blog",
+    subtitle: "SABO bilan yangi, tabiiy va sifatli mahsulotlar haqida batafsil ma'lumotlar",
     comingSoon: "Blog bo'limi tez orada ishga tushadi",
     noArticle: "Maqola topilmadi",
+    recentArticles: "Ejobsiyalarning",
+    categories: {
+      products: "Mahsulotlar",
+      production: "Ishlab chiqarish",
+      about: "Biz haqimizda",
+      certificates: "Sertifikatlar",
+    },
+    tags: {
+      quality: "Sifat",
+      natural: "Tabiiy",
+      recipes: "Tariflar",
+      news: "Yangiliklar",
+    },
+    viewAll: "Barcha maqolalar",
   },
   footer: {
     description: "SABO — sifatli sut mahsulotlari ishlab chiqaruvchi brend.",

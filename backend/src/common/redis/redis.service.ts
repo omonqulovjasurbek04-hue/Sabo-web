@@ -1,6 +1,11 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import Redis from 'ioredis';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import Redis from "ioredis";
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -10,7 +15,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit() {
-    const redisUrl = this.configService.get<string>('redis.url', 'redis://localhost:6379');
+    const redisUrl = this.configService.get<string>(
+      "redis.url",
+      "redis://localhost:6379",
+    );
     try {
       this.client = new Redis(redisUrl, {
         maxRetriesPerRequest: 3,
@@ -18,11 +26,16 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         lazyConnect: true,
       });
 
-      this.client.connect().then(() => {
-        this.logger.log('✅ Redis connected successfully');
-      }).catch((err) => {
-        this.logger.warn(`⚠️ Redis connection failed: ${err.message}. Running in fallback mode.`);
-      });
+      this.client
+        .connect()
+        .then(() => {
+          this.logger.log("✅ Redis connected successfully");
+        })
+        .catch((err) => {
+          this.logger.warn(
+            `⚠️ Redis connection failed: ${err.message}. Running in fallback mode.`,
+          );
+        });
     } catch (e: any) {
       this.logger.warn(`⚠️ Redis initialization error: ${e.message}`);
     }
@@ -30,7 +43,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async get(key: string): Promise<string | null> {
     try {
-      if (this.client?.status === 'ready') {
+      if (this.client?.status === "ready") {
         return await this.client.get(key);
       }
       return null;
@@ -41,9 +54,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async set(key: string, value: string, ttlSeconds?: number): Promise<void> {
     try {
-      if (this.client?.status === 'ready') {
+      if (this.client?.status === "ready") {
         if (ttlSeconds) {
-          await this.client.set(key, value, 'EX', ttlSeconds);
+          await this.client.set(key, value, "EX", ttlSeconds);
         } else {
           await this.client.set(key, value);
         }
@@ -55,7 +68,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async del(key: string): Promise<void> {
     try {
-      if (this.client?.status === 'ready') {
+      if (this.client?.status === "ready") {
         await this.client.del(key);
       }
     } catch (e: any) {
@@ -65,14 +78,29 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async delPattern(pattern: string): Promise<void> {
     try {
-      if (this.client?.status === 'ready') {
-        const keys = await this.client.keys(pattern);
-        if (keys.length > 0) {
-          await this.client.del(...keys);
+      if (this.client?.status === "ready") {
+        const stream = this.client.scanStream({
+          match: pattern,
+          count: 100,
+        });
+
+        const keysToDelete: string[] = [];
+        await new Promise<void>((resolve, reject) => {
+          stream.on("data", (resultKeys: string[]) => {
+            keysToDelete.push(...resultKeys);
+          });
+          stream.on("end", () => resolve());
+          stream.on("error", (err) => reject(err));
+        });
+
+        if (keysToDelete.length > 0) {
+          await this.client.del(...keysToDelete);
         }
       }
     } catch (e: any) {
-      this.logger.warn(`Redis delPattern error for pattern ${pattern}: ${e.message}`);
+      this.logger.warn(
+        `Redis delPattern error for pattern ${pattern}: ${e.message}`,
+      );
     }
   }
 
@@ -83,7 +111,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     if (this.client) {
       await this.client.quit();
-      this.logger.log('Redis disconnected gracefully');
+      this.logger.log("Redis disconnected gracefully");
     }
   }
 }

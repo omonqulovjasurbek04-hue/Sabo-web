@@ -2,13 +2,13 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-} from '@nestjs/common';
-import * as crypto from 'crypto';
-import { APP_CONSTANTS } from '../config/constants';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { RedisService } from '../common/redis/redis.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateContactMessageDto } from './dto/create-contact.dto';
+} from "@nestjs/common";
+import * as crypto from "crypto";
+import { APP_CONSTANTS } from "../config/constants";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { RedisService } from "../common/redis/redis.service";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateContactMessageDto } from "./dto/create-contact.dto";
 
 @Injectable()
 export class ContactService {
@@ -19,13 +19,17 @@ export class ContactService {
 
   private hashIp(ip?: string): string | null {
     if (!ip) return null;
-    return crypto.createHash('sha256').update(ip).digest('hex');
+    return crypto.createHash("sha256").update(ip).digest("hex");
   }
 
-  async submitMessage(dto: CreateContactMessageDto, ip?: string, userAgent?: string) {
+  async submitMessage(
+    dto: CreateContactMessageDto,
+    ip?: string,
+    userAgent?: string,
+  ) {
     // 1. Honeypot check: If bot filled `websiteUrl`, silently reject / mark spam
     if (dto.websiteUrl) {
-      return { success: true, message: 'Message submitted successfully' };
+      return { success: true, message: "Message submitted successfully" };
     }
 
     // 2. Redis Rate Limiting (5 messages per hour per IP)
@@ -33,10 +37,13 @@ export class ContactService {
     if (ipHash) {
       const rateKey = `rate:contact:${ipHash}`;
       const count = await this.redis.get(rateKey);
-      if (count && parseInt(count, 10) >= APP_CONSTANTS.RATE_LIMITS.CONTACT_LIMIT) {
+      if (
+        count &&
+        parseInt(count, 10) >= APP_CONSTANTS.RATE_LIMITS.CONTACT_LIMIT
+      ) {
         throw new ForbiddenException({
           code: ErrorCode.CONTACT_RATE_LIMITED,
-          message: 'Too many messages sent. Please try again later.',
+          message: "Too many messages sent. Please try again later.",
         });
       }
 
@@ -47,7 +54,7 @@ export class ContactService {
     if (!dto.phone && !dto.email) {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
-        message: 'Please provide either phone number or email address',
+        message: "Please provide either phone number or email address",
       });
     }
 
@@ -64,7 +71,8 @@ export class ContactService {
 
     return {
       success: true,
-      message: 'Your message has been received. We will get back to you shortly.',
+      message:
+        "Your message has been received. We will get back to you shortly.",
     };
   }
 

@@ -2,15 +2,15 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { Prisma, ProductStatus } from '@prisma/client';
-import { PaginatedResult } from '../common/dto/pagination.dto';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { RedisService } from '../common/redis/redis.service';
-import { pickTranslation } from '../common/utils/localization.util';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductQueryDto } from './dto/product-query.dto';
+} from "@nestjs/common";
+import { Prisma, ProductStatus } from "@prisma/client";
+import { PaginatedResult } from "../common/dto/pagination.dto";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { RedisService } from "../common/redis/redis.service";
+import { pickTranslation } from "../common/utils/localization.util";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { ProductQueryDto } from "./dto/product-query.dto";
 
 @Injectable()
 export class ProductsService {
@@ -20,7 +20,16 @@ export class ProductsService {
   ) {}
 
   async findAllPublic(query: ProductQueryDto) {
-    const { page, limit, search, category, featured, locale = 'uz', sort, order } = query;
+    const {
+      page,
+      limit,
+      search,
+      category,
+      featured,
+      locale = "uz",
+      sort,
+      order,
+    } = query;
     const skip = query.skip;
 
     const where: Prisma.ProductWhereInput = {
@@ -41,14 +50,14 @@ export class ProductsService {
 
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
         {
           translations: {
             some: {
               OR: [
-                { name: { contains: search, mode: 'insensitive' } },
-                { description: { contains: search, mode: 'insensitive' } },
+                { name: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
               ],
             },
           },
@@ -57,9 +66,9 @@ export class ProductsService {
     }
 
     const orderBy: Prisma.ProductOrderByWithRelationInput = {};
-    if (sort === 'name') {
+    if (sort === "name") {
       orderBy.name = order;
-    } else if (sort === 'sortOrder') {
+    } else if (sort === "sortOrder") {
       orderBy.sortOrder = order;
     } else {
       orderBy.createdAt = order;
@@ -78,11 +87,11 @@ export class ProductsService {
           },
           images: {
             include: { media: true },
-            orderBy: { sortOrder: 'asc' },
+            orderBy: { sortOrder: "asc" },
           },
           variants: {
             where: { isAvailable: true },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: "asc" },
           },
           availability: true,
         },
@@ -94,7 +103,7 @@ export class ProductsService {
     return new PaginatedResult(formatted, total, page, limit);
   }
 
-  async findFeatured(locale = 'uz') {
+  async findFeatured(locale = "uz") {
     const cacheKey = `products:featured:${locale}`;
     const cached = await this.redis.get(cacheKey);
     if (cached) {
@@ -111,11 +120,11 @@ export class ProductsService {
         deletedAt: null,
       },
       take: 8,
-      orderBy: { sortOrder: 'asc' },
+      orderBy: { sortOrder: "asc" },
       include: {
         translations: true,
         category: { include: { translations: true } },
-        images: { include: { media: true }, orderBy: { sortOrder: 'asc' } },
+        images: { include: { media: true }, orderBy: { sortOrder: "asc" } },
         variants: { where: { isAvailable: true } },
         availability: true,
       },
@@ -126,7 +135,7 @@ export class ProductsService {
     return formatted;
   }
 
-  async findBySlug(slug: string, locale = 'uz') {
+  async findBySlug(slug: string, locale = "uz") {
     const cacheKey = `product:${slug}:${locale}`;
     const cached = await this.redis.get(cacheKey);
     if (cached) {
@@ -144,15 +153,15 @@ export class ProductsService {
         },
         images: {
           include: { media: true },
-          orderBy: { sortOrder: 'asc' },
+          orderBy: { sortOrder: "asc" },
         },
         variants: {
           where: { isAvailable: true },
-          orderBy: { createdAt: 'asc' },
+          orderBy: { createdAt: "asc" },
         },
         nutrition: true,
         ingredients: {
-          orderBy: { order: 'asc' },
+          orderBy: { order: "asc" },
         },
         storage: true,
         availability: true,
@@ -171,7 +180,7 @@ export class ProductsService {
     ) {
       throw new NotFoundException({
         code: ErrorCode.PRODUCT_NOT_FOUND,
-        message: 'Product not found',
+        message: "Product not found",
       });
     }
 
@@ -187,7 +196,7 @@ export class ProductsService {
     if (existing) {
       throw new ConflictException({
         code: ErrorCode.PRODUCT_SLUG_EXISTS,
-        message: 'A product with this slug already exists',
+        message: "A product with this slug already exists",
       });
     }
 
@@ -198,7 +207,7 @@ export class ProductsService {
         description: dto.description || null,
         shortDescription: dto.shortDescription || null,
         categoryId: dto.categoryId || null,
-        brand: dto.brand || 'SABO',
+        brand: dto.brand || "SABO",
         status: dto.status || ProductStatus.DRAFT,
         isFeatured: dto.isFeatured || false,
         isActive: dto.isActive !== undefined ? dto.isActive : true,
@@ -241,9 +250,10 @@ export class ProductsService {
                   sku: v.sku || null,
                   barcode: v.barcode || null,
                   priceMinor: v.priceMinor || null,
-                  currency: v.currency || 'UZS',
+                  currency: v.currency || "UZS",
                   stock: v.stock || 0,
-                  isAvailable: v.isAvailable !== undefined ? v.isAvailable : true,
+                  isAvailable:
+                    v.isAvailable !== undefined ? v.isAvailable : true,
                   isDefault: v.isDefault || false,
                 })),
               },
@@ -289,15 +299,21 @@ export class ProductsService {
 
   async update(id: string, dto: Partial<CreateProductDto>) {
     const product = await this.prisma.product.findUnique({ where: { id } });
-    if (!product) throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
+    if (!product)
+      throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
 
     if (dto.slug && dto.slug !== product.slug) {
-      const existing = await this.prisma.product.findUnique({ where: { slug: dto.slug } });
-      if (existing) throw new ConflictException({ code: ErrorCode.PRODUCT_SLUG_EXISTS });
+      const existing = await this.prisma.product.findUnique({
+        where: { slug: dto.slug },
+      });
+      if (existing)
+        throw new ConflictException({ code: ErrorCode.PRODUCT_SLUG_EXISTS });
     }
 
     if (dto.translations) {
-      await this.prisma.productTranslation.deleteMany({ where: { productId: id } });
+      await this.prisma.productTranslation.deleteMany({
+        where: { productId: id },
+      });
     }
 
     const updated = await this.prisma.product.update({
@@ -338,13 +354,15 @@ export class ProductsService {
 
   async setStatus(id: string, status: ProductStatus) {
     const product = await this.prisma.product.findUnique({ where: { id } });
-    if (!product) throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
+    if (!product)
+      throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
 
     const updated = await this.prisma.product.update({
       where: { id },
       data: {
         status,
-        publishedAt: status === ProductStatus.ACTIVE ? new Date() : product.publishedAt,
+        publishedAt:
+          status === ProductStatus.ACTIVE ? new Date() : product.publishedAt,
       },
     });
 
@@ -354,21 +372,28 @@ export class ProductsService {
 
   async softDelete(id: string) {
     const product = await this.prisma.product.findUnique({ where: { id } });
-    if (!product) throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
+    if (!product)
+      throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
 
     await this.prisma.product.update({
       where: { id },
-      data: { deletedAt: new Date(), isActive: false, status: ProductStatus.ARCHIVED },
+      data: {
+        deletedAt: new Date(),
+        isActive: false,
+        status: ProductStatus.ARCHIVED,
+      },
     });
 
     await this.invalidateCache();
-    return { success: true, message: 'Product archived' };
+    return { success: true, message: "Product archived" };
   }
 
   // Formatters
   private formatPublicProduct(p: any, locale: string) {
     const trans = pickTranslation(p.translations, locale);
-    const catTrans = p.category ? pickTranslation(p.category.translations, locale) : null;
+    const catTrans = p.category
+      ? pickTranslation(p.category.translations, locale)
+      : null;
 
     return {
       id: p.id,
@@ -418,14 +443,15 @@ export class ProductsService {
 
     return {
       ...base,
-      ingredients: p.ingredients && p.ingredients.length > 0
-        ? p.ingredients.map((ing: any) => ({
-            id: ing.id,
-            name: ing.name,
-            isAllergen: ing.isAllergen,
-            allergenNote: ing.allergenNote,
-          }))
-        : [],
+      ingredients:
+        p.ingredients && p.ingredients.length > 0
+          ? p.ingredients.map((ing: any) => ({
+              id: ing.id,
+              name: ing.name,
+              isAllergen: ing.isAllergen,
+              allergenNote: ing.allergenNote,
+            }))
+          : [],
       nutrition: p.nutrition
         ? {
             servingSize: p.nutrition.servingSize,
@@ -464,7 +490,7 @@ export class ProductsService {
   }
 
   private async invalidateCache() {
-    await this.redis.delPattern('product:*');
-    await this.redis.delPattern('products:*');
+    await this.redis.delPattern("product:*");
+    await this.redis.delPattern("products:*");
   }
 }

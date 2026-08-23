@@ -1,23 +1,18 @@
-name: SABO Frontend CI
+name: SABO CI / CD Pipeline
 
 on:
   push:
     branches: [main, master, develop]
-    paths:
-      - 'frontend/**'
   pull_request:
     branches: [main, master]
-    paths:
-      - 'frontend/**'
 
 jobs:
-  lint_and_build:
-    name: Lint & Build Frontend
+  validate_backend:
+    name: Backend Typecheck & Test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./frontend
-
+        working-directory: ./backend
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,10 +22,62 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: frontend/package.json
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+
+      - name: TypeScript Typecheck
+        run: npm run typecheck
+
+      - name: Unit Tests
+        run: npm test
+
+  validate_admin:
+    name: Build Admin Panel
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/admin
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: backend/admin/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  validate_frontend:
+    name: Lint & Build Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Lint
         run: npm run lint

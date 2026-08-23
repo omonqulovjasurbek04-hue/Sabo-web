@@ -43,7 +43,18 @@ export interface OrderRecord {
   updatedAt: string;
 }
 
-const usersStore = new Map<string, UserRecord>();
+const defaultAdminUser: UserRecord = {
+  id: "usr_admin_001",
+  name: "Administrator",
+  phone: "+998901234567",
+  email: "admin@sabo.uz",
+  role: "admin",
+  createdAt: new Date().toISOString(),
+};
+
+const usersStore = new Map<string, UserRecord>([
+  [defaultAdminUser.id, defaultAdminUser],
+]);
 const contactStore: ContactRecord[] = [];
 const ordersStore = new Map<string, OrderRecord>();
 
@@ -111,6 +122,22 @@ export const db = {
     },
     findById: (id: string): UserRecord | undefined => {
       return usersStore.get(id);
+    },
+    findByIdentifier: (identifier: string): UserRecord | undefined => {
+      const norm = identifier.trim().toLowerCase();
+      if (norm === "admin" || norm === "sabo_admin" || norm === "administrator") {
+        return defaultAdminUser;
+      }
+      for (const u of usersStore.values()) {
+        if (
+          u.phone === norm ||
+          u.phone.replace(/[\s-()]/g, "") === norm.replace(/[\s-()]/g, "") ||
+          (u.email && u.email.toLowerCase() === norm)
+        ) {
+          return u;
+        }
+      }
+      return undefined;
     },
   },
 

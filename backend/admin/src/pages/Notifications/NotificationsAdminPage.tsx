@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Check, ShoppingCart, MessageSquare, ShieldAlert } from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 export const NotificationsAdminPage: React.FC = () => {
   const notifications = [

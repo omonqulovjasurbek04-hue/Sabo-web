@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, UserPlus, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 export const UsersRolesPage: React.FC = () => {
   const users = [

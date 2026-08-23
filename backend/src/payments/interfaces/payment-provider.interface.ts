@@ -24,5 +24,8 @@ export interface WebhookResult {
 export interface PaymentProvider {
   createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult>;
   verifyPayment(externalTransactionId: string): Promise<boolean>;
-  handleWebhook(headers: Record<string, any>, payload: Record<string, any>): Promise<WebhookResult>;
+  handleWebhook(
+    headers: Record<string, any>,
+    payload: Record<string, any>,
+  ): Promise<WebhookResult>;
 }

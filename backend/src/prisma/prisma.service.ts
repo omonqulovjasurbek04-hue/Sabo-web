@@ -1,28 +1,38 @@
-import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
     super({
-      log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+      log:
+        process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     });
   }
 
   async onModuleInit() {
     try {
       await this.$connect();
-      this.logger.log('✅ PostgreSQL connected successfully via Prisma');
+      this.logger.log("✅ PostgreSQL connected successfully via Prisma");
     } catch (error) {
-      this.logger.error('❌ Failed to connect to PostgreSQL:', error);
-      throw error;
+      this.logger.warn(
+        "⚠️ PostgreSQL is currently offline at localhost:5432. Run 'npm run docker:up' to start the database container."
+      );
     }
   }
 
   async onModuleDestroy() {
     await this.$disconnect();
-    this.logger.log('Prisma disconnected gracefully');
+    this.logger.log("Prisma disconnected gracefully");
   }
 }

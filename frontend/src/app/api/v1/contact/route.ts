@@ -4,6 +4,8 @@ import { validateContact } from "@/lib/backend/validation";
 import { checkRateLimit } from "@/lib/backend/rate-limit";
 import { db } from "@/lib/backend/db";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for") || "unknown";
   const rate = checkRateLimit(`contact_${ip}`, 5, 60 * 1000);
@@ -13,7 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const validation = validateContact(body);
 
     if (!validation.success || !validation.data) {

@@ -10,7 +10,7 @@ export interface TranslationRecord {
 export function pickTranslation<T extends TranslationRecord>(
   translations: T[] | undefined,
   requestedLocale: string,
-  defaultLocale = 'uz',
+  defaultLocale = "uz",
 ): T | undefined {
   if (!translations || translations.length === 0) return undefined;
 

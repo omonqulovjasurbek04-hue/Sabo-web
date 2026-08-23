@@ -3,20 +3,24 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
+} from "@nestjs/common";
 import {
   OrderStatus,
   PaymentProviderType,
   PaymentStatus,
   Prisma,
   RoleType,
-} from '@prisma/client';
-import * as crypto from 'crypto';
-import { PaginatedResult } from '../common/dto/pagination.dto';
-import { ErrorCode } from '../common/enums/error-code.enum';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateOrderDto, OrderQueryDto, UpdateOrderStatusDto } from './dto/create-order.dto';
-import { OrderPricingService } from './services/order-pricing.service';
+} from "@prisma/client";
+import * as crypto from "crypto";
+import { PaginatedResult } from "../common/dto/pagination.dto";
+import { ErrorCode } from "../common/enums/error-code.enum";
+import { PrismaService } from "../prisma/prisma.service";
+import {
+  CreateOrderDto,
+  OrderQueryDto,
+  UpdateOrderStatusDto,
+} from "./dto/create-order.dto";
+import { OrderPricingService } from "./services/order-pricing.service";
 
 @Injectable()
 export class OrdersService {
@@ -26,12 +30,16 @@ export class OrdersService {
   ) {}
 
   private generateOrderNumber(): string {
-    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const randomHex = crypto.randomBytes(3).toString('hex').toUpperCase();
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const randomHex = crypto.randomBytes(3).toString("hex").toUpperCase();
     return `SABO-${dateStr}-${randomHex}`;
   }
 
-  async createOrder(dto: CreateOrderDto, userId?: string, idempotencyKey?: string) {
+  async createOrder(
+    dto: CreateOrderDto,
+    userId?: string,
+    idempotencyKey?: string,
+  ) {
     // 1. Check idempotency if key provided
     if (idempotencyKey) {
       const existing = await this.prisma.order.findUnique({
@@ -56,7 +64,7 @@ export class OrdersService {
       if (!cart || cart.items.length === 0) {
         throw new BadRequestException({
           code: ErrorCode.CART_NOT_FOUND,
-          message: 'Cart is empty or not found',
+          message: "Cart is empty or not found",
         });
       }
       itemsToProcess = cart.items.map((i) => ({
@@ -66,7 +74,7 @@ export class OrdersService {
     } else {
       throw new BadRequestException({
         code: ErrorCode.VALIDATION_ERROR,
-        message: 'Must provide either items or a valid cartId',
+        message: "Must provide either items or a valid cartId",
       });
     }
 
@@ -163,7 +171,7 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException({
         code: ErrorCode.ORDER_NOT_FOUND,
-        message: 'Order not found',
+        message: "Order not found",
       });
     }
 
@@ -176,7 +184,7 @@ export class OrdersService {
     if (!isAdmin && order.userId !== user.id) {
       throw new ForbiddenException({
         code: ErrorCode.AUTH_FORBIDDEN,
-        message: 'You do not have permission to view this order',
+        message: "You do not have permission to view this order",
       });
     }
 
@@ -195,7 +203,7 @@ export class OrdersService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: { items: true, payments: true },
       }),
       this.prisma.order.count({ where }),
@@ -205,8 +213,11 @@ export class OrdersService {
   }
 
   async cancelOrder(orderId: string, userId: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order) throw new NotFoundException({ code: ErrorCode.ORDER_NOT_FOUND });
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order)
+      throw new NotFoundException({ code: ErrorCode.ORDER_NOT_FOUND });
 
     if (order.userId !== userId) {
       throw new ForbiddenException({ code: ErrorCode.AUTH_FORBIDDEN });
@@ -238,9 +249,9 @@ export class OrdersService {
     if (query.paymentStatus) where.paymentStatus = query.paymentStatus;
     if (query.search) {
       where.OR = [
-        { orderNumber: { contains: query.search, mode: 'insensitive' } },
-        { customerName: { contains: query.search, mode: 'insensitive' } },
-        { customerPhone: { contains: query.search, mode: 'insensitive' } },
+        { orderNumber: { contains: query.search, mode: "insensitive" } },
+        { customerName: { contains: query.search, mode: "insensitive" } },
+        { customerPhone: { contains: query.search, mode: "insensitive" } },
       ];
     }
 
@@ -249,8 +260,13 @@ export class OrdersService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: { items: true, address: true, payments: true, user: { select: { email: true, phone: true } } },
+        orderBy: { createdAt: "desc" },
+        include: {
+          items: true,
+          address: true,
+          payments: true,
+          user: { select: { email: true, phone: true } },
+        },
       }),
       this.prisma.order.count({ where }),
     ]);
@@ -258,16 +274,25 @@ export class OrdersService {
     return new PaginatedResult(orders, total, page, limit);
   }
 
-  async updateStatusAdmin(orderId: string, dto: UpdateOrderStatusDto, adminId: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order) throw new NotFoundException({ code: ErrorCode.ORDER_NOT_FOUND });
+  async updateStatusAdmin(
+    orderId: string,
+    dto: UpdateOrderStatusDto,
+    adminId: string,
+  ) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order)
+      throw new NotFoundException({ code: ErrorCode.ORDER_NOT_FOUND });
 
     const updated = await this.prisma.order.update({
       where: { id: orderId },
       data: {
         status: dto.status,
-        completedAt: dto.status === OrderStatus.DELIVERED ? new Date() : undefined,
-        cancelledAt: dto.status === OrderStatus.CANCELLED ? new Date() : undefined,
+        completedAt:
+          dto.status === OrderStatus.DELIVERED ? new Date() : undefined,
+        cancelledAt:
+          dto.status === OrderStatus.CANCELLED ? new Date() : undefined,
         notes: dto.note
           ? {
               create: {
