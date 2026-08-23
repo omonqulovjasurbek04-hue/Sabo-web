@@ -28,7 +28,15 @@ async function bootstrap() {
   // 2. Strict CORS Configuration
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || origins.includes(origin) || nodeEnv === "development") {
+      if (
+        !origin ||
+        origins.includes(origin) ||
+        origins.includes("*") ||
+        nodeEnv === "development" ||
+        origin.endsWith(".railway.app") ||
+        origin.endsWith(".up.railway.app") ||
+        origin.endsWith("sabo.uz")
+      ) {
         callback(null, true);
       } else {
         callback(new Error(`CORS blocked origin: ${origin}`));
@@ -104,9 +112,9 @@ async function bootstrap() {
     );
   }
 
-  await app.listen(port);
+  await app.listen(port, "0.0.0.0");
   logger.log(
-    `🚀 SABO Backend API running on http://localhost:${port}/${apiPrefix}`,
+    `🚀 SABO Backend API running on http://0.0.0.0:${port}/${apiPrefix}`,
   );
 }
 

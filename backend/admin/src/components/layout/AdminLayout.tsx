@@ -262,7 +262,7 @@ export const AdminLayout: React.FC = () => {
             </button>
 
             <a
-              href="http://localhost:3000"
+              href={import.meta.env.VITE_STORE_URL || "https://sabo.uz"}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-[11px] font-bold text-[#D8F3DC] transition-colors"

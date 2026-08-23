@@ -30,21 +30,22 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4000
 
-# Install openssl for Prisma
+# Install openssl and curl for Prisma & healthcheck
 RUN apk add --no-cache openssl curl
 
-# Create non-root user
-USER node
-
 # Copy production artifacts
-COPY --chown=node:node package*.json ./
-COPY --chown=node:node prisma ./prisma/
-COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --chown=node:node --from=builder /app/dist ./dist
+COPY package*.json ./
+COPY prisma ./prisma/
+COPY docker-entrypoint.sh ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+
+# Ensure entrypoint script is executable
+RUN chmod +x /app/docker-entrypoint.sh
 
 EXPOSE 4000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:4000/api/v1/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-4000}/api/v1/health || exit 1
 
-CMD ["node", "dist/main"]
+CMD ["/app/docker-entrypoint.sh"]

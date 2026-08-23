@@ -30,8 +30,12 @@ export class ClickPaymentProvider implements PaymentProvider {
   async createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult> {
     // In minor units / sums
     const amountInSum = (input.amountMinor / 100).toFixed(2);
+    const frontendUrl = this.configService.get<string>(
+      "cors.frontendUrl",
+      "http://localhost:3000",
+    );
     const returnUrl = encodeURIComponent(
-      input.returnUrl || "http://localhost:3000/account/orders",
+      input.returnUrl || `${frontendUrl}/account/orders`,
     );
     const paymentUrl = `https://my.click.uz/services/pay?service_id=${this.serviceId}&merchant_id=${this.merchantId}&amount=${amountInSum}&transaction_param=${input.orderId}&return_url=${returnUrl}`;
 

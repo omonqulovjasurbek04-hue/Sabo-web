@@ -2,7 +2,10 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  outputFileTracingRoot: process.env.VERCEL ? undefined : path.join(__dirname, "../"),
+  outputFileTracingRoot:
+    process.env.VERCEL || process.env.RAILWAY_ENVIRONMENT || process.env.DOCKER_BUILD
+      ? undefined
+      : path.join(__dirname, "../"),
   compress: true,
   reactStrictMode: true,
   images: {
@@ -31,6 +34,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "sabo.uz",
+      },
+      {
+        protocol: "https",
+        hostname: "*.railway.app",
+      },
+      {
+        protocol: "https",
+        hostname: "*.up.railway.app",
       },
       {
         protocol: "https",

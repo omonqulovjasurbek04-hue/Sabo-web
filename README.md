@@ -103,6 +103,10 @@ npm run dev:backend
 
 ---
 
-## 🌐 Serverga yuklash (Vercel & Production)
-- Loyiha GitHub omboriga to'liq ulangan: `https://github.com/omonqulovjasurbek04-hue/Sabo-web.git`
-- [vercel.com](https://vercel.com/) orqali `Sabo-web` omborini tanlab to'g'ridan-to'g'ri deploy qilish mumkin.
+## 🌐 Serverga yuklash (Railway & Cloud Deployment)
+- **Railway 1-Click / GitHub Deploy**: [railway.com/new/github](https://railway.com/new/github)
+  - Batafsil bosqichma-bosqich yo'riqnoma: [RAILWAY-DEPLOY.md](RAILWAY-DEPLOY.md)
+  - Barcha Dockerfile va `railway.json` konfiguratsiyalari to'liq sozlangan (Postgres, Redis, NestJS, Next.js).
+- **Vercel Frontend Deploy**: [vercel.com](https://vercel.com/) orqali `Sabo-web` omborini tanlab `frontend` ildizidan deploy qilish mumkin.
+- **GitHub Repository**: `https://github.com/omonqulovjasurbek04-hue/Sabo-web.git`
+
