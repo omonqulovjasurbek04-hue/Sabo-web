@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-cd /app
+cd /app/backend
 
 echo "🚀 Starting SABO Backend API..."
 
