@@ -39,7 +39,7 @@
   <div id="modalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Mahsulot tafsilotlari"><div id="modal" class="modal"></div></div><div id="toast" class="toast" role="status"></div>
   <script>
   (()=>{
-    const IMAGE = 'images/products/';
+    const IMAGE = 'frontend/public/images/products/';
     const products=[
       {id:'milk',name:'SABO Sut',type:'Sut',volume:'1 litr',fat:'3.2%',price:10500,image:'Sabo_Milk.jpg',badge:'100% tabiiy',description:'Yangi sog‘ilgan sigir sutidan tayyorlangan, foydali va to‘yimli sut.'},
       {id:'sutim',name:'SABO Sutim',type:'Sut',volume:'1 litr',fat:'2.5%',price:9000,image:'SaboSutim.jpg',badge:'Har kuni uchun',description:'Oilaning har kuni uchun mayin ta’mli, kalsiyga boy sut.'},
@@ -56,7 +56,7 @@
     };
     let lang=localStorage.getItem('sabo-language')||'uz', cart=JSON.parse(localStorage.getItem('sabo-cart')||'[]'), activeCategory='all', searchQuery=''; const app=document.querySelector('#app'); const tr=()=>translations[lang];
     const money=n=>new Intl.NumberFormat(lang==='uz'?'uz-UZ':lang==='ru'?'ru-RU':'en-US').format(n)+' so‘m';
-    const image=(file,alt='SABO mahsuloti')=>`<img src="${IMAGE+file}" alt="${alt}" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src='frontend/public/images/products/${file}'}">`;
+    const image=(file,alt='SABO mahsuloti')=>`<img src="${IMAGE+file}" alt="${alt}">`;
     const esc=s=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
     function saveCart(){localStorage.setItem('sabo-cart',JSON.stringify(cart)); updateCartBadge()}
     function updateCartBadge(){const total=cart.reduce((n,i)=>n+i.quantity,0),badge=document.querySelector('#cartNumber');badge.textContent=total;badge.classList.toggle('show',total>0)}
