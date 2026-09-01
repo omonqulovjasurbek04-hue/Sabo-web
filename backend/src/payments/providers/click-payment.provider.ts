@@ -34,9 +34,13 @@ export class ClickPaymentProvider implements PaymentProvider {
       "cors.frontendUrl",
       "http://localhost:3000",
     );
-    const returnUrl = encodeURIComponent(
-      input.returnUrl || `${frontendUrl}/account/orders`,
-    );
+    // Only ever redirect back to our own frontend — an unvalidated returnUrl
+    // would let a caller turn Click's checkout into an open redirect.
+    const safeReturnUrl =
+      input.returnUrl && input.returnUrl.startsWith(frontendUrl)
+        ? input.returnUrl
+        : `${frontendUrl}/account/orders`;
+    const returnUrl = encodeURIComponent(safeReturnUrl);
     const paymentUrl = `https://my.click.uz/services/pay?service_id=${this.serviceId}&merchant_id=${this.merchantId}&amount=${amountInSum}&transaction_param=${input.orderId}&return_url=${returnUrl}`;
 
     return {
@@ -74,7 +78,7 @@ export class ClickPaymentProvider implements PaymentProvider {
       )
       .digest("hex");
 
-    if (this.secret && sign_string !== expectedSign) {
+    if (!this.secret || service_id !== this.serviceId || sign_string !== expectedSign) {
       this.logger.warn(
         `Click signature mismatch. Expected: ${expectedSign}, Received: ${sign_string}`,
       );

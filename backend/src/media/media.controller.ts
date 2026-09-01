@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -44,7 +45,12 @@ export class MediaController {
     RoleType.MANAGER,
   )
   @ApiBearerAuth()
-  @UseInterceptors(FileInterceptor("file"))
+  @UseInterceptors(
+    FileInterceptor("file", {
+      // Multer's memory storage must reject oversized data before buffering it.
+      limits: { fileSize: 50 * 1024 * 1024, files: 1 },
+    }),
+  )
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Upload an image, PDF document or 3D asset" })
   @ApiBody({
@@ -114,6 +120,9 @@ export class MediaController {
     @Param("fileName") fileName: string,
     @Res() res: Response,
   ) {
+    if (!/^[a-zA-Z0-9_-]+$/.test(folder) || !/^[a-zA-Z0-9._-]+$/.test(fileName)) {
+      throw new NotFoundException("Media file not found");
+    }
     const storageKey = `${folder}/${fileName}`;
     const { stream, mimeType, size } =
       await this.mediaService.getMediaStream(storageKey);

@@ -39,16 +39,23 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4000
 
-# Install openssl and curl for Prisma & healthcheck
-RUN apk add --no-cache openssl curl
+# Install openssl and curl for Prisma & healthcheck, then create an
+# unprivileged account for the application and writable local media store.
+RUN apk add --no-cache openssl curl && \
+    addgroup --system --gid 1001 sabo && \
+    adduser --system --uid 1001 --ingroup sabo sabo && \
+    mkdir -p /app/backend/uploads && \
+    chown -R sabo:sabo /app
 
 # Copy production artifacts (hoisted node_modules + built backend workspace)
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/backend ./backend
+COPY --from=builder --chown=sabo:sabo /app/node_modules ./node_modules
+COPY --from=builder --chown=sabo:sabo /app/backend ./backend
 
 RUN chmod +x ./backend/docker-entrypoint.sh
 
 WORKDIR /app/backend
+
+USER sabo
 
 EXPOSE 4000
 

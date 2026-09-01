@@ -83,4 +83,9 @@ export class SettingsService {
 
     return merged;
   }
+
+  async resetTheme() {
+    await this.prisma.siteSetting.deleteMany({ where: { key: THEME_SETTING_KEY } });
+    return DEFAULT_THEME;
+  }
 }

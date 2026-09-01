@@ -40,6 +40,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    volumes:
+      # S3 is optional; retain the safe local fallback across container rebuilds.
+      - sabo_backend_uploads:/app/backend/uploads
     environment:
       NODE_ENV: production
       PORT: 4000
@@ -51,6 +54,18 @@ services:
       ADMIN_BOOTSTRAP_PASSWORD: ${ADMIN_BOOTSTRAP_PASSWORD}
       CORS_ORIGINS: https://${DOMAIN}
       FRONTEND_URL: https://${DOMAIN}
+      PAYMENTS_ENABLED: ${PAYMENTS_ENABLED:-false}
+      CLICK_MERCHANT_ID: ${CLICK_MERCHANT_ID:-}
+      CLICK_SERVICE_ID: ${CLICK_SERVICE_ID:-}
+      CLICK_SECRET: ${CLICK_SECRET:-}
+      PAYME_MERCHANT_ID: ${PAYME_MERCHANT_ID:-}
+      PAYME_SECRET: ${PAYME_SECRET:-}
+      S3_ENDPOINT: ${S3_ENDPOINT:-}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-}
+      S3_PUBLIC_URL: ${S3_PUBLIC_URL:-}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000/api/v1/health"]
       interval: 15s
@@ -95,5 +110,6 @@ services:
 volumes:
   sabo_postgres_data:
   sabo_redis_data:
+  sabo_backend_uploads:
   sabo_caddy_data:
   sabo_caddy_config:

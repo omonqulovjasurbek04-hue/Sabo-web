@@ -1,0 +1,27 @@
+# Version control and local editor state
+.git
+.github
+.vscode
+.idea
+
+# Dependencies and build artifacts are recreated in Docker build stages.
+node_modules
+**/node_modules
+.next
+**/.next
+dist
+**/dist
+coverage
+**/coverage
+
+# Never send local configuration, credentials, or uploaded content to Docker.
+.env
+.env.*
+**/.env
+**/.env.*
+backend/uploads
+*.log
+
+# OS and temporary files
+.DS_Store
+*.tsbuildinfo

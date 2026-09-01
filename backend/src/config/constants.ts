@@ -23,7 +23,6 @@ export const APP_CONSTANTS = {
       "image/png",
       "image/webp",
       "image/avif",
-      "image/svg+xml",
     ],
     ALLOWED_DOC_MIMES: ["application/pdf"],
     ALLOWED_3D_MIMES: [

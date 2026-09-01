@@ -17,6 +17,7 @@ import {
 } from "@nestjs/swagger";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
+import { OptionalJwtAuthGuard } from "../common/guards/optional-jwt-auth.guard";
 import { CreateOrderDto, OrderQueryDto } from "./dto/create-order.dto";
 import { OrdersService } from "./orders.service";
 
@@ -30,6 +31,7 @@ export class OrdersController {
   // ==========================================
 
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   @Post("orders")
   @ApiOperation({
     summary: "Create a new order (Checkout - Guest or Authenticated)",
@@ -41,9 +43,10 @@ export class OrdersController {
   async createOrder(
     @Body() dto: CreateOrderDto,
     @Headers("idempotency-key") idempotencyKey?: string,
+    @Headers("x-session-id") sessionId?: string,
     @CurrentUser("id") userId?: string,
   ) {
-    return this.ordersService.createOrder(dto, userId, idempotencyKey);
+    return this.ordersService.createOrder(dto, userId, sessionId, idempotencyKey);
   }
 
   @UseGuards(JwtAuthGuard)

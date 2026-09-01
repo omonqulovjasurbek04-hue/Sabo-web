@@ -19,54 +19,10 @@ export function ProductAddOns({
   onToggleAddOn,
   locale,
 }: ProductAddOnsProps) {
-  // Default list of SABO accessories / add-ons if none provided
-  const availableAddOns: ProductAddOn[] = addOns.length > 0 ? addOns : [
-    {
-      id: "addon-eco-box",
-      name: {
-        uz: "Sovg'abop Eko-quti",
-        ru: "Подарочная Эко-коробка",
-        en: "Gift Eco-box Packaging",
-      },
-      price: 5000,
-      description: {
-        uz: "Sifatli va chiroyli SABO qadoqi",
-        ru: "Эстетичная подарочная упаковка",
-        en: "Premium aesthetic gift packaging",
-      },
-      icon: "gift",
-    },
-    {
-      id: "addon-thermo-bag",
-      name: {
-        uz: "Sovutgichli Termopaket (+4°C)",
-        ru: "Термопакет охлаждающий (+4°C)",
-        en: "Thermal Cooling Pouch (+4°C)",
-      },
-      price: 12000,
-      description: {
-        uz: "Yetkazib berishda haroratni 4 soat saqlaydi",
-        ru: "Сохраняет свежесть и холод до 4 часов",
-        en: "Maintains optimal cold freshness up to 4h",
-      },
-      icon: "thermo",
-    },
-    {
-      id: "addon-eco-spoon",
-      name: {
-        uz: "Ekologik Yog'och Qoshiqcha",
-        ru: "Экологичная деревянная ложка",
-        en: "Eco-friendly Wooden Spoon",
-      },
-      price: 2000,
-      description: {
-        uz: "Yogurt va smetana iste'moli uchun qulay",
-        ru: "Удобно для йогурта и сметаны",
-        en: "Convenient for yogurt & sour cream",
-      },
-      icon: "spoon",
-    },
-  ];
+  // These options must be backed by the commerce API; otherwise the server
+  // cannot preserve or price them in an order.
+  const availableAddOns = addOns;
+  if (availableAddOns.length === 0) return null;
 
   const getIcon = (iconType?: string) => {
     switch (iconType) {

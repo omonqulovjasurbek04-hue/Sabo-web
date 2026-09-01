@@ -51,6 +51,7 @@ export function ProductPurchasePanel({
       volume: selectedVariant.volume ?? "",
       fat: product.fat,
       price: unitPrice + addOnsTotal,
+      quantity,
     });
 
     notify(`${product.name} ${dict.cart.added}`);

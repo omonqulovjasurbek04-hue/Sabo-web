@@ -31,11 +31,7 @@ async function bootstrap() {
       if (
         !origin ||
         origins.includes(origin) ||
-        origins.includes("*") ||
-        nodeEnv === "development" ||
-        origin.endsWith(".railway.app") ||
-        origin.endsWith(".up.railway.app") ||
-        origin.endsWith("sabo.uz")
+        nodeEnv === "development"
       ) {
         callback(null, true);
       } else {

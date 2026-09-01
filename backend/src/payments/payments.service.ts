@@ -28,6 +28,7 @@ export class PaymentsService {
     orderId: string,
     provider: PaymentProviderType,
     returnUrl?: string,
+    userId?: string,
   ) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
@@ -38,6 +39,13 @@ export class PaymentsService {
       throw new NotFoundException({
         code: ErrorCode.ORDER_NOT_FOUND,
         message: "Order not found",
+      });
+    }
+
+    if (!userId || order.userId !== userId) {
+      throw new BadRequestException({
+        code: ErrorCode.AUTH_FORBIDDEN,
+        message: "You cannot create a payment link for this order",
       });
     }
 
@@ -122,7 +130,19 @@ export class PaymentsService {
           where: { id: webhookResult.orderId },
         });
 
-        if (order && order.paymentStatus !== PaymentStatus.PAID) {
+        const expectedProvider =
+          provider.toLowerCase() === "click"
+            ? PaymentProviderType.CLICK
+            : PaymentProviderType.PAYME;
+        const hasMatchingPayment = await tx.payment.findFirst({
+          where: { orderId: webhookResult.orderId, provider: expectedProvider },
+        });
+        if (
+          order &&
+          order.paymentStatus !== PaymentStatus.PAID &&
+          webhookResult.amountMinor === order.totalMinor &&
+          hasMatchingPayment
+        ) {
           await tx.order.update({
             where: { id: order.id },
             data: {

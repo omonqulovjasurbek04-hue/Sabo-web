@@ -28,6 +28,7 @@ export interface CartAddInput {
   volume: string;
   fat: string | null;
   price: number | null;
+  quantity?: number;
 }
 
 interface CartContextValue {
@@ -85,11 +86,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (existing) {
           return current.map((line) =>
             line.id === item.id
-              ? { ...line, quantity: line.quantity + 1 }
+              ? { ...line, quantity: line.quantity + Math.max(1, item.quantity ?? 1) }
               : line,
           );
         }
-        return [...current, { ...item, quantity: 1 }];
+        return [...current, { ...item, quantity: Math.max(1, item.quantity ?? 1) }];
       });
     },
     [],

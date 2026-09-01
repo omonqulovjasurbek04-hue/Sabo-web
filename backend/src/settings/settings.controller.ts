@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Put, UseGuards } from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -35,5 +35,13 @@ export class SettingsController {
   @ApiResponse({ status: 200, description: "Theme settings updated" })
   async updateTheme(@Body() dto: UpdateThemeDto) {
     return this.settingsService.updateTheme(dto);
+  }
+
+  @Delete("theme")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(RoleType.SUPER_ADMIN, RoleType.ADMIN)
+  @ApiBearerAuth()
+  async resetTheme() {
+    return this.settingsService.resetTheme();
   }
 }

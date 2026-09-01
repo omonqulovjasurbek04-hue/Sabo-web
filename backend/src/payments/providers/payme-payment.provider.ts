@@ -47,22 +47,24 @@ export class PaymePaymentProvider implements PaymentProvider {
     const { method, params, id } = payload;
     const authHeader = headers["authorization"];
 
-    // Verify HTTP Basic Auth "Paycom:SECRET"
-    if (this.secret && authHeader) {
-      const encoded = authHeader.replace("Basic ", "");
-      const decoded = Buffer.from(encoded, "base64").toString("utf-8");
-      const [, providedSecret] = decoded.split(":");
-      if (providedSecret !== this.secret) {
-        return {
-          isSuccess: false,
-          status: "UNAUTHORIZED",
-          responsePayload: {
-            error: { code: -32504, message: "Insufficient privileges" },
-            id,
-          },
-        };
-      }
-    }
+    // A webhook must never be accepted without a configured secret and valid
+    // Basic credentials. Accepting a missing header made it possible to mark an
+    // order as paid by posting a forged PerformTransaction request.
+    const unauthorized = () => ({
+      isSuccess: false,
+      status: "UNAUTHORIZED",
+      responsePayload: {
+        error: { code: -32504, message: "Insufficient privileges" },
+        id,
+      },
+    });
+    if (!this.secret || !authHeader?.startsWith("Basic ")) return unauthorized();
+
+    const decoded = Buffer.from(authHeader.slice(6), "base64").toString("utf-8");
+    const separator = decoded.indexOf(":");
+    const username = separator >= 0 ? decoded.slice(0, separator) : "";
+    const providedSecret = separator >= 0 ? decoded.slice(separator + 1) : "";
+    if (username !== "Paycom" || providedSecret !== this.secret) return unauthorized();
 
     const orderId = params?.account?.order_id;
     const isPerformTransaction = method === "PerformTransaction";

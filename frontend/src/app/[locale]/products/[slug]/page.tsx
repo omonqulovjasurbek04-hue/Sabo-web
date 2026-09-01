@@ -10,7 +10,7 @@ import { Container } from "@/components/ui/container";
 import { ArrowLeftIcon } from "@/components/ui/icons";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductGrid } from "@/components/product/product-grid";
-import { getCategoryBySlug } from "@/data/categories";
+import { getCategory, getCategoryBySlug } from "@/data/categories";
 import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
@@ -58,7 +58,7 @@ export default async function ProductDetailPage({
   if (!res.success || !res.data) notFound();
   const product = mapApiProduct(res.data);
 
-  const category = getCategoryBySlug(product.category);
+  const category = getCategory(product.category) || getCategoryBySlug("other");
   const relatedRes = await apiClient.getProducts({ category: product.category, locale, limit: 4 });
   const related = (relatedRes.data || [])
     .map(mapApiProduct)

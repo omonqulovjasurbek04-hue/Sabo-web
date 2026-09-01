@@ -1,64 +1,64 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsHexColor } from "class-validator";
 
 export class ThemeModeColorsDto {
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   primary!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   primaryHover!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   primarySoft!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   secondary!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   secondarySoft!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   background!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   surface!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   surfaceElevated!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   foreground!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   muted!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   border!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   buttonBg!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   buttonText!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   buttonHover!: string;
 
   @ApiProperty()
-  @IsString()
+  @IsHexColor()
   actionRed!: string;
 }

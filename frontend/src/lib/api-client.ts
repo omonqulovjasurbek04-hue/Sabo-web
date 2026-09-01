@@ -18,6 +18,29 @@ export interface ApiResponse<T = unknown> {
   };
 }
 
+export interface AdminOrderApi {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  totalMinor: number;
+  paymentStatus: string;
+  status: string;
+  createdAt: string;
+  address?: { city?: string | null; district?: string | null; street?: string | null; apartment?: string | null } | null;
+  items?: Array<{ productName: string; quantity: number }>;
+  payments?: Array<{ provider: string }>;
+}
+
+export interface AdminMessageApi {
+  id: string;
+  name: string;
+  phone?: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+}
+
 const API_BASE =
   typeof window !== "undefined"
     ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1"
@@ -47,16 +70,20 @@ function clearTokens() {
 }
 
 let refreshPromise: Promise<boolean> | null = null;
+const REQUEST_TIMEOUT_MS = 8_000;
 
 async function tryRefreshToken(): Promise<boolean> {
   const { refreshToken } = getStoredTokens();
   if (!refreshToken) return false;
 
   if (!refreshPromise) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     refreshPromise = fetch(`${API_BASE}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken }),
+      signal: controller.signal,
     })
       .then(async (res) => {
         if (!res.ok) return false;
@@ -70,6 +97,7 @@ async function tryRefreshToken(): Promise<boolean> {
       })
       .catch(() => false)
       .finally(() => {
+        clearTimeout(timeout);
         refreshPromise = null;
       });
   }
@@ -93,10 +121,24 @@ async function request<T>(endpoint: string, options: RequestInit = {}, _retried 
       headers["Content-Type"] = "application/json";
     }
 
-    const res = await fetch(url, {
-      ...options,
-      headers,
-    });
+    const controller = new AbortController();
+    const onExternalAbort = () => controller.abort();
+    if (options.signal) {
+      if (options.signal.aborted) controller.abort();
+      else options.signal.addEventListener("abort", onExternalAbort, { once: true });
+    }
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+      options.signal?.removeEventListener("abort", onExternalAbort);
+    }
 
     if (res.status === 401 && accessToken && !_retried) {
       const refreshed = await tryRefreshToken();
@@ -106,23 +148,38 @@ async function request<T>(endpoint: string, options: RequestInit = {}, _retried 
       clearTokens();
     }
 
-    const json = (await res.json()) as ApiResponse<T> & { message?: string };
-    if (!res.ok && !json.error) {
+    const raw = await res.text();
+    let json: (ApiResponse<T> & { message?: string }) | undefined;
+    if (raw) {
+      try {
+        json = JSON.parse(raw) as ApiResponse<T> & { message?: string };
+      } catch {
+        // A proxy can return a non-JSON error page. Normalize it below.
+      }
+    }
+
+    if (!res.ok) {
+      if (json?.error) return json;
       return {
         success: false,
         error: {
           code: `HTTP_${res.status}`,
-          message: json.message || "Xatolik yuz berdi",
+          message: json?.message || "Xatolik yuz berdi",
         },
       };
     }
-    return json;
+    return json ?? { success: true };
   } catch (err: unknown) {
     return {
       success: false,
       error: {
         code: "NETWORK_ERROR",
-        message: err instanceof Error ? err.message : "Tarmoq xatosi yuz berdi",
+        message:
+          err instanceof Error && err.name === "AbortError"
+            ? "So'rov vaqti tugadi. Qayta urinib ko'ring."
+            : err instanceof Error
+              ? err.message
+              : "Tarmoq xatosi yuz berdi",
       },
     };
   }
@@ -130,10 +187,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}, _retried 
 
 export const apiClient = {
   getHealth: () => request<{ status: string; timestamp: string }>("/health"),
-  getProducts: (params?: { category?: string; q?: string; page?: number; limit?: number; locale?: string; featured?: boolean }) => {
+  getProducts: (params?: { category?: string; q?: string; search?: string; page?: number; limit?: number; locale?: string; featured?: boolean }) => {
     const query = new URLSearchParams();
     if (params?.category) query.set("category", params.category);
-    if (params?.q) query.set("q", params.q);
+    if (params?.q || params?.search) query.set("search", params.q || params.search || "");
     if (params?.page) query.set("page", params.page.toString());
     if (params?.limit) query.set("limit", params.limit.toString());
     if (params?.locale) query.set("locale", params.locale);
@@ -158,7 +215,7 @@ export const apiClient = {
         subject: payload.subject || undefined,
       }),
     }),
-  register: async (payload: { name?: string; firstName?: string; lastName?: string; phone: string; password?: string; email?: string }) => {
+  register: async (payload: { name?: string; firstName?: string; lastName?: string; phone: string; password: string; email?: string }) => {
     const parts = (payload.name || "").trim().split(" ");
     const firstName = payload.firstName || parts[0] || "Mijoz";
     const lastName = payload.lastName || parts.slice(1).join(" ") || undefined;
@@ -169,7 +226,7 @@ export const apiClient = {
         lastName,
         phone: payload.phone,
         email: payload.email || undefined,
-        password: payload.password || "SaboDefault123!",
+        password: payload.password,
       }),
     });
     if (res.success && res.data) storeTokens(res.data.accessToken, res.data.refreshToken);
@@ -236,7 +293,7 @@ export const apiClient = {
   },
   getOrderById: (id: string) => request<{ id: string; [key: string]: unknown }>(`/orders/${id}`),
   getCheckoutUrl: (orderId: string, provider: "CLICK" | "PAYME", returnUrl?: string) =>
-    request<{ url: string }>("/payments/checkout-url", {
+    request<{ paymentUrl: string }>("/payments/checkout-url", {
       method: "POST",
       body: JSON.stringify({ orderId, provider, returnUrl }),
     }),
@@ -283,6 +340,18 @@ export const apiClient = {
     request<{ success: boolean; message: string }>(`/admin/products/${id}`, {
       method: "DELETE",
     }),
+  getAdminOrders: () => request<AdminOrderApi[]>("/admin/orders"),
+  updateAdminOrderStatus: (id: string, status: string) =>
+    request<AdminOrderApi>(`/admin/orders/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+  getAdminMessages: () => request<AdminMessageApi[]>("/admin/messages"),
+  updateAdminMessageStatus: (id: string, status: string) =>
+    request<AdminMessageApi>(`/admin/messages/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
 
   // ==========================================
   // GLOBAL THEME & COLOR SETTINGS
@@ -293,9 +362,5 @@ export const apiClient = {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
-  resetThemeSettings: () =>
-    request<ThemeSettings>("/settings/theme?action=reset", {
-      method: "POST",
-      body: JSON.stringify({ reset: true }),
-    }),
+  resetThemeSettings: () => request<ThemeSettings>("/settings/theme", { method: "DELETE" }),
 };

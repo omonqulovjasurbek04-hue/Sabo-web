@@ -38,12 +38,16 @@ export class OrdersService {
   async createOrder(
     dto: CreateOrderDto,
     userId?: string,
+    sessionId?: string,
     idempotencyKey?: string,
   ) {
     // 1. Check idempotency if key provided
-    if (idempotencyKey) {
+    // Guest idempotency cannot be made ownership-safe without persisting a
+    // separate guest credential, so only authenticated orders use the key.
+    const safeIdempotencyKey = userId ? idempotencyKey : undefined;
+    if (safeIdempotencyKey) {
       const existing = await this.prisma.order.findUnique({
-        where: { idempotencyKey },
+        where: { idempotencyKey: safeIdempotencyKey },
         include: { items: true, address: true, payments: true },
       });
       if (existing) {
@@ -65,6 +69,15 @@ export class OrdersService {
         throw new BadRequestException({
           code: ErrorCode.CART_NOT_FOUND,
           message: "Cart is empty or not found",
+        });
+      }
+      const ownsCart = cart.userId
+        ? cart.userId === userId
+        : Boolean(sessionId && cart.sessionId === sessionId);
+      if (!ownsCart) {
+        throw new ForbiddenException({
+          code: ErrorCode.AUTH_FORBIDDEN,
+          message: "You do not have permission to checkout this cart",
         });
       }
       itemsToProcess = cart.items.map((i) => ({
@@ -102,7 +115,7 @@ export class OrdersService {
           customerPhone: dto.customerPhone,
           customerEmail: dto.customerEmail || null,
           note: dto.note || null,
-          idempotencyKey: idempotencyKey || null,
+          idempotencyKey: safeIdempotencyKey || null,
           items: {
             createMany: {
               data: pricing.items.map((item) => ({

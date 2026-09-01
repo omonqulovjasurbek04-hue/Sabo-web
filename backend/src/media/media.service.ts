@@ -69,6 +69,12 @@ export class MediaService {
   }
 
   validateFile(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException({
+        code: ErrorCode.MEDIA_TYPE_NOT_ALLOWED,
+        message: "A file is required.",
+      });
+    }
     const isImage = (
       APP_CONSTANTS.MEDIA.ALLOWED_IMAGE_MIMES as readonly string[]
     ).includes(file.mimetype);
@@ -185,18 +191,31 @@ export class MediaService {
   }
 
   async getMediaStream(idOrKey: string): Promise<{ stream: Readable; mimeType: string; fileName: string; size?: number }> {
-    let media = await this.prisma.media.findFirst({
+    const media = await this.prisma.media.findFirst({
       where: {
         OR: [{ id: idOrKey }, { storageKey: idOrKey }],
       },
     });
 
-    const storageKey = media ? media.storageKey : idOrKey;
-    const fileName = media ? media.originalName : path.basename(storageKey);
-    const mimeType = media ? media.mimeType : "application/octet-stream";
+    if (!media) {
+      throw new NotFoundException({
+        code: ErrorCode.MEDIA_NOT_FOUND,
+        message: "Media file not found",
+      });
+    }
+    const storageKey = media.storageKey;
+    const fileName = media.originalName;
+    const mimeType = media.mimeType;
 
     // 1. Try local file system
-    const localPath = path.join(this.localStorageDir, storageKey);
+    const storageRoot = path.resolve(this.localStorageDir);
+    const localPath = path.resolve(storageRoot, storageKey);
+    if (!localPath.startsWith(`${storageRoot}${path.sep}`)) {
+      throw new NotFoundException({
+        code: ErrorCode.MEDIA_NOT_FOUND,
+        message: "Invalid media path",
+      });
+    }
     if (fs.existsSync(localPath)) {
       const stats = fs.statSync(localPath);
       return {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -42,11 +42,20 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { ProductEditModal } from "@/components/admin/product-edit-modal";
 import { ThemeDesignPanel } from "@/components/admin/theme-design-panel";
 import { categories } from "@/data/categories";
-import { apiClient } from "@/lib/api-client";
+import { apiClient, type AdminMessageApi, type AdminOrderApi } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 import type { MediaFileItem, Product } from "@/lib/types";
 import { mapApiProduct } from "@/lib/product-mapper";
+
+const ORDER_STATUS_TO_UI: Record<string, string> = {
+  PENDING: "new", CONFIRMED: "confirmed", PROCESSING: "preparing",
+  OUT_FOR_DELIVERY: "delivering", DELIVERED: "completed", CANCELLED: "cancelled",
+};
+const ORDER_STATUS_TO_API: Record<string, string> = {
+  new: "PENDING", confirmed: "CONFIRMED", preparing: "PROCESSING",
+  delivering: "OUT_FOR_DELIVERY", completed: "DELIVERED", cancelled: "CANCELLED",
+};
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -219,82 +228,51 @@ export default function AdminPage() {
     setTimeout(() => setProductActionMsg(""), 4000);
   };
 
-  // Mock Orders state
-  const [orders, setOrders] = useState([
-    {
-      id: "ORD-2026-8941",
-      customerName: "Jasurbek Omonqulov",
-      customerPhone: "+998 90 123 45 67",
-      address: "Toshkent sh., Yunusobod tumani, 12-mavze, 45-uy",
-      items: "SABO Sut 3.2% (2 dona), SABO Kefir 1L (1 dona)",
-      totalAmount: 36000,
-      paymentMethod: "Click",
-      paymentStatus: "paid",
-      orderStatus: "confirmed",
-      date: "Bugun, 10:24",
-    },
-    {
-      id: "ORD-2026-8940",
-      customerName: "Dilshod Rahimov",
-      customerPhone: "+998 93 987 65 43",
-      address: "Toshkent sh., Chilonzor tumani, 9-mavze, 18-uy",
-      items: "SABO Qaymoq 200g (3 dona)",
-      totalAmount: 45000,
-      paymentMethod: "Payme",
-      paymentStatus: "pending",
-      orderStatus: "new",
-      date: "Bugun, 09:45",
-    },
-    {
-      id: "ORD-2026-8939",
-      customerName: "Madina Alimova",
-      customerPhone: "+998 97 555 11 22",
-      address: "Toshkent sh., Mirzo Ulug'bek tumani, 4-tor ko'cha",
-      items: "SABO Yogurt 2.5% (4 dona), SABO Sutim 1L (2 dona)",
-      totalAmount: 52000,
-      paymentMethod: "Naqd",
-      paymentStatus: "paid",
-      orderStatus: "completed",
-      date: "Kecha, 16:30",
-    },
-  ]);
+  type AdminOrderView = {
+    id: string; apiId: string; customerName: string; customerPhone: string;
+    address: string; items: string; totalAmount: number; paymentMethod: string;
+    paymentStatus: string; orderStatus: string; date: string;
+  };
+  type AdminMessageView = {
+    id: string; name: string; phone: string; subject: string; message: string; date: string; status: string;
+  };
+  const [orders, setOrders] = useState<AdminOrderView[]>([]);
+  const [messages, setMessages] = useState<AdminMessageView[]>([]);
+  const loadAdminData = useCallback(async () => {
+    const [ordersRes, messagesRes] = await Promise.all([apiClient.getAdminOrders(), apiClient.getAdminMessages()]);
+    if (ordersRes.success && ordersRes.data) setOrders(ordersRes.data.map((order: AdminOrderApi) => ({
+      id: order.orderNumber || order.id,
+      apiId: order.id,
+      customerName: order.customerName,
+      customerPhone: order.customerPhone,
+      address: [order.address?.city, order.address?.district, order.address?.street, order.address?.apartment].filter(Boolean).join(", "),
+      items: (order.items || []).map((item) => `${item.productName} (${item.quantity} dona)`).join(", "),
+      totalAmount: (order.totalMinor || 0) / 100,
+      paymentMethod: order.payments?.[0]?.provider || "CASH",
+      paymentStatus: (order.paymentStatus || "PENDING").toLowerCase(),
+      orderStatus: ORDER_STATUS_TO_UI[order.status] || "new",
+      date: new Date(order.createdAt).toLocaleString(),
+    })));
+    if (messagesRes.success && messagesRes.data) setMessages(messagesRes.data.map((message: AdminMessageApi) => ({
+      id: message.id, name: message.name, phone: message.phone || "—", subject: "Murojaat",
+      message: message.message, date: new Date(message.createdAt).toLocaleString(), status: (message.status || "NEW").toLowerCase(),
+    })));
+  }, []);
+  useEffect(() => { if (isAuthenticated) loadAdminData(); }, [isAuthenticated, loadAdminData]);
 
-  // Mock Contact Messages
-  const [messages, setMessages] = useState([
-    {
-      id: "MSG-001",
-      name: "Akmal Karimov",
-      phone: "+998 91 234 56 78",
-      subject: "Ulgurji hamkorlik",
-      message: "Do'konlar tarmog'imizga SABO tabiiy sut va qatiq mahsulotlarini ulgurji yetkazib berish bo'yicha shartnoma qilmoqchimiz.",
-      date: "Bugun, 08:15",
-      status: "new",
-    },
-    {
-      id: "MSG-002",
-      name: "Sardor Yusupov",
-      phone: "+998 94 321 00 11",
-      subject: "Mahsulot sertifikatlari",
-      message: "SABO Yogurt va Sariyog' mahsulotlarining ISO hamda Halol sifat sertifikatlari nusxasini taqdim eta olasizmi?",
-      date: "Kecha, 14:20",
-      status: "read",
-    },
-  ]);
-
-  const handleUpdateOrderStatus = (orderId: string, newStatus: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === orderId ? { ...o, orderStatus: newStatus } : o))
-    );
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
+    const order = orders.find((item) => item.id === orderId);
+    if (!order) return;
+    const res = await apiClient.updateAdminOrderStatus(order.apiId, ORDER_STATUS_TO_API[newStatus] || "PENDING");
+    if (res.success) setOrders((prev) => prev.map((item) => item.id === orderId ? { ...item, orderStatus: newStatus } : item));
   };
 
-  const handleToggleMessageStatus = (msgId: string) => {
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === msgId
-          ? { ...m, status: m.status === "new" ? "read" : "new" }
-          : m
-      )
-    );
+  const handleToggleMessageStatus = async (msgId: string) => {
+    const message = messages.find((item) => item.id === msgId);
+    if (!message) return;
+    const nextStatus = message.status === "new" ? "READ" : "NEW";
+    const res = await apiClient.updateAdminMessageStatus(msgId, nextStatus);
+    if (res.success) setMessages((prev) => prev.map((item) => item.id === msgId ? { ...item, status: nextStatus.toLowerCase() } : item));
   };
 
   const filteredProducts = productList.filter((p) => {

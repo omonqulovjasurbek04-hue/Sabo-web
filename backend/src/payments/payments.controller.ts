@@ -15,8 +15,22 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 import { PaymentProviderType } from "@prisma/client";
+import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
+import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { PaymentsService } from "./payments.service";
+
+class CreateCheckoutUrlDto {
+  @IsUUID()
+  orderId!: string;
+
+  @IsEnum(PaymentProviderType)
+  provider!: PaymentProviderType;
+
+  @IsOptional()
+  @IsString()
+  returnUrl?: string;
+}
 
 @ApiTags("Payments")
 @Controller("payments")
@@ -29,16 +43,14 @@ export class PaymentsController {
   @ApiOperation({ summary: "Generate checkout URL for Click or Payme" })
   async getPaymentUrl(
     @Body()
-    dto: {
-      orderId: string;
-      provider: PaymentProviderType;
-      returnUrl?: string;
-    },
+    dto: CreateCheckoutUrlDto,
+    @CurrentUser("id") userId: string,
   ) {
     return this.paymentsService.createPaymentUrl(
       dto.orderId,
       dto.provider,
       dto.returnUrl,
+      userId,
     );
   }
 

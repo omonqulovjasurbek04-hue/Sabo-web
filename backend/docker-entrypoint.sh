@@ -8,7 +8,7 @@ echo "🚀 Starting SABO Backend API..."
 # Synchronize Database Schema if DATABASE_URL is configured
 if [ -n "$DATABASE_URL" ]; then
   echo "📦 Syncing Prisma schema with PostgreSQL..."
-  npx prisma db push --accept-data-loss || echo "⚠️ Prisma schema push skipped or deferred."
+  npx prisma db push
 
   if [ "$RUN_SEED" = "true" ] || [ -n "$ADMIN_BOOTSTRAP_EMAIL" ]; then
     echo "🌱 Running database seed..."

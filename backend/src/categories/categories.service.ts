@@ -195,6 +195,17 @@ export class CategoriesService {
       children: category.children?.map((child: any) =>
         this.formatCategory(child, locale),
       ),
+      products: category.products?.map((product: any) => {
+        const productTranslation = pickTranslation(product.translations, locale);
+        const primaryImage = product.images?.find((image: any) => image.isPrimary) || product.images?.[0];
+        return {
+          id: product.id,
+          slug: product.slug,
+          name: productTranslation?.name || product.name,
+          description: productTranslation?.description || product.description || null,
+          imageUrl: primaryImage?.media?.url || null,
+        };
+      }) || [],
       sortOrder: category.sortOrder,
       isActive: category.isActive,
     };
