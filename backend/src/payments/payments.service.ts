@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -43,7 +44,7 @@ export class PaymentsService {
     }
 
     if (!userId || order.userId !== userId) {
-      throw new BadRequestException({
+      throw new ForbiddenException({
         code: ErrorCode.AUTH_FORBIDDEN,
         message: "You cannot create a payment link for this order",
       });

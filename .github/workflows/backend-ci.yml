@@ -14,6 +14,20 @@ jobs:
   test_and_build:
     name: Lint, Test & Build
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/sabo_ci?schema=public
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sabo_ci
+        options: >-
+          --health-cmd "pg_isready -U postgres -d sabo_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: ./backend
@@ -34,6 +48,12 @@ jobs:
 
       - name: Generate Prisma Client
         run: npx prisma generate
+
+      - name: Apply Prisma migrations
+        run: npm run prisma:migrate:deploy
+
+      - name: Lint
+        run: npm run lint
 
       - name: Typecheck
         run: npm run typecheck

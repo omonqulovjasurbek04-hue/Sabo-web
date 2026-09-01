@@ -79,9 +79,7 @@ export class ClickPaymentProvider implements PaymentProvider {
       .digest("hex");
 
     if (!this.secret || service_id !== this.serviceId || sign_string !== expectedSign) {
-      this.logger.warn(
-        `Click signature mismatch. Expected: ${expectedSign}, Received: ${sign_string}`,
-      );
+      this.logger.warn("Click signature verification failed");
       return {
         isSuccess: false,
         status: "SIGN_ERROR",
