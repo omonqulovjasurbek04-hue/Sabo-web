@@ -15,7 +15,7 @@ import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
 import { mapApiProduct } from "@/lib/product-mapper";
-import { generatePageMetadata } from "@/lib/seo";
+import { generatePageMetadata, safeJsonLd } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { localize } from "@/lib/types";
 
@@ -117,11 +117,11 @@ export default async function ProductDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(productSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbSchema) }}
       />
 
       <section className="py-10 md:py-16">

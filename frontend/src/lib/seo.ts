@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { defaultLocale, locales, type Locale } from "@/lib/i18n/locales";
 
+// JSON.stringify doesn't escape "<", so a product name/description containing
+// a literal "</script>" would break out of the JSON-LD block into the page.
+export function safeJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
 interface PageMetadataOptions {
   locale: Locale;
   path: string;
