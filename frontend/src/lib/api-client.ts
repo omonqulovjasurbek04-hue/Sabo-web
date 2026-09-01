@@ -1,4 +1,5 @@
-import type { Product, ProductCategoryInfo, User, Order, MediaFileItem, ThemeSettings } from "@/lib/types";
+import type { User, MediaFileItem, ThemeSettings } from "@/lib/types";
+import type { ApiProduct } from "@/lib/product-mapper";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -19,15 +20,68 @@ export interface ApiResponse<T = unknown> {
 
 const API_BASE =
   typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_API_URL || "/api/v1"
+    ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1"
     : process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+const ACCESS_TOKEN_KEY = "sabo_access_token";
+const REFRESH_TOKEN_KEY = "sabo_refresh_token";
+
+function getStoredTokens() {
+  if (typeof window === "undefined") return { accessToken: null, refreshToken: null };
+  return {
+    accessToken: window.localStorage.getItem(ACCESS_TOKEN_KEY),
+    refreshToken: window.localStorage.getItem(REFRESH_TOKEN_KEY),
+  };
+}
+
+function storeTokens(accessToken: string, refreshToken: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
+  window.localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+}
+
+function clearTokens() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+  window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+let refreshPromise: Promise<boolean> | null = null;
+
+async function tryRefreshToken(): Promise<boolean> {
+  const { refreshToken } = getStoredTokens();
+  if (!refreshToken) return false;
+
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    })
+      .then(async (res) => {
+        if (!res.ok) return false;
+        const json = await res.json();
+        const tokens = json?.data;
+        if (tokens?.accessToken && tokens?.refreshToken) {
+          storeTokens(tokens.accessToken, tokens.refreshToken);
+          return true;
+        }
+        return false;
+      })
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+  return refreshPromise;
+}
+
+async function request<T>(endpoint: string, options: RequestInit = {}, _retried = false): Promise<ApiResponse<T>> {
   const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   try {
-    const token = typeof window !== "undefined" ? localStorage.getItem("sabo_token") || localStorage.getItem("sabo_admin_token") : null;
-    const authHeader: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+    const { accessToken } = getStoredTokens();
+    const authHeader: Record<string, string> = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 
     const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
     const headers: Record<string, string> = {
@@ -43,6 +97,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       ...options,
       headers,
     });
+
+    if (res.status === 401 && accessToken && !_retried) {
+      const refreshed = await tryRefreshToken();
+      if (refreshed) {
+        return request<T>(endpoint, options, true);
+      }
+      clearTokens();
+    }
 
     const json = (await res.json()) as ApiResponse<T> & { message?: string };
     if (!res.ok && !json.error) {
@@ -68,20 +130,23 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 export const apiClient = {
   getHealth: () => request<{ status: string; timestamp: string }>("/health"),
-  getProducts: (params?: { category?: string; q?: string; page?: number; limit?: number; locale?: string }) => {
+  getProducts: (params?: { category?: string; q?: string; page?: number; limit?: number; locale?: string; featured?: boolean }) => {
     const query = new URLSearchParams();
     if (params?.category) query.set("category", params.category);
     if (params?.q) query.set("q", params.q);
     if (params?.page) query.set("page", params.page.toString());
     if (params?.limit) query.set("limit", params.limit.toString());
     if (params?.locale) query.set("locale", params.locale);
+    if (params?.featured !== undefined) query.set("featured", String(params.featured));
     const qs = query.toString();
-    return request<Product[]>(`/products${qs ? `?${qs}` : ""}`);
+    return request<ApiProduct[]>(`/products${qs ? `?${qs}` : ""}`);
   },
+  getFeaturedProducts: (locale?: string) =>
+    request<ApiProduct[]>(`/products/featured${locale ? `?locale=${locale}` : ""}`),
   getProductBySlug: (slug: string, locale?: string) =>
-    request<Product>(`/products/${slug}${locale ? `?locale=${locale}` : ""}`),
+    request<ApiProduct>(`/products/${slug}${locale ? `?locale=${locale}` : ""}`),
   getCategories: (locale?: string) =>
-    request<ProductCategoryInfo[]>(`/categories${locale ? `?locale=${locale}` : ""}`),
+    request<{ id: string; slug: string; name: string }[]>(`/categories${locale ? `?locale=${locale}` : ""}`),
   sendContactMessage: (payload: { name: string; phone: string; message: string; email?: string; subject?: string }) =>
     request<{ id: string; message: string }>("/contact", {
       method: "POST",
@@ -93,11 +158,11 @@ export const apiClient = {
         subject: payload.subject || undefined,
       }),
     }),
-  register: (payload: { name?: string; firstName?: string; lastName?: string; phone: string; password?: string; email?: string }) => {
+  register: async (payload: { name?: string; firstName?: string; lastName?: string; phone: string; password?: string; email?: string }) => {
     const parts = (payload.name || "").trim().split(" ");
     const firstName = payload.firstName || parts[0] || "Mijoz";
     const lastName = payload.lastName || parts.slice(1).join(" ") || undefined;
-    return request<{ user: User; token: string }>("/auth/register", {
+    const res = await request<{ user: User; accessToken: string; refreshToken: string; expiresIn: number }>("/auth/register", {
       method: "POST",
       body: JSON.stringify({
         firstName,
@@ -107,32 +172,42 @@ export const apiClient = {
         password: payload.password || "SaboDefault123!",
       }),
     });
+    if (res.success && res.data) storeTokens(res.data.accessToken, res.data.refreshToken);
+    return res;
   },
-  login: (payload: { identifier?: string; phone?: string; email?: string; password?: string }) =>
-    request<{ user: User; token: string }>("/auth/login", {
+  login: async (payload: { identifier?: string; phone?: string; email?: string; password?: string }) => {
+    const res = await request<{ user: User; accessToken: string; refreshToken: string; expiresIn: number }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({
         identifier: payload.identifier || payload.phone || payload.email || "",
         password: payload.password || "",
       }),
-    }),
-  logout: () =>
-    request<{ message: string }>("/auth/logout", {
+    });
+    if (res.success && res.data) storeTokens(res.data.accessToken, res.data.refreshToken);
+    return res;
+  },
+  logout: async () => {
+    const { refreshToken } = getStoredTokens();
+    const res = await request<{ success: boolean }>("/auth/logout", {
       method: "POST",
-    }),
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+    });
+    clearTokens();
+    return res;
+  },
+  isAuthenticated: () => Boolean(getStoredTokens().accessToken),
   getMe: () => request<{ user: User }>("/auth/me"),
   createOrder: (payload: {
-    items: Array<{ productId?: string; productVariantId?: string; quantity: number; volume?: string }>;
+    items: Array<{ productVariantId: string; quantity: number }>;
     customerName: string;
     customerPhone: string;
     customerEmail?: string;
     address: string | { recipientName?: string; phone?: string; city?: string; street?: string };
     notes?: string;
     note?: string;
-    paymentMethod?: "click" | "payme" | "cash" | "CLICK" | "PAYME" | "CASH";
     paymentProvider?: "CLICK" | "PAYME" | "CASH";
   }) => {
-    const paymentProvider = (payload.paymentProvider || payload.paymentMethod || "CASH").toUpperCase();
+    const paymentProvider = payload.paymentProvider || "CASH";
     const addressObj =
       typeof payload.address === "string"
         ? {
@@ -143,7 +218,7 @@ export const apiClient = {
           }
         : payload.address;
 
-    return request<{ order: Order; paymentUrl?: string }>("/orders", {
+    return request<{ id: string; [key: string]: unknown }>("/orders", {
       method: "POST",
       body: JSON.stringify({
         customerName: payload.customerName,
@@ -153,13 +228,18 @@ export const apiClient = {
         paymentProvider,
         address: addressObj,
         items: payload.items.map((it) => ({
-          productVariantId: it.productVariantId || it.productId,
+          productVariantId: it.productVariantId,
           quantity: it.quantity,
         })),
       }),
     });
   },
-  getOrderById: (id: string) => request<Order>(`/orders/${id}`),
+  getOrderById: (id: string) => request<{ id: string; [key: string]: unknown }>(`/orders/${id}`),
+  getCheckoutUrl: (orderId: string, provider: "CLICK" | "PAYME", returnUrl?: string) =>
+    request<{ url: string }>("/payments/checkout-url", {
+      method: "POST",
+      body: JSON.stringify({ orderId, provider, returnUrl }),
+    }),
 
   // ==========================================
   // MEDIA UPLOAD & DOWNLOAD
@@ -187,20 +267,20 @@ export const apiClient = {
   getMediaDownloadUrl: (id: string) => `${API_BASE}/media/download/${id}`,
 
   // ==========================================
-  // PRODUCT MANAGEMENT (ADMIN & CATALOG)
+  // PRODUCT MANAGEMENT (ADMIN)
   // ==========================================
-  createProduct: (product: Partial<Product>) =>
-    request<Product>("/products", {
+  createProduct: (product: Record<string, unknown>) =>
+    request<ApiProduct>("/admin/products", {
       method: "POST",
       body: JSON.stringify(product),
     }),
-  updateProduct: (slug: string, product: Partial<Product>) =>
-    request<Product>(`/products/${slug}`, {
-      method: "PUT",
+  updateProduct: (id: string, product: Record<string, unknown>) =>
+    request<ApiProduct>(`/admin/products/${id}`, {
+      method: "PATCH",
       body: JSON.stringify(product),
     }),
-  deleteProduct: (slug: string) =>
-    request<{ deleted: boolean; slug: string }>(`/products/${slug}`, {
+  deleteProduct: (id: string) =>
+    request<{ success: boolean; message: string }>(`/admin/products/${id}`, {
       method: "DELETE",
     }),
 

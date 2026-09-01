@@ -5,10 +5,9 @@ import { ShoppingCart, Plus, Minus, Check, Sparkles } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { ProductAddOns } from "@/components/product/product-add-ons";
 import { LocalizedLink } from "@/components/layout/localized-link";
-import type { Product, ProductAddOn } from "@/lib/types";
+import type { Product, ProductAddOn, ProductVariantInfo } from "@/lib/types";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
-import { localize } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductPurchasePanelProps {
@@ -23,16 +22,14 @@ export function ProductPurchasePanel({
   dict,
 }: ProductPurchasePanelProps) {
   const { addItem, notify } = useCart();
-  const [selectedVolume, setSelectedVolume] = useState<string>(
-    product.volumes[0] || "1 L"
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariantInfo | null>(
+    product.variants.find((v) => v.isDefault) || product.variants[0] || null
   );
   const [selectedAddOns, setSelectedAddOns] = useState<ProductAddOn[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
-  const basePrice = product.price || 13000;
-  const volumeMultiplier = selectedVolume.includes("1.5") ? 1.4 : selectedVolume.includes("0.5") ? 0.65 : 1;
-  const unitPrice = Math.round(basePrice * volumeMultiplier);
+  const unitPrice = selectedVariant?.priceMinor != null ? selectedVariant.priceMinor / 100 : 0;
   const addOnsTotal = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
   const totalItemPrice = (unitPrice + addOnsTotal) * quantity;
 
@@ -45,17 +42,18 @@ export function ProductPurchasePanel({
   };
 
   const handleAddToCart = () => {
+    if (!selectedVariant) return;
     addItem({
-      id: `${product.id}-${selectedVolume}`,
+      id: selectedVariant.id,
       slug: product.slug,
-      name: `${localize(product.name, locale)}${selectedAddOns.length > 0 ? ` (+${selectedAddOns.length} qo'shimcha)` : ""}`,
+      name: `${product.name}${selectedAddOns.length > 0 ? ` (+${selectedAddOns.length} qo'shimcha)` : ""}`,
       image: product.image,
-      volume: selectedVolume,
+      volume: selectedVariant.volume ?? "",
       fat: product.fat,
       price: unitPrice + addOnsTotal,
     });
 
-    notify(`${localize(product.name, locale)} ${dict.cart.added}`);
+    notify(`${product.name} ${dict.cart.added}`);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
   };
@@ -63,26 +61,27 @@ export function ProductPurchasePanel({
   return (
     <div className="flex flex-col gap-6">
       {/* Volume Selector */}
-      {product.volumes.length > 0 && (
+      {product.variants.length > 0 && (
         <div className="flex flex-col gap-2.5">
           <label className="text-xs font-extrabold uppercase tracking-wider text-muted">
             {dict.product.volume}
           </label>
           <div className="flex gap-2.5 flex-wrap">
-            {product.volumes.map((volume) => {
-              const isSelected = selectedVolume === volume;
+            {product.variants.map((variant) => {
+              const isSelected = selectedVariant?.id === variant.id;
               return (
                 <button
-                  key={volume}
+                  key={variant.id}
                   type="button"
-                  onClick={() => setSelectedVolume(volume)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+                  disabled={!variant.isAvailable}
+                  onClick={() => setSelectedVariant(variant)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                     isSelected
                       ? "bg-primary text-white shadow-md shadow-primary/20 scale-105"
                       : "bg-surface border border-border text-foreground hover:border-primary/40"
                   }`}
                 >
-                  {volume}
+                  {variant.volume}
                 </button>
               );
             })}

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CartIcon } from "@/components/ui/icons";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
-import { localize, type Product } from "@/lib/types";
+import type { Product } from "@/lib/types";
 
 interface AddToCartButtonProps {
   product: Product;
@@ -16,21 +16,22 @@ interface AddToCartButtonProps {
 
 export function AddToCartButton({
   product,
-  locale,
   dict,
   size = "lg",
 }: AddToCartButtonProps) {
   const { addItem, notify } = useCart();
 
   const handleClick = () => {
+    const variant = product.variants.find((v) => v.isDefault) || product.variants[0];
+    if (!variant) return;
     addItem({
-      id: product.id,
+      id: variant.id,
       slug: product.slug,
-      name: localize(product.name, locale),
+      name: product.name,
       image: product.image,
-      volume: product.volumes[0] ?? "",
+      volume: variant.volume ?? "",
       fat: product.fat,
-      price: product.price,
+      price: variant.priceMinor != null ? variant.priceMinor / 100 : null,
     });
     notify(dict.cart.added);
   };

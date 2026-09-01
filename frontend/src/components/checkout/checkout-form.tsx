@@ -91,11 +91,10 @@ export function CheckoutForm({ dict, locale }: CheckoutFormProps) {
       customerPhone: values.phone.trim(),
       customerEmail: values.email.trim(),
       address: values.address.trim(),
-      paymentMethod: "cash" as const,
+      paymentProvider: "CASH" as const,
       items: items.map((item) => ({
-        productId: item.id,
+        productVariantId: item.id,
         quantity: item.quantity,
-        volume: item.volume,
       })),
     };
 

@@ -65,5 +65,16 @@ export function validate(config: Record<string, unknown>) {
     );
   }
 
+  if (
+    validatedConfig.NODE_ENV === Environment.Production &&
+    (validatedConfig.JWT_REFRESH_SECRET ===
+      "dev_secret_refresh_key_min_32_chars_123" ||
+      validatedConfig.JWT_REFRESH_SECRET.length < 32)
+  ) {
+    throw new Error(
+      "❌ Insecure configuration: JWT_REFRESH_SECRET must be at least 32 characters in production!",
+    );
+  }
+
   return validatedConfig;
 }

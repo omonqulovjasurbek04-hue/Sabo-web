@@ -99,6 +99,7 @@ async function bootstrap() {
       .addTag("Contact", "Spam-Protected Contact Form and Company Info")
       .addTag("Admin", "Administrator Operations and Real Aggregated Metrics")
       .addTag("Health", "Application and Database Liveness/Readiness")
+      .addTag("Settings", "Site-wide Theme and Color Customization Settings")
       .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);
@@ -111,6 +112,15 @@ async function bootstrap() {
       `📚 Swagger documentation available at http://localhost:${port}/docs`,
     );
   }
+
+  // 7. Root Redirect to Frontend
+  const frontendUrl = configService.get<string>(
+    "cors.frontendUrl",
+    "http://localhost:3000",
+  );
+  app.getHttpAdapter().getInstance().get("/", (req: any, res: any) => {
+    res.redirect(frontendUrl);
+  });
 
   await app.listen(port, "0.0.0.0");
   logger.log(

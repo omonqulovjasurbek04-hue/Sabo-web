@@ -70,23 +70,31 @@ export class PaymentsService {
       };
     }
 
-    // Update payment record
-    await this.prisma.payment.upsert({
-      where: { id: order.payments[0]?.id || "new" },
-      update: {
-        provider,
-        paymentUrl: result.paymentUrl,
-        metadata: result.metadata,
-      },
-      create: {
-        orderId: order.id,
-        provider,
-        amountMinor: order.totalMinor,
-        currency: order.currency,
-        paymentUrl: result.paymentUrl,
-        metadata: result.metadata,
-      },
-    });
+    // Update payment record: update the existing one for this order if present,
+    // otherwise create a new one. (A literal "new" id can't be used with upsert
+    // since Payment.id is a real @db.Uuid column.)
+    const existingPayment = order.payments[0];
+    if (existingPayment) {
+      await this.prisma.payment.update({
+        where: { id: existingPayment.id },
+        data: {
+          provider,
+          paymentUrl: result.paymentUrl,
+          metadata: result.metadata,
+        },
+      });
+    } else {
+      await this.prisma.payment.create({
+        data: {
+          orderId: order.id,
+          provider,
+          amountMinor: order.totalMinor,
+          currency: order.currency,
+          paymentUrl: result.paymentUrl,
+          metadata: result.metadata,
+        },
+      });
+    }
 
     return result;
   }

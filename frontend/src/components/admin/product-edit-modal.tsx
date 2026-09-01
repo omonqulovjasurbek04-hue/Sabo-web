@@ -12,14 +12,45 @@ import {
   Thermometer,
   Apple,
 } from "lucide-react";
-import type { Product, ProductCategory } from "@/lib/types";
+import type { LocalizedString, Product, ProductCategory, ProductNutritionInfo } from "@/lib/types";
 import { apiClient } from "@/lib/api-client";
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "") || "mahsulot";
+}
 
 interface ProductEditModalProps {
   product: Product | null; // null means create new product
   isOpen: boolean;
   onClose: () => void;
-  onSaved: (savedProduct: Product) => void;
+  onSaved: () => void;
+}
+
+// This form edits all 3 languages at once, unlike the live Product type
+// (which only carries the single currently-requested locale's text).
+interface ProductFormData {
+  name: LocalizedString;
+  description: LocalizedString;
+  category: ProductCategory | string;
+  image: string;
+  galleryImages: string[];
+  price: number;
+  fat: string;
+  volumes: string[];
+  availability: "in-stock" | "out-of-stock";
+  colorAccent: string;
+  colorTheme: string;
+  badges: LocalizedString[];
+  nutrition?: ProductNutritionInfo;
+  storage?: {
+    temperatureMin: number;
+    temperatureMax: number;
+    shelfLife: LocalizedString;
+    storageText: LocalizedString;
+  };
 }
 
 export function ProductEditModal({
@@ -30,7 +61,7 @@ export function ProductEditModal({
 }: ProductEditModalProps) {
   const isEditing = !!product;
 
-  const [formData, setFormData] = useState<Partial<Product>>({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: { uz: "", ru: "", en: "" },
     description: { uz: "", ru: "", en: "" },
     category: "milk",
@@ -68,23 +99,58 @@ export function ProductEditModal({
   const [errorMessage, setErrorMessage] = useState("");
   const [newVolumeInput, setNewVolumeInput] = useState("");
   const [newGalleryUrl, setNewGalleryUrl] = useState("");
+  const [categoryIds, setCategoryIds] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    apiClient.getCategories().then((res) => {
+      if (res.success && res.data) {
+        const map: Record<string, string> = {};
+        for (const c of res.data) map[c.slug] = c.id;
+        setCategoryIds(map);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (product) {
-      setFormData({
-        ...product,
-        name: { ...product.name },
-        description: { ...product.description },
-        galleryImages: product.galleryImages ? [...product.galleryImages] : [product.image],
-        volumes: product.volumes ? [...product.volumes] : ["1 L"],
-        nutrition: product.nutrition ? { ...product.nutrition } : undefined,
-        storage: product.storage
-          ? {
-              ...product.storage,
-              shelfLife: { ...product.storage.shelfLife },
-              storageText: { ...product.storage.storageText },
-            }
-          : undefined,
+      // The live product only carries the single currently-resolved locale's
+      // text; fetch uz/ru/en in parallel so all 3 language fields can be edited.
+      Promise.all(
+        (["uz", "ru", "en"] as const).map((locale) =>
+          apiClient.getProductBySlug(product.slug, locale),
+        ),
+      ).then(([uzRes, ruRes, enRes]) => {
+        setFormData({
+          name: {
+            uz: uzRes.data?.name || product.name,
+            ru: ruRes.data?.name || "",
+            en: enRes.data?.name || "",
+          },
+          description: {
+            uz: uzRes.data?.description || product.description || "",
+            ru: ruRes.data?.description || "",
+            en: enRes.data?.description || "",
+          },
+          category: product.category,
+          image: product.image,
+          galleryImages: product.galleryImages ? [...product.galleryImages] : [product.image],
+          price: product.price ?? 0,
+          fat: product.fat ?? "",
+          volumes: product.volumes ? [...product.volumes] : ["1 L"],
+          availability: product.availability ?? "in-stock",
+          colorAccent: product.colorAccent ?? "#2F6B45",
+          colorTheme: product.colorTheme ?? "green",
+          badges: product.badges ? [...product.badges] : [],
+          nutrition: product.nutrition ? { ...product.nutrition } : undefined,
+          storage: product.storage
+            ? {
+                temperatureMin: product.storage.temperatureMin,
+                temperatureMax: product.storage.temperatureMax,
+                shelfLife: { uz: product.storage.shelfLife, ru: "", en: "" },
+                storageText: { uz: product.storage.storageText, ru: "", en: "" },
+              }
+            : undefined,
+        });
       });
     } else {
       setFormData({
@@ -134,19 +200,76 @@ export function ProductEditModal({
     setIsSaving(true);
     setErrorMessage("");
 
+    const translations = (["uz", "ru", "en"] as const)
+      .filter((locale) => formData.name?.[locale])
+      .map((locale) => ({
+        locale,
+        name: formData.name![locale],
+        description: formData.description?.[locale] || undefined,
+        storageText: formData.storage?.storageText?.[locale] || undefined,
+      }));
+
+    const priceMinor = Math.round((formData.price || 0) * 100);
+    const volumes = formData.volumes && formData.volumes.length > 0 ? formData.volumes : [null];
+
     try {
       if (isEditing && product) {
-        const res = await apiClient.updateProduct(product.slug, formData);
+        // Note: the backend's admin update endpoint currently only persists
+        // slug/name/description/category/status/isFeatured/isActive/translations —
+        // variant price, images, nutrition, and storage edits are not yet
+        // applied on update (backend limitation, not this form's).
+        const res = await apiClient.updateProduct(product.id, {
+          slug: product.slug,
+          name: formData.name?.uz,
+          description: formData.description?.uz || undefined,
+          categoryId: categoryIds[formData.category as string] || undefined,
+          translations,
+        });
         if (res.success && res.data) {
-          onSaved(res.data);
+          onSaved();
           onClose();
         } else {
           setErrorMessage(res.error?.message || "Mahsulotni saqlashda xatolik");
         }
       } else {
-        const res = await apiClient.createProduct(formData);
+        const res = await apiClient.createProduct({
+          slug: slugify(formData.name?.uz || ""),
+          name: formData.name?.uz,
+          description: formData.description?.uz || undefined,
+          categoryId: categoryIds[formData.category as string] || undefined,
+          status: "ACTIVE",
+          isActive: true,
+          isFeatured: false,
+          translations,
+          variants: volumes.map((volume, idx) => ({
+            name: `${formData.name?.uz || ""}${volume ? ` ${volume}` : ""}`.trim(),
+            volume,
+            priceMinor,
+            currency: "UZS",
+            stock: 100,
+            isAvailable: formData.availability !== "out-of-stock",
+            isDefault: idx === 0,
+          })),
+          nutrition: formData.nutrition
+            ? {
+                calories: formData.nutrition.calories,
+                protein: formData.nutrition.protein,
+                fat: formData.nutrition.fat,
+                carbohydrates: formData.nutrition.carbohydrates,
+                sugar: formData.nutrition.sugar,
+              }
+            : undefined,
+          storage: formData.storage
+            ? {
+                temperatureMin: formData.storage.temperatureMin,
+                temperatureMax: formData.storage.temperatureMax,
+                shelfLife: formData.storage.shelfLife?.uz,
+                storageText: formData.storage.storageText?.uz,
+              }
+            : undefined,
+        });
         if (res.success && res.data) {
-          onSaved(res.data);
+          onSaved();
           onClose();
         } else {
           setErrorMessage(res.error?.message || "Mahsulotni yaratishda xatolik");

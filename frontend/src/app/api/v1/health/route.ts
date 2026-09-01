@@ -1,10 +1,7 @@
-import { apiSuccess } from "@/lib/backend/response";
+import { NextResponse } from "next/server";
 
-export async function GET() {
-  return apiSuccess({
-    status: "ok",
-    service: "SABO Web API",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-  });
+// Minimal, dependency-free healthcheck for Railway's frontend service —
+// intentionally does not call the backend or any external service.
+export function GET() {
+  return NextResponse.json({ status: "ok", timestamp: new Date().toISOString() });
 }

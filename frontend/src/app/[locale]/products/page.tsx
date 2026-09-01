@@ -3,15 +3,18 @@ import type { Metadata } from "next";
 import { ProductCatalog } from "@/components/product/product-catalog";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { products } from "@/data/products";
+import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { isLocale } from "@/lib/i18n/locales";
+import { mapApiProduct } from "@/lib/product-mapper";
 import { generatePageMetadata } from "@/lib/seo";
 
 interface ProductsPageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string; category?: string }>;
 }
+
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
@@ -48,6 +51,9 @@ export default async function ProductsPage({
   ]);
   const initialCategory =
     category && validCategories.has(category) ? category : "all";
+
+  const res = await apiClient.getProducts({ locale, limit: 100 });
+  const products = (res.data || []).map(mapApiProduct);
 
   return (
     <section className="py-12 md:py-16">

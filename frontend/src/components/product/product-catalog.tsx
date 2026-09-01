@@ -88,12 +88,8 @@ export function ProductCatalog({
       if (!matchesCategory) return false;
       if (!normalized) return true;
       const haystack = [
-        product.name.uz,
-        product.name.ru,
-        product.name.en,
-        product.description.uz,
-        product.description.ru,
-        product.description.en,
+        product.name,
+        product.description ?? "",
         product.fat ?? "",
         ...product.volumes,
       ]

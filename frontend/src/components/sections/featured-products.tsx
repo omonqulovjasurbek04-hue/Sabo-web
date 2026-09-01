@@ -4,18 +4,22 @@ import { ArrowRightIcon } from "@/components/ui/icons";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductGrid } from "@/components/product/product-grid";
-import { products } from "@/data/products";
+import { apiClient } from "@/lib/api-client";
 import type { Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
+import { mapApiProduct } from "@/lib/product-mapper";
 
-export function FeaturedProducts({
+export async function FeaturedProducts({
   dict,
   locale,
 }: {
   dict: Dictionary;
   locale: Locale;
 }) {
-  const featured = products.slice(0, 6);
+  const res = await apiClient.getFeaturedProducts(locale);
+  const featured = (res.data || []).slice(0, 6).map(mapApiProduct);
+
+  if (featured.length === 0) return null;
 
   return (
     <section className="py-14 sm:py-18 bg-surface-soft transition-colors duration-200">

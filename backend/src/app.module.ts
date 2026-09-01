@@ -26,6 +26,7 @@ import { PaymentsModule } from "./payments/payments.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { ProductionModule } from "./production/production.module";
 import { ProductsModule } from "./products/products.module";
+import { SettingsModule } from "./settings/settings.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -53,6 +54,7 @@ import { UsersModule } from "./users/users.module";
     PaymentsModule,
     AdminModule,
     HealthModule,
+    SettingsModule,
   ],
   providers: [
     {

@@ -37,19 +37,26 @@ export function ProductSpecsTabs({ product, locale }: ProductSpecsTabsProps) {
     sugar: 4.5,
   };
 
+  const defaultStorage = {
+    uz: {
+      shelfLife: "14 kun (+2°C dan +6°C gacha)",
+      storageText: "Qadoq ochilgandan so'ng muzlatgichda 48 soat ichida iste'mol qilinishi tavsiya etiladi.",
+    },
+    ru: {
+      shelfLife: "14 дней (от +2°C до +6°C)",
+      storageText: "После вскрытия упаковки употребить в течение 48 часов, хранить в холодильнике.",
+    },
+    en: {
+      shelfLife: "14 days (+2°C to +6°C)",
+      storageText: "After opening, store refrigerated and consume within 48 hours.",
+    },
+  }[locale];
+
   const storage = product.storage || {
     temperatureMin: 2,
     temperatureMax: 6,
-    shelfLife: {
-      uz: "14 kun (+2°C dan +6°C gacha)",
-      ru: "14 дней (от +2°C до +6°C)",
-      en: "14 days (+2°C to +6°C)",
-    },
-    storageText: {
-      uz: "Qadoq ochilgandan so'ng muzlatgichda 48 soat ichida iste'mol qilinishi tavsiya etiladi.",
-      ru: "После вскрытия упаковки употребить в течение 48 часов, хранить в холодильнике.",
-      en: "After opening, store refrigerated and consume within 48 hours.",
-    },
+    shelfLife: defaultStorage.shelfLife,
+    storageText: defaultStorage.storageText,
   };
 
   const certificates = [
@@ -257,10 +264,10 @@ export function ProductSpecsTabs({ product, locale }: ProductSpecsTabsProps) {
                   Yaroqlilik Muddati
                 </h4>
                 <p className="text-base font-bold text-foreground">
-                  {localize(storage.shelfLife, locale)}
+                  {storage.shelfLife}
                 </p>
                 <p className="text-xs text-muted mt-1">
-                  {localize(storage.storageText, locale)}
+                  {storage.storageText}
                 </p>
               </div>
             </div>

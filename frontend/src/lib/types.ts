@@ -48,8 +48,9 @@ export interface ProductNutritionInfo {
 export interface ProductStorageInfo {
   temperatureMin: number;
   temperatureMax: number;
-  shelfLife: LocalizedString;
-  storageText: LocalizedString;
+  // Already resolved to the requested locale by the backend.
+  shelfLife: string;
+  storageText: string;
 }
 
 export interface ProductCertificateItem {
@@ -76,34 +77,46 @@ export interface MediaFileItem {
   height?: number | null;
 }
 
+export interface ProductVariantInfo {
+  id: string;
+  name?: string;
+  volume: string | null;
+  priceMinor: number | null;
+  currency: string;
+  isAvailable: boolean;
+  isDefault: boolean;
+}
+
 export interface Product {
   id: string;
   slug: string;
-  name: LocalizedString;
-  description: LocalizedString;
+  // Already resolved to the requested locale by the backend — not a LocalizedString.
+  name: string;
+  description: string | null;
   category: ProductCategory;
   image: string;
   galleryImages?: string[];
   volumes: string[];
+  variants: ProductVariantInfo[];
   fat: string | null;
   price: number | null;
   availability: "in-stock" | "out-of-stock" | null;
   isPlaceholder: boolean;
-  colorAccent?: string; // hex or CSS token (e.g. "#2F6B45", "#95BFEE")
+  colorAccent?: string; // hex or CSS token (e.g. "#2F6B45", "#95BFEE") — local display-only, no backend field
   colorTheme?: "green" | "blue" | "red" | "amber" | "emerald" | "berry";
-  badges?: LocalizedString[];
+  badges?: LocalizedString[]; // local display-only, no backend field
   nutrition?: ProductNutritionInfo;
   storage?: ProductStorageInfo;
   ingredients?: LocalizedString;
-  addOns?: ProductAddOn[];
+  addOns?: ProductAddOn[]; // local display-only, no backend field
 }
 
 export interface User {
   id: string;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
-  role: "user" | "admin";
+  role: string;
   createdAt: string;
 }
 

@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
 
-import { products } from "@/data/products";
+import { apiClient } from "@/lib/api-client";
 import { locales } from "@/lib/i18n/locales";
 import { getSiteUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl().replace(/\/$/, "");
+  const productsRes = await apiClient.getProducts({ limit: 200 });
+  const products = productsRes.data || [];
   const now = new Date();
 
   const staticPaths: Array<{

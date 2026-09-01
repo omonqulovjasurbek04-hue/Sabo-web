@@ -18,7 +18,9 @@ import { ContactMessageStatus, OrderStatus, RoleType } from "@prisma/client";
 import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
+import { UpdateOrderStatusDto } from "../orders/dto/create-order.dto";
 import { AdminService } from "./admin.service";
+import { UpdateMessageStatusDto } from "./dto/update-message-status.dto";
 
 @ApiTags("Admin")
 @Controller("admin")
@@ -54,9 +56,9 @@ export class AdminController {
   @ApiOperation({ summary: "Update order status" })
   async updateOrderStatus(
     @Param("id") id: string,
-    @Body("status") status: OrderStatus,
+    @Body() dto: UpdateOrderStatusDto,
   ) {
-    return this.adminService.updateOrderStatus(id, status);
+    return this.adminService.updateOrderStatus(id, dto.status);
   }
 
   @Get("messages")
@@ -76,9 +78,9 @@ export class AdminController {
   @ApiOperation({ summary: "Update contact message status" })
   async updateMessageStatus(
     @Param("id") id: string,
-    @Body("status") status: ContactMessageStatus,
+    @Body() dto: UpdateMessageStatusDto,
   ) {
-    return this.adminService.updateMessageStatus(id, status);
+    return this.adminService.updateMessageStatus(id, dto.status);
   }
 
   @Get("system")

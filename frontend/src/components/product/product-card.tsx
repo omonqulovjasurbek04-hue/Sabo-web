@@ -42,11 +42,11 @@ export function ProductCard({
           href={`/products/${product.slug}`}
           locale={locale}
           className="block w-full h-full"
-          aria-label={localize(product.name, locale)}
+          aria-label={product.name}
         >
           <Image
             src={product.image}
-            alt={localize(product.name, locale)}
+            alt={product.name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={priority}
@@ -76,12 +76,12 @@ export function ProductCard({
 
         <h3 className="font-display font-bold text-lg text-foreground line-clamp-1 group-hover:text-primary transition-colors">
           <LocalizedLink href={`/products/${product.slug}`} locale={locale}>
-            {localize(product.name, locale)}
+            {product.name}
           </LocalizedLink>
         </h3>
 
         <p className="text-xs sm:text-sm text-muted line-clamp-2 leading-relaxed">
-          {localize(product.description, locale)}
+          {product.description}
         </p>
 
         <div className="flex flex-wrap items-center justify-between text-xs text-muted mt-auto pt-3 border-t border-border/60">

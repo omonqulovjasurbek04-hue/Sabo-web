@@ -41,15 +41,16 @@ import {
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { ProductEditModal } from "@/components/admin/product-edit-modal";
 import { ThemeDesignPanel } from "@/components/admin/theme-design-panel";
-import { products as initialProducts } from "@/data/products";
 import { categories } from "@/data/categories";
 import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locales";
 import type { MediaFileItem, Product } from "@/lib/types";
+import { mapApiProduct } from "@/lib/product-mapper";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [currentUserName, setCurrentUserName] = useState("Admin");
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -119,34 +120,19 @@ export default function AdminPage() {
     setTimeout(() => setCopiedUrl(null), 2500);
   };
 
-  // Check auth from localStorage on mount
+  // Check auth against the real backend on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const isAuth = window.localStorage.getItem("sabo_admin_auth") === "true";
-      const token = window.localStorage.getItem("sabo_token") || window.localStorage.getItem("sabo_admin_token");
-      if (isAuth && token) {
-        setIsAuthenticated(true);
-      } else if (token) {
-        apiClient
-          .getMe()
-          .then((res) => {
-            if (res.success || res.data) {
-              setIsAuthenticated(true);
-            } else {
-              handleLogout();
-            }
-          })
-          .catch(() => {
-            if (isAuth) {
-              setIsAuthenticated(true);
-            } else {
-              handleLogout();
-            }
-          });
-      } else {
-        setIsAuthenticated(false);
-      }
+    if (!apiClient.isAuthenticated()) {
+      setIsAuthenticated(false);
+      return;
     }
+    apiClient
+      .getMe()
+      .then((res) => {
+        setIsAuthenticated(Boolean(res.success && res.data));
+        if (res.data?.user?.name) setCurrentUserName(res.data.user.name);
+      })
+      .catch(() => setIsAuthenticated(false));
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -155,61 +141,23 @@ export default function AdminPage() {
     setLoginError("");
 
     const trimmedUser = usernameInput.trim();
+    const res = await apiClient.login({
+      identifier: trimmedUser,
+      password: passwordInput,
+    });
 
-    try {
-      const res = await apiClient.login({
-        identifier: trimmedUser,
-        password: passwordInput,
-      });
-
-      if (res.success && res.data?.token) {
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem("sabo_token", res.data.token);
-          window.localStorage.setItem("sabo_admin_token", res.data.token);
-          window.localStorage.setItem("sabo_admin_auth", "true");
-          window.localStorage.setItem("sabo_admin_user", res.data.user?.name || trimmedUser);
-        }
-        setIsAuthenticated(true);
-        setLoginError("");
-        setIsSubmitting(false);
-        return;
-      }
-    } catch {
-      // API call failed, check offline credentials below
-    }
-
-    // Fallback for offline/demo admin credentials (configurable via env)
-    const adminUser = (process.env.NEXT_PUBLIC_ADMIN_USER || "Bekzodbek").toLowerCase();
-    const adminPass = process.env.NEXT_PUBLIC_ADMIN_PASS || "Admin0525";
-
-    if (
-      (trimmedUser.toLowerCase() === adminUser ||
-        trimmedUser.toLowerCase() === `${adminUser}@sabo.uz`) &&
-      passwordInput === adminPass
-    ) {
-      const fallbackToken = "admin_session_" + Date.now();
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("sabo_token", fallbackToken);
-        window.localStorage.setItem("sabo_admin_token", fallbackToken);
-        window.localStorage.setItem("sabo_admin_auth", "true");
-        window.localStorage.setItem("sabo_admin_user", "Bekzodbek");
-      }
+    if (res.success && res.data) {
       setIsAuthenticated(true);
       setLoginError("");
+      if (res.data.user?.name) setCurrentUserName(res.data.user.name);
     } else {
-      setLoginError("Login yoki parol noto'g'ri! Faqat ruxsat etilgan ma'lumotlar bilan kiring.");
+      setLoginError(res.error?.message || "Login yoki parol noto'g'ri!");
     }
 
     setIsSubmitting(false);
   };
 
   const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem("sabo_token");
-      window.localStorage.removeItem("sabo_admin_token");
-      window.localStorage.removeItem("sabo_admin_auth");
-      window.localStorage.removeItem("sabo_admin_user");
-    }
     setIsAuthenticated(false);
     setUsernameInput("");
     setPasswordInput("");
@@ -217,7 +165,7 @@ export default function AdminPage() {
   };
 
   // Products state & CRUD
-  const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const [productList, setProductList] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -226,9 +174,9 @@ export default function AdminPage() {
 
   const loadProducts = async () => {
     try {
-      const res = await apiClient.getProducts();
+      const res = await apiClient.getProducts({ limit: 100 });
       if (res.success && res.data) {
-        setProductList(res.data);
+        setProductList(res.data.map(mapApiProduct));
       }
     } catch (err) {
       console.error("Failed to load products from API:", err);
@@ -251,12 +199,12 @@ export default function AdminPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteProduct = async (slug: string, name: string) => {
+  const handleDeleteProduct = async (id: string, name: string) => {
     if (!confirm(`"${name}" mahsulotini rostdan ham o'chirmoqchimisiz?`)) return;
     try {
-      const res = await apiClient.deleteProduct(slug);
+      const res = await apiClient.deleteProduct(id);
       if (res.success) {
-        setProductList((prev) => prev.filter((p) => p.slug !== slug));
+        setProductList((prev) => prev.filter((p) => p.id !== id));
         setProductActionMsg(`"${name}" muvaffaqiyatli o'chirildi!`);
         setTimeout(() => setProductActionMsg(""), 4000);
       }
@@ -265,17 +213,9 @@ export default function AdminPage() {
     }
   };
 
-  const handleProductSaved = (saved: Product) => {
-    setProductList((prev) => {
-      const idx = prev.findIndex((p) => p.slug === saved.slug || p.id === saved.id);
-      if (idx >= 0) {
-        const copy = [...prev];
-        copy[idx] = saved;
-        return copy;
-      }
-      return [saved, ...prev];
-    });
-    setProductActionMsg(`"${saved.name.uz}" muvaffaqiyatli saqlandi!`);
+  const handleProductSaved = () => {
+    loadProducts();
+    setProductActionMsg("Mahsulot muvaffaqiyatli saqlandi!");
     setTimeout(() => setProductActionMsg(""), 4000);
   };
 
@@ -359,7 +299,7 @@ export default function AdminPage() {
 
   const filteredProducts = productList.filter((p) => {
     const matchSearch =
-      p.name.uz.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.slug.toLowerCase().includes(searchQuery.toLowerCase());
     const matchCategory =
       selectedCategory === "all" || p.category === selectedCategory;
@@ -526,10 +466,10 @@ export default function AdminPage() {
           <div className="mb-6 p-4 rounded-2xl bg-background/80 border border-border flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-xl bg-primary text-white flex items-center justify-center font-black font-display text-sm shadow-xs">
-                B
+                {currentUserName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <div className="text-xs font-extrabold text-foreground tracking-tight">Bekzodbek</div>
+                <div className="text-xs font-extrabold text-foreground tracking-tight">{currentUserName}</div>
                 <div className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1 mt-0.5">
                   <span className="size-1.5 rounded-full bg-emerald-600 animate-pulse" />
                   Bosh Administrator
@@ -958,7 +898,7 @@ export default function AdminPage() {
                           {p.image ? (
                             <Image
                               src={p.image}
-                              alt={p.name.uz}
+                              alt={p.name}
                               fill
                               className="object-contain p-1"
                             />
@@ -968,7 +908,7 @@ export default function AdminPage() {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-bold text-foreground text-sm">{p.name.uz}</div>
+                        <div className="font-bold text-foreground text-sm">{p.name}</div>
                         <div className="text-xs text-muted font-mono">{p.slug}</div>
                       </td>
                       <td className="py-3 px-4">
@@ -1019,7 +959,7 @@ export default function AdminPage() {
 
                           <button
                             type="button"
-                            onClick={() => handleDeleteProduct(p.slug, p.name.uz)}
+                            onClick={() => handleDeleteProduct(p.id, p.name)}
                             className="p-1.5 rounded-xl border border-action-red/30 bg-action-red/10 text-action-red hover:bg-action-red hover:text-white transition-all shadow-2xs cursor-pointer"
                             title="O'chirish"
                           >

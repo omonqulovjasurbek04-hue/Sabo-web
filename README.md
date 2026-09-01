@@ -4,13 +4,12 @@ SABO tabiiy sut va sut mahsulotlari platformasi. Loyiha **Frontend** (Next.js 15
 
 ---
 
-## 🔑 Admin Boshqaruv Tizimiga Kirish Ma'lumotlari
+## 🔑 Admin Boshqaruv Tizimiga Kirish
 
 | Maydon | Qiymat |
 |---|---|
 | **Admin Panel URL** | **`http://localhost:5173`** yoki **`http://localhost:3000/admin`** |
-| **Login (Foydalanuvchi nomi)** | `Bekzodbek` |
-| **Parol** | `Admin0525` |
+| **Login / Parol** | `backend/.env` dagi `ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` qiymatlari (haqiqiy qiymatlar hech qachon git'ga commit qilinmaydi) |
 | **Rol** | `SUPER_ADMIN` (Bosh Administrator) |
 
 ---

@@ -11,9 +11,10 @@ import { ArrowLeftIcon } from "@/components/ui/icons";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProductGrid } from "@/components/product/product-grid";
 import { getCategoryBySlug } from "@/data/categories";
-import { getProductBySlug, getRelatedProducts, products } from "@/data/products";
+import { apiClient } from "@/lib/api-client";
 import { getDictionary } from "@/lib/i18n/dictionary";
-import { locales, isLocale, type Locale } from "@/lib/i18n/locales";
+import { isLocale } from "@/lib/i18n/locales";
+import { mapApiProduct } from "@/lib/product-mapper";
 import { generatePageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 import { localize } from "@/lib/types";
@@ -22,36 +23,26 @@ interface ProductDetailPageProps {
   params: Promise<{ locale: string; slug: string }>;
 }
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  const params: Array<{ locale: Locale; slug: string }> = [];
-  for (const locale of locales) {
-    for (const product of products) {
-      params.push({ locale, slug: product.slug });
-    }
-  }
-  return params;
-}
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
 }: ProductDetailPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   if (!isLocale(locale)) return {};
-  const product = getProductBySlug(slug);
   const dict = getDictionary(locale);
-  if (!product) {
+  const res = await apiClient.getProductBySlug(slug, locale);
+  if (!res.success || !res.data) {
     return {
       title: dict.common.notFoundTitle,
     };
   }
-  const name = localize(product.name, locale);
+  const product = mapApiProduct(res.data);
   return generatePageMetadata({
     locale,
     path: `/products/${product.slug}`,
-    title: name,
-    description: localize(product.description, locale),
+    title: product.name,
+    description: product.description ?? undefined,
     image: product.image,
   });
 }
@@ -63,12 +54,17 @@ export default async function ProductDetailPage({
   if (!isLocale(locale)) notFound();
 
   const dict = getDictionary(locale);
-  const product = getProductBySlug(slug);
-  if (!product) notFound();
+  const res = await apiClient.getProductBySlug(slug, locale);
+  if (!res.success || !res.data) notFound();
+  const product = mapApiProduct(res.data);
 
   const category = getCategoryBySlug(product.category);
-  const related = getRelatedProducts(product);
-  const name = localize(product.name, locale);
+  const relatedRes = await apiClient.getProducts({ category: product.category, locale, limit: 4 });
+  const related = (relatedRes.data || [])
+    .map(mapApiProduct)
+    .filter((p) => p.id !== product.id)
+    .slice(0, 3);
+  const name = product.name;
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -77,7 +73,7 @@ export default async function ProductDetailPage({
     image: absoluteUrl(product.image),
     brand: { "@type": "Brand", name: "SABO" },
     category: localize(category.name, locale),
-    description: localize(product.description, locale),
+    description: product.description,
     ...(product.price !== null
       ? {
           offers: {
@@ -199,7 +195,7 @@ export default async function ProductDetailPage({
               <h1 className="font-display font-bold text-3xl sm:text-4xl text-foreground">{name}</h1>
 
               <p className="text-base sm:text-lg text-muted leading-relaxed">
-                {localize(product.description, locale)}
+                {product.description}
               </p>
 
               {/* Purchase Panel with Volumes, Add-ons and Dynamic Cart Sync */}

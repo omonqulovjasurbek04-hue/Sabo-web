@@ -55,10 +55,10 @@ Railway Project /
 | `NODE_ENV` | `production` | Ishlab chiqarish muhiti |
 | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` | Railway Postgres ulanish havolasi |
 | `REDIS_URL` | `${{Redis.REDIS_URL}}` | Railway Redis ulanish havolasi |
-| `JWT_ACCESS_SECRET` | `sabo_production_jwt_access_secret_secure_key_32chars` | Kamida 32 ta belgili maxfiy kalit |
-| `JWT_REFRESH_SECRET` | `sabo_production_jwt_refresh_secret_secure_key_32chars` | Kamida 32 ta belgili maxfiy kalit |
+| `JWT_ACCESS_SECRET` | *(o'zingiz generatsiya qiling, kamida 32 belgi — masalan `openssl rand -base64 32`)* | Maxfiy kalit, hech qachon repo'ga commit qilinmasin |
+| `JWT_REFRESH_SECRET` | *(o'zingiz generatsiya qiling, kamida 32 belgi, `JWT_ACCESS_SECRET`dan boshqa qiymat)* | Maxfiy kalit, hech qachon repo'ga commit qilinmasin |
 | `ADMIN_BOOTSTRAP_EMAIL` | `admin@sabo.uz` | Dastlabki Super Admin logini |
-| `ADMIN_BOOTSTRAP_PASSWORD` | `Admin0525` | Dastlabki Super Admin paroli |
+| `ADMIN_BOOTSTRAP_PASSWORD` | *(o'zingiz belgilaydigan kuchli parol)* | Dastlabki Super Admin paroli, hech qachon repo'ga commit qilinmasin |
 | `CORS_ORIGINS` | `https://*.up.railway.app,https://sabo.uz,http://localhost:3000` | Ruxsat etilgan domenlar |
 | `FRONTEND_URL` | `https://sabo.uz` | Asosiy frontend havolasi |
 
@@ -80,8 +80,6 @@ Railway Project /
 | `NEXT_PUBLIC_API_URL` | `https://sabo-backend-production.up.railway.app/api/v1` | 4-qadamda olingan Backend URL |
 | `NEXT_PUBLIC_SITE_URL` | `https://sabo-frontend-production.up.railway.app` | Frontend sayt domeni |
 | `INTERNAL_API_URL` | `https://sabo-backend-production.up.railway.app/api/v1` | Server-side SSR uchun API |
-| `NEXT_PUBLIC_ADMIN_USER` | `Bekzodbek` | Admin login |
-| `NEXT_PUBLIC_ADMIN_PASS` | `Admin0525` | Admin parol |
 
 5. **`Networking`** bo'limiga o'tib, **`Generate Domain`** tugmasini bosing (masalan: `sabo-frontend-production.up.railway.app`).
 
@@ -97,8 +95,8 @@ Railway Project /
 | **API Health Status** | `https://sabo-backend-production.up.railway.app/api/v1/health` |
 
 ### Admin Kirish Ma'lumotlari:
-- **Login:** `Bekzodbek` yoki `admin@sabo.uz`
-- **Parol:** `Admin0525`
+- **Login:** Backend `Variables` bo'limida siz o'rnatgan `ADMIN_BOOTSTRAP_EMAIL`
+- **Parol:** Backend `Variables` bo'limida siz o'rnatgan `ADMIN_BOOTSTRAP_PASSWORD`
 - **Rol:** `SUPER_ADMIN` (To'liq boshqaruv)
 
 ---
