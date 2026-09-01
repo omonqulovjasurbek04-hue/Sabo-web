@@ -1,0 +1,99 @@
+# Production stack for a single self-managed VM (e.g. Oracle Cloud Always Free).
+# Usage: docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sabo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sabo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-sabo_db}
+    volumes:
+      - sabo_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sabo} -d ${POSTGRES_DB:-sabo_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: sabo_redis
+    restart: unless-stopped
+    volumes:
+      - sabo_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: sabo_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sabo}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-sabo_db}?schema=public
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      ADMIN_BOOTSTRAP_EMAIL: ${ADMIN_BOOTSTRAP_EMAIL}
+      ADMIN_BOOTSTRAP_PASSWORD: ${ADMIN_BOOTSTRAP_PASSWORD}
+      CORS_ORIGINS: https://${DOMAIN}
+      FRONTEND_URL: https://${DOMAIN}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/api/v1/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://${DOMAIN}/api/v1
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+    container_name: sabo_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: https://${DOMAIN}/api/v1
+      NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+      INTERNAL_API_URL: http://backend:4000/api/v1
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: sabo_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - sabo_caddy_data:/data
+      - sabo_caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  sabo_postgres_data:
+  sabo_redis_data:
+  sabo_caddy_data:
+  sabo_caddy_config:
