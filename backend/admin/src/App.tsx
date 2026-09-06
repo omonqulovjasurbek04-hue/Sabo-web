@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AdminLayout } from './components/layout/AdminLayout';
+import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { LoginPage } from './pages/Login/LoginPage';
 import { Dashboard } from './pages/Dashboard';
 import { ProductsList } from './pages/Products/ProductsList';
 import { CategoriesPage } from './pages/Products/CategoriesPage';
@@ -26,8 +28,15 @@ export const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Navigate to="/" replace />} />
-          <Route path="/" element={<AdminLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductsList />} />
             <Route path="products/categories" element={<CategoriesPage />} />

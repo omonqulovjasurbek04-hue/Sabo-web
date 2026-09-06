@@ -38,6 +38,8 @@ Sabo-web/
 │   └── .env.example
 │
 ├── vercel.json                 # Vercel Production deployment sozlamasi
+├── TASKS.md                    # 📋 Loyihaning to'liq vazifalar yo'l xaritasi (Roadmap)
+├── AGENTS.md                   # 🤖 AI agentlari va skillar bo'yicha yo'riqnoma
 ├── package.json                # Root monorepo boshqaruv skriptlari
 └── README.md
 ```

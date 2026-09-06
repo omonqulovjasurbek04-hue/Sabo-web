@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
   LayoutDashboard,
   Package,
@@ -26,6 +26,14 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../../context/useAuth';
+import type { Role } from '../../types';
+
+const roleLabels: Record<Role, string> = {
+  SUPER_ADMIN: 'Bosh Administrator',
+  ADMIN: 'Administrator',
+  MANAGER: 'Menejer',
+  EDITOR: 'Muharrir',
+};
 
 interface NavItem {
   title: string;
@@ -80,12 +88,13 @@ const navItems: NavItem[] = [
 export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   const handleLogout = () => {
     logout();
-    window.location.href = 'http://localhost:3000';
+    navigate('/login', { replace: true });
   };
 
   const toggleSubmenu = (title: string) => {
@@ -236,10 +245,10 @@ export const AdminLayout: React.FC = () => {
                 </div>
                 <div className="overflow-hidden">
                   <div className="text-xs font-bold text-white truncate">
-                    {user?.name || 'Bekzodbek'}
+                    {user?.name || 'Administrator'}
                   </div>
                   <div className="text-[10px] font-semibold text-[#88D49E]">
-                    Bosh Administrator
+                    {roleLabels[user?.role as Role] || 'Administrator'}
                   </div>
                 </div>
               </div>
@@ -310,9 +319,9 @@ export const AdminLayout: React.FC = () => {
 
             <div className="hidden sm:flex items-center gap-2.5 pl-3 border-l border-[#EBE3DA]">
               <div className="size-8 rounded-full bg-[#0E3B2E] text-white flex items-center justify-center font-bold text-xs">
-                B
+                {user?.name.charAt(0) || 'A'}
               </div>
-              <span className="text-xs font-bold text-[#1A2E26]">Bekzodbek</span>
+              <span className="text-xs font-bold text-[#1A2E26]">{user?.name || 'Administrator'}</span>
             </div>
 
             <button
