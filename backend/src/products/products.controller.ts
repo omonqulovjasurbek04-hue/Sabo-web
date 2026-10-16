@@ -21,6 +21,7 @@ import { Roles } from "../common/decorators/roles.decorator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../common/guards/roles.guard";
 import { CreateProductDto, UpdateProductDto } from "./dto/create-product.dto";
+import { AdminProductQueryDto } from "./dto/admin-product-query.dto";
 import { ProductQueryDto } from "./dto/product-query.dto";
 import { ProductsService } from "./products.service";
 
@@ -68,6 +69,24 @@ export class ProductsController {
   // ==========================================
   // ADMIN ENDPOINTS
   // ==========================================
+
+  @Get("admin/products")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(
+    RoleType.SUPER_ADMIN,
+    RoleType.ADMIN,
+    RoleType.EDITOR,
+    RoleType.MANAGER,
+  )
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:
+      "List all non-deleted products incl. DRAFT/INACTIVE/ARCHIVED (Admin)",
+  })
+  @ApiResponse({ status: HttpStatus.OK, description: "Paginated product list" })
+  async getAdminProducts(@Query() query: AdminProductQueryDto) {
+    return this.productsService.findAllAdmin(query);
+  }
 
   @Post("admin/products")
   @UseGuards(JwtAuthGuard, RolesGuard)

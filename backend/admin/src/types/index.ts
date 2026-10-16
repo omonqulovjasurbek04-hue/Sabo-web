@@ -36,35 +36,6 @@ export interface Order {
   createdAt: string;
 }
 
-export interface Product {
-  id: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string;
-  slug: string;
-  category: string;
-  fatContent?: string;
-  volumeWeight?: string;
-  shelfLife?: string;
-  storageTemp?: string;
-  priceMinor: number;
-  stock: number;
-  isActive: boolean;
-  isFeatured: boolean;
-  image: string;
-}
-
-export interface Category {
-  id: string;
-  slug: string;
-  nameUz: string;
-  nameRu: string;
-  nameEn: string;
-  description?: string;
-  productCount: number;
-  isActive: boolean;
-}
-
 export interface Customer {
   id: string;
   name: string;

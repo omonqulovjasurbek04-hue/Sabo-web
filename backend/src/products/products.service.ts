@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -9,8 +10,32 @@ import { ErrorCode } from "../common/enums/error-code.enum";
 import { RedisService } from "../common/redis/redis.service";
 import { pickTranslation } from "../common/utils/localization.util";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateProductDto } from "./dto/create-product.dto";
+import { AdminProductQueryDto } from "./dto/admin-product-query.dto";
+import {
+  CreateProductDto,
+  ProductNutritionDto,
+  ProductStorageDto,
+  ProductVariantDto,
+  UpdateProductDto,
+} from "./dto/create-product.dto";
 import { ProductQueryDto } from "./dto/product-query.dto";
+
+const ADMIN_PRODUCT_INCLUDE = {
+  translations: true,
+  category: { include: { translations: true } },
+  images: { include: { media: true }, orderBy: { sortOrder: "asc" } },
+  variants: { orderBy: { createdAt: "asc" } },
+  nutrition: true,
+  storage: true,
+  availability: true,
+} satisfies Prisma.ProductInclude;
+
+/** DTO fields as optional-or-null, so DB rows and request DTOs share the mappers. */
+type Nullable<T> = { [K in keyof T]?: T[K] | null };
+
+type AdminProductRecord = Prisma.ProductGetPayload<{
+  include: typeof ADMIN_PRODUCT_INCLUDE;
+}>;
 
 @Injectable()
 export class ProductsService {
@@ -297,9 +322,54 @@ export class ProductsService {
     return product;
   }
 
-  async update(id: string, dto: Partial<CreateProductDto>) {
+  async findAllAdmin(query: AdminProductQueryDto) {
+    const { page, limit, search, status, sort, order } = query;
+
+    const where: Prisma.ProductWhereInput = { deletedAt: null };
+    if (status) {
+      where.status = status;
+    }
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { slug: { contains: search, mode: "insensitive" } },
+        {
+          translations: {
+            some: { name: { contains: search, mode: "insensitive" } },
+          },
+        },
+      ];
+    }
+
+    const orderBy: Prisma.ProductOrderByWithRelationInput =
+      sort === "name"
+        ? { name: order }
+        : sort === "sortOrder"
+          ? { sortOrder: order }
+          : { createdAt: order };
+
+    const [products, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where,
+        skip: query.skip,
+        take: limit,
+        orderBy,
+        include: ADMIN_PRODUCT_INCLUDE,
+      }),
+      this.prisma.product.count({ where }),
+    ]);
+
+    return new PaginatedResult(
+      products.map((p) => this.formatAdminProduct(p)),
+      total,
+      page,
+      limit,
+    );
+  }
+
+  async update(id: string, dto: UpdateProductDto) {
     const product = await this.prisma.product.findUnique({ where: { id } });
-    if (!product)
+    if (!product || product.deletedAt)
       throw new NotFoundException({ code: ErrorCode.PRODUCT_NOT_FOUND });
 
     if (dto.slug && dto.slug !== product.slug) {
@@ -310,46 +380,153 @@ export class ProductsService {
         throw new ConflictException({ code: ErrorCode.PRODUCT_SLUG_EXISTS });
     }
 
-    if (dto.translations) {
-      await this.prisma.productTranslation.deleteMany({
-        where: { productId: id },
-      });
-    }
+    const updated = await this.prisma.$transaction(async (tx) => {
+      if (dto.translations) {
+        await tx.productTranslation.deleteMany({ where: { productId: id } });
+      }
+      if (dto.images) {
+        await tx.productImage.deleteMany({ where: { productId: id } });
+      }
+      if (dto.variants) {
+        await this.syncVariants(tx, id, dto.variants);
+      }
 
-    const updated = await this.prisma.product.update({
-      where: { id },
-      data: {
-        slug: dto.slug,
-        name: dto.name,
-        description: dto.description,
-        shortDescription: dto.shortDescription,
-        categoryId: dto.categoryId,
-        brand: dto.brand,
-        status: dto.status,
-        isFeatured: dto.isFeatured,
-        isActive: dto.isActive,
-        translations: dto.translations
-          ? {
-              createMany: {
-                data: dto.translations.map((t) => ({
-                  locale: t.locale,
-                  name: t.name,
-                  description: t.description || null,
-                  shortDescription: t.shortDescription || null,
-                  ingredientsText: t.ingredientsText || null,
-                  storageText: t.storageText || null,
-                  seoTitle: t.seoTitle || null,
-                  seoDescription: t.seoDescription || null,
-                })),
-              },
-            }
-          : undefined,
-      },
-      include: { translations: true, images: true, variants: true },
+      return tx.product.update({
+        where: { id },
+        data: {
+          slug: dto.slug,
+          name: dto.name,
+          description: dto.description,
+          shortDescription: dto.shortDescription,
+          categoryId: dto.categoryId,
+          brand: dto.brand,
+          status: dto.status,
+          isFeatured: dto.isFeatured,
+          isActive: dto.isActive,
+          translations: dto.translations
+            ? {
+                createMany: {
+                  data: dto.translations.map((t) => ({
+                    locale: t.locale,
+                    name: t.name,
+                    description: t.description || null,
+                    shortDescription: t.shortDescription || null,
+                    ingredientsText: t.ingredientsText || null,
+                    storageText: t.storageText || null,
+                    seoTitle: t.seoTitle || null,
+                    seoDescription: t.seoDescription || null,
+                  })),
+                },
+              }
+            : undefined,
+          images: dto.images
+            ? {
+                createMany: {
+                  data: dto.images.map((img) => ({
+                    mediaId: img.mediaId,
+                    type: img.type,
+                    sortOrder: img.sortOrder ?? 0,
+                    altText: img.altText || null,
+                    isPrimary: img.isPrimary ?? false,
+                  })),
+                },
+              }
+            : undefined,
+          nutrition: dto.nutrition
+            ? {
+                upsert: {
+                  create: this.nutritionData(dto.nutrition),
+                  update: this.nutritionData(dto.nutrition),
+                },
+              }
+            : undefined,
+          storage: dto.storage
+            ? {
+                upsert: {
+                  create: this.storageData(dto.storage),
+                  update: this.storageData(dto.storage),
+                },
+              }
+            : undefined,
+        },
+        include: ADMIN_PRODUCT_INCLUDE,
+      });
     });
 
     await this.invalidateCache();
-    return updated;
+    return this.formatAdminProduct(updated);
+  }
+
+  /** Upserts variants by `id`; variants of the product missing from `variants` are deleted. */
+  private async syncVariants(
+    tx: Prisma.TransactionClient,
+    productId: string,
+    variants: ProductVariantDto[],
+  ) {
+    const existing = await tx.productVariant.findMany({
+      where: { productId },
+      select: { id: true },
+    });
+    const existingIds = new Set(existing.map((v) => v.id));
+
+    const foreign = variants.find((v) => v.id && !existingIds.has(v.id));
+    if (foreign) {
+      throw new BadRequestException({
+        code: ErrorCode.VARIANT_NOT_FOUND,
+        message: `Variant ${foreign.id} does not belong to this product`,
+      });
+    }
+
+    const keptIds = variants
+      .map((v) => v.id)
+      .filter((v): v is string => Boolean(v));
+
+    // Delete first so a removed variant's SKU can be reused by a new one.
+    await tx.productVariant.deleteMany({
+      where: { productId, id: { notIn: keptIds } },
+    });
+
+    for (const v of variants) {
+      const data = {
+        name: v.name,
+        volume: v.volume ?? null,
+        unit: v.unit ?? null,
+        sku: v.sku || null,
+        barcode: v.barcode ?? null,
+        priceMinor: v.priceMinor ?? null,
+        currency: v.currency || "UZS",
+        stock: v.stock ?? 0,
+        isAvailable: v.isAvailable ?? true,
+        isDefault: v.isDefault ?? false,
+      };
+      if (v.id) {
+        await tx.productVariant.update({ where: { id: v.id }, data });
+      } else {
+        await tx.productVariant.create({ data: { ...data, productId } });
+      }
+    }
+  }
+
+  private nutritionData(n: Nullable<ProductNutritionDto>) {
+    return {
+      servingSize: n.servingSize ?? null,
+      calories: n.calories ?? null,
+      protein: n.protein ?? null,
+      fat: n.fat ?? null,
+      carbohydrates: n.carbohydrates ?? null,
+      sugar: n.sugar ?? null,
+      salt: n.salt ?? null,
+      fiber: n.fiber ?? null,
+    };
+  }
+
+  private storageData(s: Nullable<ProductStorageDto>) {
+    return {
+      temperatureMin: s.temperatureMin ?? null,
+      temperatureMax: s.temperatureMax ?? null,
+      shelfLife: s.shelfLife ?? null,
+      storageText: s.storageText ?? null,
+    };
   }
 
   async setStatus(id: string, status: ProductStatus) {
@@ -389,6 +566,74 @@ export class ProductsService {
   }
 
   // Formatters
+  /** Admin view: every locale's translation and all variants (incl. unavailable ones). */
+  private formatAdminProduct(p: AdminProductRecord) {
+    return {
+      id: p.id,
+      slug: p.slug,
+      name: p.name,
+      description: p.description,
+      shortDescription: p.shortDescription,
+      brand: p.brand,
+      status: p.status,
+      isActive: p.isActive,
+      isFeatured: p.isFeatured,
+      sortOrder: p.sortOrder,
+      categoryId: p.categoryId,
+      publishedAt: p.publishedAt,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+      translations: p.translations.map((t) => ({
+        locale: t.locale,
+        name: t.name,
+        description: t.description,
+        shortDescription: t.shortDescription,
+        ingredientsText: t.ingredientsText,
+        storageText: t.storageText,
+        seoTitle: t.seoTitle,
+        seoDescription: t.seoDescription,
+      })),
+      category: p.category
+        ? {
+            id: p.category.id,
+            slug: p.category.slug,
+            name: p.category.name,
+            translations: p.category.translations.map((t) => ({
+              locale: t.locale,
+              name: t.name,
+            })),
+          }
+        : null,
+      images: p.images.map((img) => ({
+        id: img.id,
+        mediaId: img.mediaId,
+        url: img.media.url,
+        type: img.type,
+        sortOrder: img.sortOrder,
+        altText: img.altText,
+        isPrimary: img.isPrimary,
+      })),
+      variants: p.variants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        volume: v.volume,
+        unit: v.unit,
+        sku: v.sku,
+        barcode: v.barcode,
+        priceMinor: v.priceMinor,
+        currency: v.currency,
+        stock: v.stock,
+        isAvailable: v.isAvailable,
+        isDefault: v.isDefault,
+      })),
+      nutrition: p.nutrition ? this.nutritionData(p.nutrition) : null,
+      storage: p.storage ? this.storageData(p.storage) : null,
+      availability: p.availability
+        ? { status: p.availability.status, stock: p.availability.stock }
+        : null,
+    };
+  }
+
   private formatPublicProduct(p: any, locale: string) {
     const trans = pickTranslation(p.translations, locale);
     const catTrans = p.category
