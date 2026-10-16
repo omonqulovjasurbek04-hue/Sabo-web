@@ -69,7 +69,7 @@ export type ProductStatus = 'DRAFT' | 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
 export type ProductImageType = 'PRIMARY' | 'GALLERY' | 'LIFESTYLE' | 'DETAIL' | 'THUMBNAIL';
 export type AvailabilityStatus = 'AVAILABLE' | 'UNAVAILABLE' | 'COMING_SOON' | 'HIDDEN';
 
-/** Raw Prisma product returned by admin create/update/publish/archive. */
+/** Raw Prisma product returned by admin create/publish/archive. */
 export interface ProductRecord {
   id: string;
   slug: string;
@@ -78,6 +78,60 @@ export interface ProductRecord {
   isActive: boolean;
   isFeatured: boolean;
   categoryId: string | null;
+}
+
+export interface AdminProductVariant {
+  id: string;
+  name: string;
+  volume: string | null;
+  unit: string | null;
+  sku: string | null;
+  barcode: string | null;
+  priceMinor: number | null;
+  currency: string;
+  stock: number;
+  isAvailable: boolean;
+  isDefault: boolean;
+}
+
+export interface AdminProductImage {
+  id: string;
+  mediaId: string;
+  url: string;
+  type: ProductImageType;
+  sortOrder: number;
+  altText: string | null;
+  isPrimary: boolean;
+}
+
+/** Nutrition / storage as stored: every field nullable. */
+type NullableFields<T> = { [K in keyof T]-?: T[K] | null };
+
+/** `ProductsService.formatAdminProduct` — `GET /admin/products`, `PATCH /admin/products/:id`. */
+export interface AdminProductResponse extends ProductRecord {
+  description: string | null;
+  shortDescription: string | null;
+  brand: string | null;
+  sortOrder: number;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  translations: {
+    locale: string;
+    name: string;
+    description: string | null;
+    shortDescription: string | null;
+    ingredientsText: string | null;
+    storageText: string | null;
+    seoTitle: string | null;
+    seoDescription: string | null;
+  }[];
+  category: { id: string; slug: string; name: string; translations: { locale: string; name: string }[] } | null;
+  images: AdminProductImage[];
+  variants: AdminProductVariant[];
+  nutrition: NullableFields<ProductNutritionInput> | null;
+  storage: NullableFields<ProductStorageInput> | null;
+  availability: { status: AvailabilityStatus; stock: number | null } | null;
 }
 
 // ==========================================
@@ -154,14 +208,11 @@ export interface CreateProductInput {
 }
 
 /**
- * `UpdateProductDto` extends `CreateProductDto`, so `slug` and `name` stay required.
- * `ProductsService.update` only persists the basic fields + translations
- * (variants, images, nutrition and storage are ignored), so they are omitted here.
+ * `UpdateProductDto` = `PartialType(CreateProductDto)`. When present:
+ * `translations`/`images` are replaced, `variants` are upserted by `id`
+ * (omitted ones are deleted), `nutrition`/`storage` are replaced.
  */
-export type UpdateProductInput = Pick<
-  CreateProductInput,
-  'slug' | 'name' | 'description' | 'shortDescription' | 'categoryId' | 'brand' | 'status' | 'isFeatured' | 'isActive' | 'translations'
->;
+export type UpdateProductInput = Partial<CreateProductInput>;
 
 export interface CategoryTranslationInput {
   locale: Locale;
@@ -201,14 +252,21 @@ export interface AdminProduct {
   id: string;
   slug: string;
   brand: string;
+  status: ProductStatus;
+  isActive: boolean;
   isFeatured: boolean;
   name: LocalizedText;
   description: LocalizedText;
   category: { id: string; name: string } | null;
   imageUrl: string | null;
-  variant: { name: string; priceMinor: number | null; currency: string } | null;
-  variantCount: number;
-  stock: number | null;
+  images: AdminProductImage[];
+  /** Default variant (or first one). */
+  variant: AdminProductVariant | null;
+  variants: AdminProductVariant[];
+  /** Sum of all variants' stock. */
+  stock: number;
+  nutrition: AdminProductResponse['nutrition'];
+  storage: AdminProductResponse['storage'];
 }
 
 function byLocale<T>(results: readonly T[]): Record<Locale, T> {
@@ -258,44 +316,52 @@ export interface ProductsPage {
   meta: PaginationMeta | null;
 }
 
-/**
- * `GET /products` is public: it only returns ACTIVE, non-deleted products.
- * DRAFT / ARCHIVED products are not listable until a backend admin list endpoint exists.
- */
-export async function fetchProducts(page = 1): Promise<ProductsPage> {
-  const results = await Promise.all(
-    LOCALES.map((locale) => getPaginated<PublicProduct>('/products', { locale, page, limit: PRODUCTS_PAGE_LIMIT })),
-  );
-  const perLocale = byLocale(results.map((r) => r.items));
-  const lookup = (locale: Locale, id: string) => perLocale[locale].find((p) => p.id === id);
+const localized = (p: AdminProductResponse, field: 'name' | 'description'): LocalizedText => {
+  const pick = (locale: Locale) => p.translations.find((t) => t.locale === locale)?.[field] ?? '';
+  return {
+    uz: pick('uz') || (p[field] ?? ''),
+    ru: pick('ru'),
+    en: pick('en'),
+  };
+};
 
-  const items = perLocale.uz.map((p): AdminProduct => {
-    const variant = p.variants.find((v) => v.isDefault) ?? p.variants[0];
-    const image = p.images.find((img) => img.isPrimary) ?? p.images[0];
-    return {
-      id: p.id,
-      slug: p.slug,
-      brand: p.brand,
-      isFeatured: p.isFeatured,
-      name: { uz: p.name, ru: lookup('ru', p.id)?.name ?? '', en: lookup('en', p.id)?.name ?? '' },
-      description: {
-        uz: p.description ?? '',
-        ru: lookup('ru', p.id)?.description ?? '',
-        en: lookup('en', p.id)?.description ?? '',
-      },
-      category: p.category ? { id: p.category.id, name: p.category.name } : null,
-      imageUrl: image?.url ?? null,
-      variant: variant ? { name: variant.name, priceMinor: variant.priceMinor, currency: variant.currency } : null,
-      variantCount: p.variants.length,
-      stock: p.availability?.stock ?? null,
-    };
+export function toAdminProduct(p: AdminProductResponse): AdminProduct {
+  const image = p.images.find((img) => img.isPrimary) ?? p.images[0];
+  return {
+    id: p.id,
+    slug: p.slug,
+    brand: p.brand ?? 'SABO',
+    status: p.status,
+    isActive: p.isActive,
+    isFeatured: p.isFeatured,
+    name: localized(p, 'name'),
+    description: localized(p, 'description'),
+    category: p.category
+      ? { id: p.category.id, name: p.category.translations.find((t) => t.locale === 'uz')?.name ?? p.category.name }
+      : null,
+    imageUrl: image?.url ?? null,
+    images: p.images,
+    variant: p.variants.find((v) => v.isDefault) ?? p.variants[0] ?? null,
+    variants: p.variants,
+    stock: p.variants.reduce((sum, v) => sum + v.stock, 0),
+    nutrition: p.nutrition,
+    storage: p.storage,
+  };
+}
+
+/** `GET /admin/products` — every non-deleted product (DRAFT / INACTIVE / ARCHIVED included). */
+export async function fetchProducts(page = 1, status?: ProductStatus): Promise<ProductsPage> {
+  const result = await getPaginated<AdminProductResponse>('/admin/products', {
+    page,
+    limit: PRODUCTS_PAGE_LIMIT,
+    ...(status ? { status } : {}),
   });
-  return { items, meta: results[0].meta };
+  return { items: result.items.map(toAdminProduct), meta: result.meta };
 }
 
 export const createProduct = (input: CreateProductInput) => sendData<ProductRecord>('post', '/admin/products', input);
 export const updateProduct = (id: string, input: UpdateProductInput) =>
-  sendData<ProductRecord>('patch', `/admin/products/${id}`, input);
+  sendData<AdminProductResponse>('patch', `/admin/products/${id}`, input);
 export const publishProduct = (id: string) => sendData<ProductRecord>('post', `/admin/products/${id}/publish`);
 export const archiveProduct = (id: string) => sendData<ProductRecord>('post', `/admin/products/${id}/archive`);
 export const deleteProduct = (id: string) => sendData<{ success: boolean }>('delete', `/admin/products/${id}`);

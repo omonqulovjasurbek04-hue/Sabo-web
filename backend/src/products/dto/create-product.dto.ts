@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import { ProductImageType, ProductStatus } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
@@ -289,4 +289,10 @@ export class CreateProductDto {
   storage?: ProductStorageDto;
 }
 
-export class UpdateProductDto extends CreateProductDto {}
+/**
+ * Partial update. Nested collections are replaced when present:
+ * - `translations`, `images`: full replace
+ * - `variants`: upsert by `id`, variants missing from the list are deleted
+ * - `nutrition`, `storage`: upsert
+ */
+export class UpdateProductDto extends PartialType(CreateProductDto) {}
