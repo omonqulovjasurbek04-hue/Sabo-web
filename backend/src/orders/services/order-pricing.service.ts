@@ -74,7 +74,22 @@ export class OrderPricingService {
         });
       }
 
-      const unitPriceMinor = variant.priceMinor || 0;
+      // A variant without a price must never be sold (it would be free), and a
+      // single order can't silently mix currencies.
+      if (variant.priceMinor === null || variant.priceMinor <= 0) {
+        throw new BadRequestException({
+          code: ErrorCode.PRODUCT_INACTIVE,
+          message: `Product variant ${reqItem.productVariantId} has no price`,
+        });
+      }
+      if (variant.currency && variant.currency !== currency) {
+        throw new BadRequestException({
+          code: ErrorCode.VALIDATION_ERROR,
+          message: `Product variant ${reqItem.productVariantId} is priced in ${variant.currency}, expected ${currency}`,
+        });
+      }
+
+      const unitPriceMinor = variant.priceMinor;
       const itemSubtotalMinor = unitPriceMinor * reqItem.quantity;
       subtotalMinor += itemSubtotalMinor;
 
@@ -87,7 +102,7 @@ export class OrderPricingService {
         unitPriceMinor,
         quantity: reqItem.quantity,
         subtotalMinor: itemSubtotalMinor,
-        currency: variant.currency || currency,
+        currency,
       });
     }
 

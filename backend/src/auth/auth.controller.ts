@@ -14,8 +14,10 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
+import { STRICT_LIMITS } from "../common/throttle/throttle.config";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
@@ -27,6 +29,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @Throttle(STRICT_LIMITS.register)
   @Post("register")
   @ApiOperation({ summary: "Register a new customer user" })
   @ApiResponse({
@@ -50,6 +53,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle(STRICT_LIMITS.refresh)
   @Post("refresh")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

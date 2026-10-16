@@ -105,10 +105,10 @@ Railway Project /
 
 1. **Database ulanmadi deb chiqsa:**
    - Backend `Variables` bo'limida `DATABASE_URL` qiymati `${{Postgres.DATABASE_URL}}` ekanligini tekshiring.
-   - `backend/docker-entrypoint.sh` skripti PostgreSQL ulanganda avtomatik `prisma db push` va `seed` buyruqlarini xavfsiz ishga tushiradi.
+   - `backend/docker-entrypoint.sh` skripti `DATABASE_URL` mavjud bo'lsa avtomatik `prisma migrate deploy` ni, `RUN_SEED=true` yoki `ADMIN_BOOTSTRAP_EMAIL` berilgan bo'lsa `seed` ni ishga tushiradi.
 
 2. **CORS Error (Brauzerda API bloklansa):**
-   - Backend `CORS_ORIGINS` maydoniga Frontend domenini (yoki `*`) qo'shing.
+   - Backend `CORS_ORIGINS` maydoniga Frontend domenini to'liq ko'rinishda (`https://...`, vergul bilan ajratib) qo'shing. `*` ishlamaydi — origin aniq solishtiriladi.
 
 3. **Rasmlar ochilmasa:**
    - `frontend/next.config.ts` ga `*.railway.app` va `*.up.railway.app` domenlari avtomatik kiritilgan.

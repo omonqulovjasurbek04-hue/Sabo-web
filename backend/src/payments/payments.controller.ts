@@ -18,6 +18,7 @@ import { PaymentProviderType } from "@prisma/client";
 import { IsEnum, IsOptional, IsString, IsUUID } from "class-validator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
+import { RawResponse } from "../common/decorators/raw-response.decorator";
 import { PaymentsService } from "./payments.service";
 
 class CreateCheckoutUrlDto {
@@ -55,6 +56,7 @@ export class PaymentsController {
   }
 
   @Public()
+  @RawResponse()
   @Post(":provider/webhook")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -66,8 +68,8 @@ export class PaymentsController {
   })
   async handleWebhook(
     @Param("provider") provider: string,
-    @Headers() headers: Record<string, any>,
-    @Body() payload: Record<string, any>,
+    @Headers() headers: Record<string, string | string[] | undefined>,
+    @Body() payload: Record<string, unknown>,
   ) {
     return this.paymentsService.processWebhook(provider, headers, payload);
   }

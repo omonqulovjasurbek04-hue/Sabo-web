@@ -20,6 +20,11 @@ import { APP_CONSTANTS } from "../config/constants";
 import { ErrorCode } from "../common/enums/error-code.enum";
 import { PrismaService } from "../prisma/prisma.service";
 import { UploadMediaDto } from "./dto/upload-media.dto";
+import {
+  declaredMimeMatches,
+  DetectedFileType,
+  detectFileType,
+} from "./file-signature";
 
 @Injectable()
 export class MediaService {
@@ -68,50 +73,43 @@ export class MediaService {
     });
   }
 
-  validateFile(file: Express.Multer.File) {
+  /**
+   * Validates an upload by its content, not by the client-declared MIME type or
+   * file name, and returns the detected type used for storage.
+   */
+  validateFile(file: Express.Multer.File): DetectedFileType {
     if (!file) {
       throw new BadRequestException({
         code: ErrorCode.MEDIA_TYPE_NOT_ALLOWED,
         message: "A file is required.",
       });
     }
-    const isImage = (
-      APP_CONSTANTS.MEDIA.ALLOWED_IMAGE_MIMES as readonly string[]
-    ).includes(file.mimetype);
-    const isDoc = (
-      APP_CONSTANTS.MEDIA.ALLOWED_DOC_MIMES as readonly string[]
-    ).includes(file.mimetype);
-    const is3D = (
-      APP_CONSTANTS.MEDIA.ALLOWED_3D_MIMES as readonly string[]
-    ).includes(file.mimetype);
 
-    if (!isImage && !isDoc && !is3D) {
+    const detected = detectFileType(file.buffer);
+    if (!detected || !declaredMimeMatches(file.mimetype, detected)) {
       throw new BadRequestException({
         code: ErrorCode.MEDIA_TYPE_NOT_ALLOWED,
-        message: `File type ${file.mimetype} is not allowed.`,
+        message: `File type ${file.mimetype} is not allowed or does not match the file content.`,
       });
     }
 
-    if (isImage && file.size > APP_CONSTANTS.MEDIA.MAX_IMAGE_SIZE_BYTES) {
+    const maxBytes = {
+      image: APP_CONSTANTS.MEDIA.MAX_IMAGE_SIZE_BYTES,
+      document: APP_CONSTANTS.MEDIA.MAX_PDF_SIZE_BYTES,
+      model: APP_CONSTANTS.MEDIA.MAX_3D_SIZE_BYTES,
+    }[detected.kind];
+    const label = { image: "Image", document: "Document", model: "3D Model" }[
+      detected.kind
+    ];
+
+    if (file.size > maxBytes) {
       throw new BadRequestException({
         code: ErrorCode.MEDIA_SIZE_EXCEEDED,
-        message: `Image size exceeds limit of ${APP_CONSTANTS.MEDIA.MAX_IMAGE_SIZE_BYTES / (1024 * 1024)}MB`,
+        message: `${label} size exceeds limit of ${maxBytes / (1024 * 1024)}MB`,
       });
     }
 
-    if (isDoc && file.size > APP_CONSTANTS.MEDIA.MAX_PDF_SIZE_BYTES) {
-      throw new BadRequestException({
-        code: ErrorCode.MEDIA_SIZE_EXCEEDED,
-        message: `Document size exceeds limit of ${APP_CONSTANTS.MEDIA.MAX_PDF_SIZE_BYTES / (1024 * 1024)}MB`,
-      });
-    }
-
-    if (is3D && file.size > APP_CONSTANTS.MEDIA.MAX_3D_SIZE_BYTES) {
-      throw new BadRequestException({
-        code: ErrorCode.MEDIA_SIZE_EXCEEDED,
-        message: `3D Model size exceeds limit of ${APP_CONSTANTS.MEDIA.MAX_3D_SIZE_BYTES / (1024 * 1024)}MB`,
-      });
-    }
+    return detected;
   }
 
   async uploadFile(
@@ -119,11 +117,12 @@ export class MediaService {
     dto: UploadMediaDto,
     userId?: string,
   ) {
-    this.validateFile(file);
+    const detected = this.validateFile(file);
 
-    const ext = path.extname(file.originalname).toLowerCase();
+    // Extension comes from the detected content, never from the client's file name.
+    const ext = detected.ext;
     const sanitizedBase = path
-      .basename(file.originalname, ext)
+      .basename(file.originalname, path.extname(file.originalname))
       .replace(/[^a-zA-Z0-9_-]/g, "_");
     const folder = (dto.folder || "general").replace(/[^a-zA-Z0-9_-]/g, "");
     const storageKey = `${folder}/${uuidv4()}-${sanitizedBase}${ext}`;
@@ -135,7 +134,7 @@ export class MediaService {
           Bucket: this.bucket,
           Key: storageKey,
           Body: file.buffer,
-          ContentType: file.mimetype,
+          ContentType: detected.mime,
         }),
       );
       uploadedToS3 = true;
@@ -164,7 +163,7 @@ export class MediaService {
       data: {
         fileName: `${sanitizedBase}${ext}`,
         originalName: file.originalname,
-        mimeType: file.mimetype,
+        mimeType: detected.mime,
         size: file.size,
         storageKey,
         url,

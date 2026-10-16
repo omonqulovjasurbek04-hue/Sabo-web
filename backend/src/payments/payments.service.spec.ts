@@ -1,50 +1,32 @@
-import { OrderStatus, PaymentProviderType, PaymentStatus } from "@prisma/client";
+import { NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { PaymentsService } from "./payments.service";
 import { ClickPaymentProvider } from "./providers/click-payment.provider";
 import { PaymePaymentProvider } from "./providers/payme-payment.provider";
 
-describe("PaymentsService webhook processing", () => {
-  it("does not mark an order as paid when the provider amount differs", async () => {
-    const transaction = {
-      order: {
-        findUnique: jest.fn().mockResolvedValue({
-          id: "order-1",
-          orderNumber: "SABO-1",
-          totalMinor: 25_000,
-          paymentStatus: PaymentStatus.PENDING,
-          status: OrderStatus.PENDING,
-        }),
-        update: jest.fn(),
-      },
-      payment: {
-        findFirst: jest.fn().mockResolvedValue({ id: "payment-1" }),
-        updateMany: jest.fn(),
-      },
-    };
-    const prisma = {
-      $transaction: jest.fn(async (callback: (tx: typeof transaction) => unknown) =>
-        callback(transaction),
-      ),
-    } as unknown as PrismaService;
-    const clickProvider = {
-      handleWebhook: jest.fn().mockResolvedValue({
-        isSuccess: true,
-        orderId: "order-1",
-        amountMinor: 24_999,
-        externalTransactionId: "click-transaction-1",
-        responsePayload: { error: 0 },
-      }),
-    } as unknown as ClickPaymentProvider;
-    const paymeProvider = {} as PaymePaymentProvider;
-    const service = new PaymentsService(prisma, clickProvider, paymeProvider);
+describe("PaymentsService webhook dispatch", () => {
+  const clickReply = { error: 0 };
+  const paymeReply = { result: { allow: true }, id: 1 };
+  const clickProvider = {
+    handleWebhook: jest.fn().mockResolvedValue(clickReply),
+  } as unknown as ClickPaymentProvider;
+  const paymeProvider = {
+    handleWebhook: jest.fn().mockResolvedValue(paymeReply),
+  } as unknown as PaymePaymentProvider;
+  const service = new PaymentsService(
+    {} as PrismaService,
+    clickProvider,
+    paymeProvider,
+  );
 
-    await service.processWebhook("click", {}, {});
+  it("returns the provider's protocol response verbatim", async () => {
+    await expect(service.processWebhook("CLICK", {}, {})).resolves.toBe(clickReply);
+    await expect(service.processWebhook("payme", {}, {})).resolves.toBe(paymeReply);
+  });
 
-    expect(transaction.payment.findFirst).toHaveBeenCalledWith({
-      where: { orderId: "order-1", provider: PaymentProviderType.CLICK },
-    });
-    expect(transaction.order.update).not.toHaveBeenCalled();
-    expect(transaction.payment.updateMany).not.toHaveBeenCalled();
+  it("rejects unknown providers", async () => {
+    await expect(service.processWebhook("stripe", {}, {})).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 });

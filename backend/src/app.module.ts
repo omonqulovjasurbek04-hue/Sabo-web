@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
 import { AboutModule } from "./about/about.module";
 import { AdminModule } from "./admin/admin.module";
 import { AuthModule } from "./auth/auth.module";
@@ -15,6 +16,7 @@ import { RolesGuard } from "./common/guards/roles.guard";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
 import { RedisModule } from "./common/redis/redis.module";
+import { throttlerOptions } from "./common/throttle/throttle.config";
 import configuration from "./config/configuration";
 import { validate } from "./config/validation";
 import { ContactModule } from "./contact/contact.module";
@@ -36,6 +38,8 @@ import { UsersModule } from "./users/users.module";
       load: [configuration],
       validate,
     }),
+    // In-memory buckets: per instance. Switch to a Redis storage if the API is scaled out.
+    ThrottlerModule.forRoot(throttlerOptions),
     PrismaModule,
     RedisModule,
     AuthModule,
@@ -64,6 +68,11 @@ import { UsersModule } from "./users/users.module";
     {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
+    },
+    // Runs first so floods are rejected before auth/DB work.
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
     {
       provide: APP_GUARD,

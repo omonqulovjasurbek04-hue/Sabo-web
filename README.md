@@ -25,6 +25,7 @@ Sabo-web/
 │   │   ├── lib/                # API client, yordamchi utilslar
 │   │   └── locales/            # Til lug'atlari (UZ, RU, EN)
 │   ├── package.json
+│   ├── vercel.json             # Vercel deploy sozlamasi
 │   └── next.config.ts
 │
 ├── backend/                    # NestJS API + Admin Panel
@@ -37,7 +38,10 @@ Sabo-web/
 │   ├── package.json
 │   └── .env.example
 │
-├── vercel.json                 # Vercel Production deployment sozlamasi
+├── docs/                       # Hujjatlar: API, xavfsizlik, audit, arxitektura, deployment, promptlar
+├── docker-compose.yml          # Lokal PostgreSQL, Redis, MinIO, Mailpit
+├── docker-compose.prod.yml     # VM uchun production stack (Caddy bilan)
+├── railway.json, render.yaml   # Railway / Render deploy konfiguratsiyasi
 ├── TASKS.md                    # 📋 Loyihaning to'liq vazifalar yo'l xaritasi (Roadmap)
 ├── AGENTS.md                   # 🤖 AI agentlari va skillar bo'yicha yo'riqnoma
 ├── package.json                # Root monorepo boshqaruv skriptlari
@@ -83,12 +87,16 @@ npm run dev:backend
 | `npm run build:frontend` | — | Next.js frontendni production uchun yig'ish |
 | `npm run build:admin` | — | Vite Admin panelni production uchun yig'ish |
 | `npm run build:backend` | — | NestJS backendni production uchun yig'ish |
+| `npm run build:all` | — | Backend, frontend va admin'ni ketma-ket yig'ish (har o'zgarishdan keyin majburiy) |
+| `npm run lint` / `npm run typecheck` | — | Lint (frontend + backend) / backend typecheck |
+| `npm run prisma:migrate` | — | Lokal DB'ga migratsiya yaratish/qo'llash |
 | `npm run prisma:studio` | `http://localhost:5555` | Prisma Studio vizual DB boshqaruvini ochish |
 | `npm run docker:up` | — | PostgreSQL va Redis konteynerlarini ishga tushirish |
 
 ---
 
 ## 🛡️ Admin Panelda mavjud bo'limlar:
+> Hozircha API'ga ulanganlari: Dashboard, Buyurtmalar, Xabarlar. Qolgan bo'limlar UI sifatida tayyor, lekin ma'lumotni saqlamaydi — [docs/AUDIT_REPORT.md](docs/AUDIT_REPORT.md) (AUD-001).
 1. **Dashboard** — Daromad dinamikasi, Recharts grafiklari, buyurtmalar statistikasi
 2. **Mahsulotlar** — Katalog, yog'lilik, ombor miqdori va yangi mahsulot qo'shish
 3. **Kategoriyalar** — Sut mahsulotlari toifalari
@@ -106,8 +114,23 @@ npm run dev:backend
 
 ## 🌐 Serverga yuklash (Railway & Cloud Deployment)
 - **Railway 1-Click / GitHub Deploy**: [railway.com/new/github](https://railway.com/new/github)
-  - Batafsil bosqichma-bosqich yo'riqnoma: [RAILWAY-DEPLOY.md](RAILWAY-DEPLOY.md)
+  - Batafsil bosqichma-bosqich yo'riqnoma: [docs/deployment/RAILWAY.md](docs/deployment/RAILWAY.md)
+- **Bepul variant (Vercel + Render + Neon)**: [docs/deployment/FREE.md](docs/deployment/FREE.md)
+- **Oracle Cloud VM (Docker + Caddy)**: [docs/deployment/ORACLE.md](docs/deployment/ORACLE.md)
   - Barcha Dockerfile va `railway.json` konfiguratsiyalari to'liq sozlangan (Postgres, Redis, NestJS, Next.js).
-- **Vercel Frontend Deploy**: [vercel.com](https://vercel.com/) orqali `Sabo-web` omborini tanlab `frontend` ildizidan deploy qilish mumkin.
+- **Vercel Frontend Deploy**: [vercel.com](https://vercel.com/) orqali `Sabo-web` omborini tanlab `frontend` ildizidan deploy qilish mumkin (`frontend/vercel.json`).
 - **GitHub Repository**: `https://github.com/omonqulovjasurbek04-hue/Sabo-web.git`
 
+---
+
+## 📚 Hujjatlar
+| Fayl | Mazmuni |
+|---|---|
+| [AGENTS.md](AGENTS.md) | AI agentlar uchun qoidalar |
+| [TASKS.md](TASKS.md) | Vazifalar va holati |
+| [docs/API.md](docs/API.md) | Amaldagi API endpointlar va rollar |
+| [docs/SECURITY.md](docs/SECURITY.md) | Xavfsizlik modeli |
+| [docs/AUDIT_REPORT.md](docs/AUDIT_REPORT.md) | Ma'lum muammolar (AUD-xxx) |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deployment variantlari |
+| [docs/architecture/](docs/architecture/README.md) | Blueprint va frontend yo'riqnomasi |
+| [docs/prompts/](docs/prompts/README.md) | AI coding promptlari |

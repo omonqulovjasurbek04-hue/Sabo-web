@@ -97,4 +97,40 @@ describe("OrderPricingService (Tamper-Proof Financial Tests)", () => {
       ]),
     ).rejects.toThrow(BadRequestException);
   });
+
+  it("should reject a variant without a price instead of selling it for free", async () => {
+    mockPrisma.productVariant.findMany.mockResolvedValue([
+      {
+        id: "var-unpriced",
+        productId: "prod-1",
+        name: "1 L",
+        priceMinor: null,
+        currency: "UZS",
+        isAvailable: true,
+        product: { name: "SABO Sut", isActive: true, status: ProductStatus.ACTIVE },
+      },
+    ]);
+
+    await expect(
+      service.calculatePricing([{ productVariantId: "var-unpriced", quantity: 1 }]),
+    ).rejects.toThrow("has no price");
+  });
+
+  it("should reject a variant priced in another currency", async () => {
+    mockPrisma.productVariant.findMany.mockResolvedValue([
+      {
+        id: "var-usd",
+        productId: "prod-1",
+        name: "1 L",
+        priceMinor: 100,
+        currency: "USD",
+        isAvailable: true,
+        product: { name: "SABO Sut", isActive: true, status: ProductStatus.ACTIVE },
+      },
+    ]);
+
+    await expect(
+      service.calculatePricing([{ productVariantId: "var-usd", quantity: 1 }], 0, "UZS"),
+    ).rejects.toThrow("priced in USD");
+  });
 });

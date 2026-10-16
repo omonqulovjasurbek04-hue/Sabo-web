@@ -15,9 +15,11 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
+import { Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../common/decorators/current-user.decorator";
 import { JwtAuthGuard, Public } from "../common/guards/jwt-auth.guard";
 import { OptionalJwtAuthGuard } from "../common/guards/optional-jwt-auth.guard";
+import { STRICT_LIMITS } from "../common/throttle/throttle.config";
 import { CreateOrderDto, OrderQueryDto } from "./dto/create-order.dto";
 import { OrdersService } from "./orders.service";
 
@@ -32,6 +34,7 @@ export class OrdersController {
 
   @Public()
   @UseGuards(OptionalJwtAuthGuard)
+  @Throttle(STRICT_LIMITS.createOrder)
   @Post("orders")
   @ApiOperation({
     summary: "Create a new order (Checkout - Guest or Authenticated)",

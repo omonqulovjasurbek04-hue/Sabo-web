@@ -9,23 +9,20 @@ export interface CreatePaymentInput {
 export interface CreatePaymentResult {
   paymentUrl: string;
   externalTransactionId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string>;
 }
 
-export interface WebhookResult {
-  isSuccess: boolean;
-  orderId?: string;
-  externalTransactionId?: string;
-  amountMinor?: number;
-  status: string;
-  responsePayload: Record<string, any>;
-}
+/** Body returned to the provider verbatim (its format is provider-defined). */
+export type WebhookResponse = Record<string, unknown>;
 
 export interface PaymentProvider {
   createPayment(input: CreatePaymentInput): Promise<CreatePaymentResult>;
-  verifyPayment(externalTransactionId: string): Promise<boolean>;
   handleWebhook(
-    headers: Record<string, any>,
-    payload: Record<string, any>,
-  ): Promise<WebhookResult>;
+    headers: Record<string, string | string[] | undefined>,
+    payload: Record<string, unknown>,
+  ): Promise<WebhookResponse>;
 }
+
+/** Order ids are UUIDs; anything else must be rejected before hitting Prisma. */
+export const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

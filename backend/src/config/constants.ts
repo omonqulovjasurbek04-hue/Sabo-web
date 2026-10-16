@@ -18,18 +18,7 @@ export const APP_CONSTANTS = {
     MAX_IMAGE_SIZE_BYTES: 10 * 1024 * 1024, // 10MB
     MAX_PDF_SIZE_BYTES: 25 * 1024 * 1024, // 25MB
     MAX_3D_SIZE_BYTES: 50 * 1024 * 1024, // 50MB
-    ALLOWED_IMAGE_MIMES: [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "image/avif",
-    ],
-    ALLOWED_DOC_MIMES: ["application/pdf"],
-    ALLOWED_3D_MIMES: [
-      "model/gltf-binary",
-      "model/gltf+json",
-      "application/octet-stream",
-    ],
+    // Allowed types are detected from file content: see media/file-signature.ts.
   },
 } as const;
 

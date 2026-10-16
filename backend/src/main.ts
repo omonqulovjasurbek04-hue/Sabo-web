@@ -1,13 +1,15 @@
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
+import { parseTrustProxy } from "./common/throttle/throttle.config";
 
 async function bootstrap() {
   const logger = new Logger("Bootstrap");
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>("app.port", 4000);
@@ -16,6 +18,9 @@ async function bootstrap() {
     "http://localhost:3000",
   ]);
   const nodeEnv = configService.get<string>("app.nodeEnv", "development");
+
+  // Real client IPs behind Render/Railway/Caddy (rate limits, login lockout).
+  app.set("trust proxy", parseTrustProxy(process.env.TRUST_PROXY, nodeEnv));
 
   // 1. Security Headers via Helmet
   app.use(

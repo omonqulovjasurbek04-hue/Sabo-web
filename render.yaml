@@ -8,7 +8,9 @@ services:
     plan: free
     region: oregon
     buildCommand: npm ci --workspace=backend --include-workspace-root && npm run build:backend
-    startCommand: cd backend && (npx prisma db push --accept-data-loss || echo "schema push skipped") && (npx ts-node prisma/seed.ts || echo "seed skipped") && node dist/main.js
+    # Versioned migrations only. A database created earlier with `db push` must be
+    # baselined once before this works — see docs/deployment/FREE.md.
+    startCommand: cd backend && npx prisma migrate deploy && (npx ts-node prisma/seed.ts || echo "seed skipped") && node dist/main.js
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_VERSION

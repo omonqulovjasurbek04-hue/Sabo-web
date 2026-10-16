@@ -5,13 +5,13 @@ import {
   Logger,
   NotFoundException,
 } from "@nestjs/common";
-import {
-  OrderStatus,
-  PaymentProviderType,
-  PaymentStatus,
-} from "@prisma/client";
+import { PaymentProviderType, PaymentStatus } from "@prisma/client";
 import { ErrorCode } from "../common/enums/error-code.enum";
 import { PrismaService } from "../prisma/prisma.service";
+import {
+  CreatePaymentResult,
+  WebhookResponse,
+} from "./interfaces/payment-provider.interface";
 import { ClickPaymentProvider } from "./providers/click-payment.provider";
 import { PaymePaymentProvider } from "./providers/payme-payment.provider";
 
@@ -57,7 +57,7 @@ export class PaymentsService {
       });
     }
 
-    let result;
+    let result: CreatePaymentResult;
     const input = {
       orderId: order.id,
       orderNumber: order.orderNumber,
@@ -108,69 +108,21 @@ export class PaymentsService {
     return result;
   }
 
+  /** Dispatches a provider callback; the returned body is sent to the provider verbatim. */
   async processWebhook(
     provider: string,
-    headers: Record<string, any>,
-    payload: Record<string, any>,
-  ) {
-    this.logger.log(`Processing payment webhook from provider: ${provider}`);
+    headers: Record<string, string | string[] | undefined>,
+    payload: Record<string, unknown>,
+  ): Promise<WebhookResponse> {
+    const name = provider.toLowerCase();
+    this.logger.log(`Processing payment webhook from provider: ${name}`);
 
-    let webhookResult;
-    if (provider.toLowerCase() === "click") {
-      webhookResult = await this.clickProvider.handleWebhook(headers, payload);
-    } else if (provider.toLowerCase() === "payme") {
-      webhookResult = await this.paymeProvider.handleWebhook(headers, payload);
-    } else {
-      throw new BadRequestException(`Unknown payment provider: ${provider}`);
+    if (name === "click") {
+      return this.clickProvider.handleWebhook(headers, payload);
     }
-
-    if (webhookResult.isSuccess && webhookResult.orderId) {
-      // Update order and payment status atomically
-      await this.prisma.$transaction(async (tx) => {
-        const order = await tx.order.findUnique({
-          where: { id: webhookResult.orderId },
-        });
-
-        const expectedProvider =
-          provider.toLowerCase() === "click"
-            ? PaymentProviderType.CLICK
-            : PaymentProviderType.PAYME;
-        const hasMatchingPayment = await tx.payment.findFirst({
-          where: { orderId: webhookResult.orderId, provider: expectedProvider },
-        });
-        if (
-          order &&
-          order.paymentStatus !== PaymentStatus.PAID &&
-          webhookResult.amountMinor === order.totalMinor &&
-          hasMatchingPayment
-        ) {
-          await tx.order.update({
-            where: { id: order.id },
-            data: {
-              paymentStatus: PaymentStatus.PAID,
-              status:
-                order.status === OrderStatus.PENDING
-                  ? OrderStatus.CONFIRMED
-                  : order.status,
-            },
-          });
-
-          await tx.payment.updateMany({
-            where: { orderId: order.id },
-            data: {
-              status: PaymentStatus.PAID,
-              externalTransactionId:
-                webhookResult.externalTransactionId || null,
-            },
-          });
-
-          this.logger.log(
-            `✅ Order ${order.orderNumber} successfully marked as PAID via ${provider}`,
-          );
-        }
-      });
+    if (name === "payme") {
+      return this.paymeProvider.handleWebhook(headers, payload);
     }
-
-    return webhookResult.responsePayload;
+    throw new NotFoundException(`Unknown payment provider: ${provider}`);
   }
 }

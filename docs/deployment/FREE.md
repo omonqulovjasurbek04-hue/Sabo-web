@@ -41,18 +41,44 @@ Repo ildizida `render.yaml` fayli allaqachon tayyorlab qo'yilgan — Render uni 
 | Kalit (Key) | Qiymat | Izoh |
 |---|---|---|
 | `DATABASE_URL` | 1-qadomda Neon'dan olingan connection string | |
-| `JWT_ACCESS_SECRET` | `TMHjv1LBaMwk3eLbiyU/zn3p0oRuPK3POpTBzU8u0t0=` | Tayyorlab qo'ydim, xohlasangiz o'zgartiring |
-| `JWT_REFRESH_SECRET` | `DVPZ16U1XZEQeaNuSXEOTwO5fPSpNbrWBkUvTrMQK20=` | Access'dan farqli bo'lishi shart |
+| `JWT_ACCESS_SECRET` | o'zingiz yaratgan tasodifiy qiymat (pastga qarang) | 32+ belgi |
+| `JWT_REFRESH_SECRET` | yana bitta yangi tasodifiy qiymat | Access'dan farqli bo'lishi shart |
 | `ADMIN_BOOTSTRAP_EMAIL` | O'zingizning emailingiz, masalan `admin@sabo.uz` | Birinchi SUPER_ADMIN login |
-| `ADMIN_BOOTSTRAP_PASSWORD` | `XwMeOidhBEdn3jHmAa1!` | Tayyorlab qo'ydim, birinchi kirishdan keyin o'zgartiring |
-| `CORS_ORIGINS` | hozircha `*` qoldiring | 3-qadomdan keyin haqiqiy Vercel domenga almashtiramiz |
+| `ADMIN_BOOTSTRAP_PASSWORD` | kuchli parol (password manager'da yarating) | Birinchi kirishdan keyin o'zgartiring |
+| `CORS_ORIGINS` | hozircha `http://localhost:3000` | 3-qadomdan keyin haqiqiy Vercel domenga almashtiramiz (`*` ishlamaydi — origin aniq solishtiriladi) |
 | `FRONTEND_URL` | hozircha `http://localhost:3000` qoldiring | 3-qadomdan keyin yangilaymiz |
+
+Secret yaratish (har biri uchun alohida ishga tushiring, qiymatni hech qayerga commit qilmang):
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
 
 5. **"Apply"** ni bosing — Render birinchi build'ni boshlaydi (5-10 daqiqa cho'zilishi mumkin).
 6. Build tugagach, Render sizga domen beradi, masalan: `https://sabo-backend.onrender.com`. Buni saqlab qo'ying.
 7. Tekshiring: brauzerda `https://sabo-backend.onrender.com/api/v1/health` ni oching — `{"status":"ok"}` kabi javob ko'rinishi kerak (birinchi so'rov sekin bo'lishi mumkin, kuting).
 
-> **Agar "Blueprint" topilmasa** — qo'lda yaratsangiz ham bo'ladi: "New +" → "Web Service" → repo tanlang → Root Directory bo'sh qoldiring → Build Command: `npm ci --workspace=backend --include-workspace-root && npm run build:backend` → Start Command: `cd backend && npx prisma db push --accept-data-loss && npx ts-node prisma/seed.ts; node dist/main.js` → Plan: Free → yuqoridagi environment variable'larni qo'lda qo'shing.
+> **Agar "Blueprint" topilmasa** — qo'lda yaratsangiz ham bo'ladi: "New +" → "Web Service" → repo tanlang → Root Directory bo'sh qoldiring → Build Command: `npm ci --workspace=backend --include-workspace-root && npm run build:backend` → Start Command: `cd backend && npx prisma migrate deploy && (npx ts-node prisma/seed.ts || echo "seed skipped") && node dist/main.js` → Plan: Free → yuqoridagi environment variable'larni qo'lda qo'shing.
+
+### Mavjud bazani migratsiyalarga o'tkazish (baseline)
+
+Start buyrug'i `prisma migrate deploy` ishlatadi. **Yangi** Neon bazasi uchun hech narsa qilish shart emas.
+
+Agar baza avval eski `prisma db push` buyrug'i bilan yaratilgan bo'lsa, `migrate deploy` `P3005` ("database schema is not empty") xatosi bilan to'xtaydi. Bir marta quyidagini bajaring:
+
+1. **Backup:** Neon Console → Branches → asosiy branch'dan yangi branch yarating (yoki `pg_dump`).
+2. Bazaning hozirgi sxemasi repo'dagi sxemaga mosligini tekshiring (farq bo'lmasligi kerak):
+   ```bash
+   cd backend && npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --script
+   ```
+   Natija bo'sh (yoki faqat izoh) bo'lsa — davom eting. SQL chiqsa, avval farqni hal qiling.
+3. Boshlang'ich migratsiyani "qo'llangan" deb belgilang:
+   ```bash
+   cd backend && npx prisma migrate resolve --applied 20260901210000_initial_schema
+   ```
+4. Render'da **Manual Deploy** → **Deploy latest commit**. Logda `No pending migrations to apply` chiqishi kerak.
+
+Bu buyruqlarni lokal kompyuterdan (`DATABASE_URL` Neon connection string bilan) yoki Render **Shell** orqali bajarish mumkin.
 
 ---
 
